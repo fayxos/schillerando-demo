@@ -115,10 +115,10 @@ li {
 
 /* Mobile */
 
-@media (max-width: 750px) { /* max-device-width: 480px */
+@media (max-width: 480px) { /* max-device-width: 480px */
 
     body {
-        font-size: 2em;
+        font-size: 3em;
     }
 
     .logo {
