@@ -119,9 +119,9 @@ hr {
 }
 
 
-/* Mobile */
+/* Mobile 
 
-@media (max-device-width: 480px) { /* max-device-width: 480px */
+@media (max-device-width: 480px) {  max-device-width: 480px 
 
     body {
         font-size: 2em;
@@ -142,3 +142,5 @@ hr {
         height: auto;
     }
 }
+
+*/
