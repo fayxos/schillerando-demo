@@ -60,7 +60,7 @@ li {
 
 .logo {
     height: 40px;
-    padding-right: 10px;
+    padding: 0 10px;
     position: relative;
     bottom: 5px;
 }
@@ -70,6 +70,7 @@ li {
 #coming-soon {
     padding: 15px 0 10px 0;
     background-color: #f78001;
+    margin: 0 -20;
 }
 
 .coming-soon {
@@ -134,5 +135,11 @@ li {
     .navbar-toggler-icon {
         size: 4rem;
         height: auto;
+    }
+
+    #infos {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 50px 0;
     }
 }
