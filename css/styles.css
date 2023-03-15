@@ -4,19 +4,48 @@ body {
     font-weight: 500;
 }
 
+h1 {
+    font-weight: 900;
+}
+
+h2 {
+    font-weight: 900;
+}
+
 a {
     color: #000;
     text-decoration: none;
 }
 
+li {
+    padding: 10px 0;
+}
+
+/* Boostrap classes */
+.row {
+    padding: 50px 0;
+}
+
 /* Navigation Bar */
 .navbar {
-    padding: 15px 20px;
+    -webkit-box-shadow: 0 8px 6px -6px #b1afaf;
+    -moz-box-shadow: 0 8px 6px -6px #b1afaf;
+    box-shadow: 0 8px 6px -6px #b1afaf;
+
+    margin: 0 -10px;
+    padding: 12px 20px;
     text-align: left;
+    background-color: white;
+    
 }
 
 .navbar-brand {
     font-size: 1.5em;
+    color: #f78001;
+    font-weight: 900;
+}
+
+.navbar-brand:hover {
     color: #f78001;
 }
 
@@ -36,20 +65,74 @@ a {
     bottom: 5px;
 }
 
+/* Coming Soon Section */
+
+#coming-soon {
+    padding: 15px 0 10px 0;
+    background-color: #f78001;
+}
+
+.coming-soon {
+    font-size: 3em;
+    color: white;
+}
+
 /* Title Section */
 
+#title {
+    padding: 80px 0;
+    background-color: #fff;
+}
+
+.title {
+    font-size: 5em;
+    color: #f78001;
+}
+
+
+/* Infos */
+
+#infos {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 50px 0;
+}
+
+.card {
+    height: 90%;
+}
+
+.col {
+    padding: 0 20px;
+}
 
 /* Footer */
 
 .social-icon {
-    margin: 20px 10px;
+    margin: 30px 20px;
 }
+
 
 /* Mobile */
 
-@media (max-device-width: 480px) {
+@media (max-width: 750px) { /* max-device-width: 480px */
 
     body {
         font-size: 2em;
+    }
+
+    .logo {
+        width: 70px;
+        height: auto;
+    }
+
+    .navbar-toggler {
+        size: 4rem;
+        height: auto;
+    }
+
+    .navbar-toggler-icon {
+        size: 4rem;
+        height: auto;
     }
 }
