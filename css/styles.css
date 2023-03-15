@@ -123,12 +123,16 @@ hr {
 
 @media (max-device-width: 480px) {  /* max-device-width: 480px */
 
+    .navbar {
+        height: 200px;
+    }
+
     .navbar-brand {
         font-size: 3em;
     }
 
     .logo {
-        width: 120px;
+        width: 10px;
         height: auto;
     }
 
