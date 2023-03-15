@@ -119,12 +119,12 @@ hr {
 }
 
 
-/* Mobile 
+/* Mobile */
 
-@media (max-device-width: 480px) {  max-device-width: 480px 
+@media (max-device-width: 480px) {  /* max-device-width: 480px */
 
-    body {
-        font-size: 2em;
+    .navbar-brand {
+        font-size: 3em;
     }
 
     .logo {
@@ -133,14 +133,13 @@ hr {
     }
 
     .navbar-toggler {
-        size: 4rem;
+        width: 120px;
         height: auto;
     }
 
     .navbar-toggler-icon {
-        size: 4rem;
+        width: 120px;
         height: auto;
     }
 }
 
-*/
