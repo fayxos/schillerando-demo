@@ -1,0 +1,41 @@
+body {
+    font-family: "Merriweather Sans",Arial,sans-serif;
+    text-align: center; 
+    font-weight: 500;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Navigation Bar */
+.navbar {
+    padding: 15px 20px;
+    text-align: left;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #f78001;
+}
+
+.nav-item {
+    padding: 0 18px;
+}
+
+.nav-link {
+    font-size: 1.2rem;
+    color: #000;
+}
+
+
+/* Title Section */
+
+
+
+/* Footer */
+
+.social-icon {
+    margin: 20px 10px;
+}
