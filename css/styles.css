@@ -16,7 +16,7 @@ a {
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.5em;
     color: #f78001;
 }
 
@@ -25,17 +25,31 @@ a {
 }
 
 .nav-link {
-    font-size: 1.2rem;
+    font-size: 1.2em;
     color: #000;
 }
 
+.logo {
+    height: 40px;
+    padding-right: 10px;
+    position: relative;
+    bottom: 5px;
+}
 
 /* Title Section */
-
 
 
 /* Footer */
 
 .social-icon {
     margin: 20px 10px;
+}
+
+/* Mobile */
+
+@media (max-device-width: 480px) {
+
+    body {
+        font-size: 2em;
+    }
 }
