@@ -118,11 +118,11 @@ li {
 @media (max-width: 480px) { /* max-device-width: 480px */
 
     body {
-        font-size: 3em;
+        font-size: 4em;
     }
 
     .logo {
-        width: 70px;
+        width: 90px;
         height: auto;
     }
 
