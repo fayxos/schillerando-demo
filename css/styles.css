@@ -223,6 +223,9 @@ hr {
 
     #info-carousel .carousel-item {
         width: 80%;
+        position: relative;
+        margin-left: 18%;
+        margin-right: 18%;
     }
 
     #info-carousel h4 {
@@ -239,6 +242,7 @@ hr {
 
     .question-text {
         font-size: 3rem;
+        height: 170px;
     }
 
     /* Footer */
