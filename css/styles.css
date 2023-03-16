@@ -104,15 +104,7 @@ hr {
 
 
 /* Infos */
-
-#infos-mobile {
-    position: absolute;
-    visibility: hidden;
-}
-
-#infos-pc {
-    position: static;
-    visibility: visible;
+#infos {
     max-width: 1100px;
     margin: 0 auto;
     padding: 50px 20px 10px 20px;
@@ -197,45 +189,6 @@ hr {
 
     /* Infos */
 
-    #infos-pc {
-        position: absolute;
-        visibility: hidden;
-    }
-    
-    #infos-mobile {
-        position: static;
-        visibility: visible;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 50px 20px;
-    }
-
-    .card {
-        height: 90%;
-        width: 80%;
-    }
-
-    .col {
-        padding: 0 20px;
-    }
-
-    /* Infos */
-
-    #info-carousel .carousel-item {
-        width: 80%;
-        position: relative;
-        margin-left: 18%;
-        margin-right: 18%;
-    }
-
-    #info-carousel h4 {
-        font-size: 2.5rem;
-    }
-
-    #info-carousel li {
-        font-size: 2rem;
-        padding: 30px 20px;
-    }
 
     
     /* Questions */
