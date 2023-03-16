@@ -1,3 +1,5 @@
+/* #00a100 */
+
 body {
     font-family: "Merriweather Sans",Arial,sans-serif;
     text-align: center; 
@@ -46,13 +48,13 @@ hr {
 }
 
 .navbar-brand {
-    font-size: 1.5em;
-    color: #f78001;
+    font-size: 1.5rem;
+    color: #00a100; 
     font-weight: 900;
 }
 
 .navbar-brand:hover {
-    color: #f78001;
+    color: #00a100;
 }
 
 .nav-item {
@@ -75,11 +77,11 @@ hr {
 
 #coming-soon {
     padding: 15px 0 10px 0;
-    background-color: #f78001;
+    background-color: #00a100;
 }
 
 .coming-soon {
-    font-size: 3em;
+    font-size: 3rem;
     color: white;
 }
 
@@ -92,13 +94,21 @@ hr {
 
 .title {
     font-size: 5em;
-    color: #f78001;
+    color: #00a100;
+    padding: 0 20px;
 }
 
 
 /* Infos */
 
-#infos {
+#infos-mobile {
+    position: absolute;
+    visibility: hidden;
+}
+
+#infos-pc {
+    position: static;
+    visibility: visible;
     max-width: 1100px;
     margin: 0 auto;
     padding: 50px 20px;
@@ -114,6 +124,10 @@ hr {
 
 /* Footer */
 
+#footer {
+    padding-bottom: 50px;
+}
+
 .social-icon {
     margin: 30px 20px;
 }
@@ -123,27 +137,83 @@ hr {
 
 @media (max-device-width: 480px) {  /* max-device-width: 480px */
 
+    h2 {
+        font-size: 3rem;
+    }
+
+    /* Navbar */
     .navbar {
-        height: 200px;
+        height: 180px;
+        padding-left: 40px;
+        padding-right: 40px;
     }
 
     .navbar-brand {
-        font-size: 3em;
+        font-size: 3rem;
     }
-
+    
     .logo {
-        width: 10px;
+        width: 100px;
         height: auto;
     }
 
     .navbar-toggler {
-        width: 120px;
-        height: auto;
+        border-radius: 15%;
     }
 
     .navbar-toggler-icon {
-        width: 120px;
-        height: auto;
+        padding: 40px;
+    }
+
+    /* Title Section */
+
+    .title {
+        font-size: 5rem;
+    }
+
+    /* Infos */
+
+    #infos-pc {
+        position: absolute;
+        visibility: hidden;
+    }
+    
+    #infos-mobile {
+        position: static;
+        visibility: visible;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 50px 20px;
+    }
+
+    .card {
+        height: 90%;
+        width: 80%;
+    }
+
+    .col {
+        padding: 0 20px;
+    }
+
+    /* Infos */
+    .carousel-inner .carousel-item > div {
+        display: none;
+    }
+    .carousel-inner .carousel-item > div:first-child {
+        display: block;
+    }
+
+    .carousel-inner .carousel-item.active,
+    .carousel-inner .carousel-item-next,
+    .carousel-inner .carousel-item-prev {
+        display: flex;
+    }
+
+    /* Footer */
+
+    #footer {
+        padding-bottom: 50px;
+        font-size: 1.5rem;
     }
 }
 
