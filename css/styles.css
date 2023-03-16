@@ -159,13 +159,17 @@ hr {
 
     /* Navbar */
     .navbar {
-        height: 180px;
+        min-height: 180px;
         padding-left: 40px;
         padding-right: 40px;
     }
 
     .navbar-brand {
         font-size: 3rem;
+    }
+
+    .nav-item {
+        font-size: 2rem;
     }
     
     .logo {
@@ -189,7 +193,23 @@ hr {
 
     /* Infos */
 
+    .info-title {
+        font-size: 2.5em;
+        padding: 15px 0;
+    }
 
+    .info-text {
+        font-size: 2em;
+        padding: 30px 30px 50px 30px;
+    }
+
+    .col {
+        padding: 20px 150px;
+    }
+
+    .card-body {
+        padding-bottom: 40px;
+    }
     
     /* Questions */
 
