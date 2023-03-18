@@ -5,5 +5,5 @@ module.exports = defineConfig({
 })
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/schillerando/" : "/",
+  publicPath: process.env.NODE_ENV === "production" ? "/schillerando/" : "/docs",
 };
