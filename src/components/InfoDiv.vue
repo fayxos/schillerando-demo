@@ -17,7 +17,7 @@ export default {
 div {
   color: #00a100;
   background-color: white;
-  padding: 50px 10px;
+  padding: 50px 20px;
 }
 
 p {
