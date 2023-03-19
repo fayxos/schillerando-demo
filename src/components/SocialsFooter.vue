@@ -15,6 +15,7 @@
 <style scoped>
 footer {
   padding-bottom: 50px;
+  padding-top: 50px;
 }
 
 .social-icon {

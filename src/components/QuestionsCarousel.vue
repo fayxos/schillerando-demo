@@ -34,7 +34,6 @@
 section {
   background-color: #00a100;
   padding: 40px 0 50px 0;
-  margin-bottom: 50px;
 }
 
 .question {
