@@ -10,7 +10,7 @@ import TitleDiv from '../components/TitleDiv'
 import InfoDiv from '../components/InfoDiv'
 
 export default {
-  name: 'ProduktView',
+  name: 'ProductView',
   components: {
     AlertBanner,
     TitleDiv,
