@@ -1,7 +1,7 @@
 <template>
   <footer id="footer" class="container-fluid">
     <div class="container-fluid">
-      <a href="mailto:schillerando@gmail.com">
+      <a href="mailto:info@schillerando.de">
         <i class="social-icon fa-solid fa-lg fa-envelope"></i>
       </a>
       <a href="https://www.instagram.com/schillerando/">
