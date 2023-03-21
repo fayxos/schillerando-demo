@@ -1,12 +1,7 @@
 <template>
   <TitleDiv title="Account"/>
-  <div v-if="this.auth.user == null">
-    <input id="mail" type="text" placeholder="E-Mail">
-    <input id="passwd" type="password" placeholder="Password">
-    <button @click="signIn">Anmelden</button>
-    <button @click="signUp">Registrieren</button>
-  </div>
-  <div v-else-if="company.length != 0">
+  <LoginSignup />
+  <div v-if="company.length != 0">
     <label for="name">Name:</label>
     <input type="text" name="name" v-model="this.company[0].name"><br>
     <label for="info">Info:</label>
@@ -15,14 +10,17 @@
   </div>
 </template>
 
+
 <script>
 import TitleDiv from '../components/TitleDiv'
+import LoginSignup from '../components/LoginSignup'
 import { supabase } from '../main.js'
 
 export default {
   name: 'AccountView',
   components: {
     TitleDiv,
+    LoginSignup
   },
   data() {
     return {
@@ -31,27 +29,6 @@ export default {
     }
   },
   methods: {
-    async signIn() {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: document.getElementById('mail').value,
-        password: document.getElementById('passwd').value,
-      })
-      this.auth = data
-      if (error != null) console.log("Error logging in", error)
-      //Download corresponding company data
-      this.company = (await supabase
-        .from('companies')
-        .select()
-        .eq('user_uid', this.auth.user.id)).data
-    },
-    async signUp() {
-      const { data, error } = await supabase.auth.signUp({
-        email: document.getElementById('mail').value,
-        password: document.getElementById('passwd').value,
-      })
-      this.auth = data
-      if (error != null) console.log("Error signing up", error)
-    },
     async saveChanges() {
       const { error } = await supabase
         .from('companies')
@@ -63,3 +40,8 @@ export default {
   }
 }
 </script>
+
+<style>
+
+
+</style>

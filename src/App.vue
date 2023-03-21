@@ -64,4 +64,16 @@ hr {
   padding: 50px 0;
 }
 
+/* Primary Styles */
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.bg-primary {
+  background-color: #00a100;
+  color: #00a100;
+}
+
 </style>
