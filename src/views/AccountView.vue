@@ -1,4 +1,5 @@
 <template>
+  <TitleDiv title="Account"/>
   <div v-if="this.auth.user == null">
     <input id="mail" type="text" placeholder="E-Mail">
     <input id="passwd" type="password" placeholder="Password">
@@ -15,14 +16,13 @@
 </template>
 
 <script>
+import TitleDiv from '../components/TitleDiv'
 import { supabase } from '../main.js'
 
 export default {
   name: 'AccountView',
   components: {
-    AlertBanner,
     TitleDiv,
-    InfoDiv
   },
   data() {
     return {

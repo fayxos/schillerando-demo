@@ -1,4 +1,5 @@
 <template>
+  <TitleDiv title="Unternehmen"/>
   <CompanyTile v-for="company in companies" :key="company.id" :companyObject="company" />
 </template>
 
@@ -20,13 +21,13 @@ onMounted(() => {
 
 <script>
 import CompanyTile from '../components/CompanyTile.vue'
+import TitleDiv from '../components/TitleDiv'
+
 
 export default {
   name: 'CompanyView',
   components: {
-    AlertBanner,
     TitleDiv,
-    InfoDiv,
     CompanyTile
   },
   data() {

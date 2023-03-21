@@ -1,15 +1,14 @@
 <template>
-
+  <TitleDiv title="Produkte"/>
 </template>
 
 <script>
+import TitleDiv from '../components/TitleDiv'
 
 export default {
   name: 'ProductView',
   components: {
-    AlertBanner,
     TitleDiv,
-    InfoDiv
   },
   data() {
     return {}

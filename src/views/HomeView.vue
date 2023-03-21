@@ -1,16 +1,14 @@
 <template>
-  
+  <TitleDiv title="Home"/>
 </template>
 
 <script>
+import TitleDiv from '../components/TitleDiv'
 
 export default {
   name: 'HomeView',
   components: {
-    AlertBanner,
     TitleDiv,
-    InfoCards,
-    QuestionsCarousel
   },
   data() {
     return {}
