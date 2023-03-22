@@ -13,22 +13,33 @@
                   <div class="card-body">
                     <h1>Login</h1>
                     <p class="text-muted">Melde dich mit deinem Account an</p>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                      <input id="login-mail" type="email" class="form-control" placeholder="Email">
-                    </div>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                      <input id="login-passwd" type="password" class="form-control" placeholder="Password">
-                    </div>
-                    <div class="row">
-                      <div class="col-5">
-                        <button type="button" @click="signIn" class="btn btn-primary px-4">Login</button>
+
+                    <form class="needs-validation" novalidate>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                        <input id="login-mail" type="email" class="form-control" placeholder="Email" @input="validateSignIn(false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+
+                        <div class="invalid-feedback">
+                          Bitte gebe eine gültige Email an
+                        </div>
                       </div>
-                      <div class="col-7 text-right">
-                        <button type="button" class="btn btn-link px-0">Passwort vergessen?</button>
+                      <div class="input-group mb-3" id="login-passwd-group">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input id="login-passwd" type="password" class="form-control" @input="validateSignIn(false)" placeholder="Password" required />
+
+                        <div class="invalid-feedback">
+                          Bitte gebe ein gültiges Passwort an
+                        </div>
                       </div>
-                    </div>
+                      <div class="row">
+                        <div class="col-5">
+                          <button type="button" @click="validateSignIn(true)" class="btn btn-primary px-4" value="validate">Login</button>
+                        </div>
+                        <div class="col-7 text-right">
+                          <button type="button" class="btn btn-link px-0">Passwort vergessen?</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
                 <div class="card text-white py-5 d-md-down-none bg">
@@ -50,23 +61,38 @@
                   <div class="card-body">
                     <h1>Sign up</h1>
                     <p class="text-muted">Erstelle einen neuen Account</p>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text"><i class="fa fa-user"></i></span>
-                      <input type="text" id="signup-name" class="form-control" placeholder="Name">
-                    </div>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                      <input type="email" id="signup-mail" class="form-control" placeholder="Email">
-                    </div>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                      <input type="password" id="signup-passwd" class="form-control" placeholder="Password">
-                    </div>
-                    <div class="row">
-                      <div class="col-12">
-                        <button type="button" @click="signUp" class="btn btn-primary px-4">Registrieren</button>
+
+                    <form class="needs-validation" novalidate>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input type="text" id="signup-name" class="form-control" @input="validateSignUp(false)" placeholder="Name" required>
+
+                        <div class="invalid-feedback">
+                          Bitte gebe deinen Vor- und Nachnamen an
+                        </div>
                       </div>
-                    </div>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                        <input type="email" id="signup-mail" class="form-control" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" @input="validateSignUp(false)" placeholder="Email" required>
+
+                        <div class="invalid-feedback">
+                          Bitte gebe eine gültige Email an
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input type="password" id="signup-passwd" class="form-control" @input="validateSignUp(false)" placeholder="Password" required>
+
+                        <div class="invalid-feedback">
+                          Dass Passwort muss mind. 6 Zeichen lang sein
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12">
+                          <button type="button" @click="validateSignUp(true)" class="btn btn-primary px-4">Registrieren</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
                 <div class="card text-white py-5 d-md-down-none bg">
@@ -87,6 +113,7 @@
   </div>
 </template>
 
+
 <script>
 import { supabase } from '../main.js'
 
@@ -98,7 +125,9 @@ export default {
   data() {
     return {
       auth: { user: null, session: null },
-      company: []
+      company: [],
+      logInPressed: false,
+      SignUpPressed: false,
     }
   },
   methods: {
@@ -109,27 +138,180 @@ export default {
         var $ = window.jQuery = require('jquery');
         $("html, body").animate({ scrollTop: "0" });
       }
+      this.logInPressed = false;
+      this.SignUpPressed = false;
+
+      var mailInput = document.getElementById("login-mail");
+      mailInput.value = ""
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.remove("is-invalid");
+      var passwInput = document.getElementById("login-passwd");
+      passwInput.value = ""
+      passwInput.classList.remove("is-valid");
+      passwInput.classList.remove("is-invalid");
+      var nameInput = document.getElementById("signup-name");
+      nameInput.value = ""
+      nameInput.classList.remove("is-valid");
+      nameInput.classList.remove("is-invalid");
+      mailInput = document.getElementById("signup-mail");
+      mailInput.value = ""
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.remove("is-invalid");
+      passwInput = document.getElementById("signup-passwd");
+      passwInput.value = ""
+      passwInput.classList.remove("is-valid");
+      passwInput.classList.remove("is-invalid");
+    },
+    validateSignIn(pressed) {
+      if(!pressed && !this.logInPressed) return;
+
+      var feedbacks = document.getElementsByClassName("invalid-feedback");
+      Array.from(feedbacks).forEach(feedback => {
+        feedback.style.visibility = "visible";
+        feedback.style.position = "relative";
+      })
+
+      var mailInput = document.getElementById("login-mail");
+      var passwInput = document.getElementById("login-passwd");
+      mailInput.value = mailInput.value.replace(/\s/g,'');
+      passwInput.value = passwInput.value.replace(/\s/g,'');
+      var mailValid = false;
+      var passwValid = false;
+
+      var regex = mailInput.getAttribute('data-regex');
+      if(!mailInput.value.match(regex)) {
+        mailInput.classList.remove("is-valid");
+        mailInput.classList.add("is-invalid");
+      }
+      else {
+        mailInput.classList.remove("is-invalid");
+        mailInput.classList.add("is-valid");
+        mailValid = true;
+      }
+
+      if(passwInput.value.length < 6) {
+        passwInput.classList.remove("is-valid");
+        passwInput.classList.add("is-invalid");
+      }
+      else {
+        passwInput.classList.remove("is-invalid");
+        passwInput.classList.add("is-valid");
+        passwValid = true;
+      }
+
+      this.logInPressed = true;
+
+      if(passwValid && mailValid && pressed) this.signIn();
     },
     async signIn() {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: document.getElementById('login-mail').value,
         password: document.getElementById('login-passwd').value,
       })
+      if (error != null) {
+        var mailInput = document.getElementById("login-mail");
+        var passwInput = document.getElementById("login-passwd");
+        mailInput.classList.remove("is-valid");
+        passwInput.classList.remove("is-valid");
+        mailInput.classList.add("is-invalid");
+        passwInput.classList.add("is-invalid");
+
+        var feedbacks = document.getElementsByClassName("invalid-feedback");
+        Array.from(feedbacks).forEach(feedback => {
+          feedback.style.visibility = "hidden";
+          feedback.style.position = "absolute";
+        })
+        console.log("Error logging in", error);
+        return;
+      } 
+
       this.auth = data
-      if (error != null) console.log("Error logging in", error)
       //Download corresponding company data
       this.company = (await supabase
         .from('companies')
         .select()
         .eq('user_uid', this.auth.user.id)).data
     },
+    validateSignUp(pressed) {
+      if(!pressed && !this.SignUpPressed) return;
+
+      var feedbacks = document.getElementsByClassName("invalid-feedback");
+      Array.from(feedbacks).forEach(feedback => {
+        feedback.style.visibility = "visible";
+        feedback.style.position = "relative";
+      })
+
+      var nameInput = document.getElementById("signup-name");
+      var mailInput = document.getElementById("signup-mail");
+      var passwInput = document.getElementById("signup-passwd");
+      nameInput.value = nameInput.value.trim();
+      mailInput.value = mailInput.value.replace(/\s/g,'');
+      passwInput.value = passwInput.value.replace(/\s/g,'');
+      var nameValid = false;
+      var mailValid = false;
+      var passwValid = false;
+
+      if(!nameInput.value.includes(' ') || nameInput.value.length < 5) {
+        nameInput.classList.remove("is-valid");
+        nameInput.classList.add("is-invalid");
+      }
+      else {
+        nameInput.classList.remove("is-invalid");
+        nameInput.classList.add("is-valid");
+        nameValid = true;
+      }
+
+      var regex = mailInput.getAttribute('data-regex');
+      if(!mailInput.value.match(regex)) {
+        mailInput.classList.remove("is-valid");
+        mailInput.classList.add("is-invalid");
+      }
+      else {
+        mailInput.classList.remove("is-invalid");
+        mailInput.classList.add("is-valid");
+        mailValid = true;
+      }
+
+      if(passwInput.value.length < 6) {
+        passwInput.classList.remove("is-valid");
+        passwInput.classList.add("is-invalid");
+      }
+      else {
+        passwInput.classList.remove("is-invalid");
+        passwInput.classList.add("is-valid");
+        passwValid = true;
+      }
+
+      this.SignUpPressed = true;
+
+      if(passwValid && mailValid && nameValid && pressed) this.signUp();
+    },
     async signUp() {
       const { data, error } = await supabase.auth.signUp({
         email: document.getElementById('signup-mail').value,
         password: document.getElementById('signup-passwd').value,
       })
+      if (error != null) {
+        var nameInput = document.getElementById("signup-name");
+        var mailInput = document.getElementById("signup-mail");
+        var passwInput = document.getElementById("signup-passwd");
+        nameInput.classList.remove("is-valid");
+        mailInput.classList.remove("is-valid");
+        passwInput.classList.remove("is-valid");
+        nameInput.classList.add("is-invalid");
+        mailInput.classList.add("is-invalid");
+        passwInput.classList.add("is-invalid");
+
+        var feedbacks = document.getElementsByClassName("invalid-feedback");
+        Array.from(feedbacks).forEach(feedback => {
+          feedback.style.visibility = "hidden";
+          feedback.style.position = "absolute";
+        })
+        console.log("Error signing up", error)
+      } 
+
       this.auth = data
-      if (error != null) console.log("Error signing up", error)
+
     }
   }
 }
