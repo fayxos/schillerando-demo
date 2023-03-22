@@ -1,7 +1,6 @@
 <template>
-  <div v-if="this.auth.user == null">
+  <div>
     <!-- Log in -->
-    <div class="position"></div>
     <div class="container">
       <div class="row justify-content-center">
         <div id="flipper" class="flipper col-md-8">
@@ -148,6 +147,16 @@ export default {
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%);
+}
+
+@media (max-width: 576px) {
+  .container {
+      position: relative;
+      top: 0;
+      left: 0;
+      margin-right: 0;
+      transform: translate(0, 0);
+  }
 }
 
 @media (min-width: 576px) {

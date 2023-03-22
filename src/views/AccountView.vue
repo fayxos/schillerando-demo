@@ -1,14 +1,19 @@
 <template>
-  <TitleDiv title="Account"/>
-  <LoginSignup />
-  <div v-if="company.length != 0">
-    <label for="name">Name:</label>
-    <input type="text" name="name" v-model="this.company[0].name"><br>
-    <label for="info">Info:</label>
-    <input type="text" name="info" v-model="company[0].info"><br>
-    <button @click="saveChanges">Änderungen speichern</button>
+  <LoginSignup v-if="this.auth.user == null"/>
+  <div v-else-if="this.auth.user != null">
+    <TitleDiv title="Account"/>
+
+    <div v-if="this.company.length != 0">
+      <label for="name">Name:</label>
+      <input type="text" name="name" v-model="this.company[0].name"><br>
+      <label for="info">Info:</label>
+      <input type="text" name="info" v-model="company[0].info"><br>
+      <button @click="saveChanges">Änderungen speichern</button>
+    </div>
   </div>
+  
 </template>
+
 
 
 <script>
