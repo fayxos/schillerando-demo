@@ -292,15 +292,9 @@ export default {
         password: document.getElementById('signup-passwd').value,
       })
       if (error != null) {
-        var nameInput = document.getElementById("signup-name");
         var mailInput = document.getElementById("signup-mail");
-        var passwInput = document.getElementById("signup-passwd");
-        nameInput.classList.remove("is-valid");
         mailInput.classList.remove("is-valid");
-        passwInput.classList.remove("is-valid");
-        nameInput.classList.add("is-invalid");
         mailInput.classList.add("is-invalid");
-        passwInput.classList.add("is-invalid");
 
         var feedbacks = document.getElementsByClassName("invalid-feedback");
         Array.from(feedbacks).forEach(feedback => {
