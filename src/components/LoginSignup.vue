@@ -251,7 +251,7 @@ export default {
       var mailValid = false;
       var passwValid = false;
 
-      if(!nameInput.value.includes(' ') || nameInput.value.length < 5) {
+      if(!nameInput.value.trim().includes(' ') || nameInput.value.length < 5) {
         nameInput.classList.remove("is-valid");
         nameInput.classList.add("is-invalid");
       }
