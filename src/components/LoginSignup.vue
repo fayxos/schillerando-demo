@@ -226,7 +226,7 @@ export default {
       } 
 
       this.auth = data
-      //Download corresponding company data
+      //Download corresponding company datas
       this.company = (await supabase
         .from('companies')
         .select()
@@ -244,7 +244,7 @@ export default {
       var nameInput = document.getElementById("signup-name");
       var mailInput = document.getElementById("signup-mail");
       var passwInput = document.getElementById("signup-passwd");
-      nameInput.value = nameInput.value.trim();
+      if(pressed) nameInput.value = nameInput.value.trim();
       mailInput.value = mailInput.value.replace(/\s/g,'');
       passwInput.value = passwInput.value.replace(/\s/g,'');
       var nameValid = false;
