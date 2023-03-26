@@ -32,6 +32,7 @@ const router = createRouter({
   routes,
   scrollBehavior() {
     document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('navbarToggler').classList.remove("show");
   }
 })
 

@@ -24,7 +24,9 @@
   </header>
 </template>
 
+
 <style scoped>
+
 .navbar {
   -webkit-box-shadow: 0 8px 6px -6px #b1afaf;
   -moz-box-shadow: 0 8px 6px -6px #b1afaf;
