@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView'
 import ProductView from '../views/ProductView'
 import CompanyView from '../views/CompanyView'
 import AccountView from '../views/AccountView'
+import AuthView from '../views/AuthView'
+import store from '../store/index'
 
 const routes = [
   {
@@ -24,6 +26,17 @@ const routes = [
     path: '/account',
     name: 'AccountView',
     component: AccountView,
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
+    path: '/auth',
+    name: 'AuthView',
+    component: AuthView,
+    meta: {
+      footer: false
+    }
   },
 ]
 
@@ -35,5 +48,17 @@ const router = createRouter({
     document.getElementById('navbarToggler').classList.remove("show");
   }
 })
+
+
+router.beforeEach((to, from, next) => {
+  // get current user info
+  const user = store.getters.getUser;
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if(requiresAuth && user == null) next('auth');
+  else if(!requiresAuth && user != null) next();
+  else next();
+})
+
 
 export default router

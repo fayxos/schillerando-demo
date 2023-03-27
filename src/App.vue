@@ -2,7 +2,7 @@
   <div>
     <NavBar/>
     <router-view></router-view>
-    <SocialsFooter/>
+    <SocialsFooter v-if="$route.meta.footer == null"/>
   </div>
 </template>
 

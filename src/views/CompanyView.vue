@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { supabase } from '../main.js'
+import { supabase } from '../supabase'
 import { ref, onMounted } from 'vue'
 
 const companies = ref([])

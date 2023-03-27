@@ -1,37 +1,47 @@
 <template>
-  <LoginSignup v-if="this.auth.user == null"/>
-  <div v-else-if="this.auth.user != null">
-    <TitleDiv title="Account"/>
+  <TitleDiv title="Account"/>
 
-    <div v-if="this.company.length != 0">
-      <label for="name">Name:</label>
-      <input type="text" name="name" v-model="this.company[0].name"><br>
-      <label for="info">Info:</label>
-      <input type="text" name="info" v-model="company[0].info"><br>
-      <button @click="saveChanges">Änderungen speichern</button>
-    </div>
+  <div v-if="this.company.length != 0">
+    <label for="name">Name:</label>
+    <input type="text" name="name" v-model="this.company[0].name"><br>
+    <label for="info">Info:</label>
+    <input type="text" name="info" v-model="company[0].info"><br>
+    <button @click="saveChanges">Änderungen speichern</button>
   </div>
-  
+
+  <button @click.prevent="signOut">Sign out</button>
+  <p>{{ userData }}</p>
 </template>
 
 
 
 <script>
 import TitleDiv from '../components/TitleDiv'
-import LoginSignup from '../components/LoginSignup'
-import { supabase } from '../main.js'
+import { supabase } from '../supabase'
+import { useStore } from "vuex";
+import { computed } from "vue";
 
 export default {
   name: 'AccountView',
   components: {
     TitleDiv,
-    LoginSignup
   },
   data() {
     return {
       auth: { user: null, session: null },
       company: []
     }
+  },
+  setup() {
+    const store = useStore();
+    const userData = computed(() => store.state.user);
+     const signOut = () => {
+      store.dispatch("signOutAction");
+    };
+    return {
+      signOut,
+      userData,
+    };
   },
   methods: {
     async saveChanges() {

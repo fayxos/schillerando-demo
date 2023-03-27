@@ -100,7 +100,7 @@
                     <div>
                       <h2>Log in</h2>
                       <p>Du hast schon einen Account? Dann melde dich mit deiner Email und deinem Passwort an!</p>
-                      <button type="button" @click="flipCard" class="btn bg-sec mt-3 register">Log in</button>
+                      <button type="submit" @click="flipCard" class="btn bg-sec mt-3 register">Log in</button>
                     </div>
                   </div>
                 </div>
@@ -115,7 +115,8 @@
 
 
 <script>
-import { supabase } from '../main.js'
+import { reactive } from "vue";
+import { useStore } from "vuex";
 
 export default {
   name: 'LoginSignup',
@@ -124,11 +125,22 @@ export default {
   },
   data() {
     return {
-      auth: { user: null, session: null },
       company: [],
       logInPressed: false,
       SignUpPressed: false,
     }
+  },
+  setup() {
+    const form = reactive({
+      name: "",
+      email: "",
+      password: "",
+    });
+    const store = useStore();
+    return {
+      store,
+      form,
+    };
   },
   methods: {
     flipCard() {
@@ -203,12 +215,13 @@ export default {
 
       if(passwValid && mailValid && pressed) this.signIn();
     },
-    async signIn() {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: document.getElementById('login-mail').value,
-        password: document.getElementById('login-passwd').value,
-      })
-      if (error != null) {
+    signIn() {
+      this.form.email = document.getElementById('login-mail').value
+      this.form.password = document.getElementById('login-passwd').value
+
+      this.store.dispatch("signInAction", this.form);
+
+      if(this.store.user == null) {
         var mailInput = document.getElementById("login-mail");
         var passwInput = document.getElementById("login-passwd");
         mailInput.classList.remove("is-valid");
@@ -221,16 +234,14 @@ export default {
           feedback.style.visibility = "hidden";
           feedback.style.position = "absolute";
         })
-        console.log("Error logging in", error);
-        return;
-      } 
-
-      this.auth = data
-      //Download corresponding company datas
+      }
+    
+      /* Download corresponding company datas
       this.company = (await supabase
         .from('companies')
         .select()
         .eq('user_uid', this.auth.user.id)).data
+        */
     },
     validateSignUp(pressed) {
       if(!pressed && !this.SignUpPressed) return;
@@ -286,12 +297,14 @@ export default {
 
       if(passwValid && mailValid && nameValid && pressed) this.signUp();
     },
-    async signUp() {
-      const { data, error } = await supabase.auth.signUp({
-        email: document.getElementById('signup-mail').value,
-        password: document.getElementById('signup-passwd').value,
-      })
-      if (error != null) {
+    signUp() {
+      this.form.name = document.getElementById('signup-name').value
+      this.form.email = document.getElementById('signup-mail').value
+      this.form.password = document.getElementById('signup-passwd').value
+
+      this.store.dispatch("signUpAction", this.form);
+
+      if(this.store.user == null) {
         var mailInput = document.getElementById("signup-mail");
         mailInput.classList.remove("is-valid");
         mailInput.classList.add("is-invalid");
@@ -301,11 +314,7 @@ export default {
           feedback.style.visibility = "hidden";
           feedback.style.position = "absolute";
         })
-        console.log("Error signing up", error)
-      } 
-
-      this.auth = data
-
+      }
     }
   }
 }
