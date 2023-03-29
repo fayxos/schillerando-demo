@@ -13,7 +13,6 @@
                   <div class="card-body">
                     <h1>Login</h1>
                     <p class="text-muted">Melde dich mit deinem Account an</p>
-
                     <form class="needs-validation" novalidate>
                       <div class="input-group mb-3">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
@@ -119,10 +118,7 @@ import { reactive } from "vue";
 import { useStore } from "vuex";
 
 export default {
-  name: 'LoginSignup',
-  props: {
-    title: String,
-  },
+  name: 'AuthView',
   data() {
     return {
       company: [],

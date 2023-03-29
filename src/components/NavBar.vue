@@ -1,10 +1,10 @@
 <template>
   <hr>
   <header class="navbar navbar-expand-lg navbar-light sticky-top">
-    <a href="/" class="brand navbar-brand">
+    <router-link to="/" class="brand navbar-brand">
       <img class="logo" src="@/assets/logo_transparent.png"/>
       Schillerando
-    </a>
+    </router-link>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -65,6 +65,16 @@
   padding: 0 10px;
   position: relative;
   bottom: 5px;
+}
+
+@media (max-width: 991px) {
+  label {
+    position: static;
+  }
+
+  br {
+    content: '';
+  }
 }
 
 </style>
