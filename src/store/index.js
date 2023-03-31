@@ -63,14 +63,14 @@ const store = createStore({
         const { data, error } = await supabase.auth.signUp({
           email: form.email,
           password: form.password,
+          options: {
+            data: {
+              name: form.name,
+            },
+          },
         });
         if (error) throw error;
         console.log("Successfully registered");
-
-        const { error2 } = await supabase
-          .from('users')
-          .insert({ id: data.user.id, name: form.name, email: data.user.email })
-        if (error2) throw error;
         commit('setUser', data.user)
 
         commit('setState', 'success')
