@@ -4,6 +4,7 @@ import ProductView from '../views/ProductView'
 import CompanyView from '../views/CompanyView'
 import AccountView from '../views/AccountView'
 import AuthView from '../views/AuthView'
+import UpdatePasswordView from '../views/UpdatePasswordView'
 import store from '../store/index'
 
 const routes = [
@@ -37,6 +38,22 @@ const routes = [
     meta: {
       footer: false
     }
+  },
+  {
+    path: '/update-password',
+    name: 'UpdatePasswordView',
+    component: UpdatePasswordView,
+    meta: {
+      footer: false
+    }
+  },
+  {
+    path: '/qr1',
+    redirect: '/'
+  },
+  {
+    path: '/qr2',
+    redirect: '/account'
   },
 ]
 

@@ -1,5 +1,38 @@
 <template>
   <div>
+
+    <AlertPopup :title="this.alertTitle" :info="this.alertInfo"/>
+
+    <!-- Reset password pop up -->
+    <div class="modal fade" id="resetPasswordPopup" tabindex="-1" aria-labelledby="resetPasswordPopupLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="resetPasswordPopupLabel">Passwort zurücksetzten</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Wir senden dir eine Email um dein Passwort zurückzusetzten.</p>
+            <form class="needs-validation" novalidate>
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                <input id="reset-mail" type="email" class="form-control" placeholder="Email" @input="validateReset(false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+
+                <div id="invalid-reset-feedback" class="invalid-feedback">
+                  Bitte gebe eine gültige Email an
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+            <button type="button" @click="validateReset(true)" class="btn btn-primary">Email senden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Log in -->
     <div class="container">
       <div class="row justify-content-center">
@@ -32,10 +65,16 @@
                       </div>
                       <div class="row">
                         <div class="col-5">
-                          <button type="button" @click="validateSignIn(true)" class="btn btn-primary px-4" value="validate">Login</button>
+                          <button type="button" @click="validateSignIn(true)" class="btn btn-primary px-4" value="validate">
+                            <div class="loading-button">Login</div>
+                            <div class="spinner">
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span class="sr-only">Loading...</span>
+                            </div>  
+                          </button>
                         </div>
                         <div class="col-7 text-right">
-                          <button type="button" class="btn btn-link px-0">Passwort vergessen?</button>
+                          <button type="button" class="btn btn-link px-0" data-bs-toggle="modal" data-bs-target="#resetPasswordPopup">Passwort vergessen?</button>
                         </div>
                       </div>
                     </form>
@@ -67,7 +106,7 @@
                         <input type="text" id="signup-name" class="form-control" @input="validateSignUp(false)" placeholder="Name" required>
 
                         <div class="invalid-feedback">
-                          Bitte gebe deinen Vor- und Nachnamen an
+                          Bitte gib deinen Vor- und Nachnamen an
                         </div>
                       </div>
                       <div class="input-group mb-3">
@@ -75,7 +114,7 @@
                         <input type="email" id="signup-mail" class="form-control" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" @input="validateSignUp(false)" placeholder="Email" required>
 
                         <div class="invalid-feedback">
-                          Bitte gebe eine gültige Email an
+                          Bitte gib eine gültige Email an
                         </div>
                       </div>
                       <div class="input-group mb-3">
@@ -88,7 +127,13 @@
                       </div>
                       <div class="row">
                         <div class="col-12">
-                          <button type="button" @click="validateSignUp(true)" class="btn btn-primary px-4">Registrieren</button>
+                          <button type="button" @click="validateSignUp(true)" class="btn btn-primary px-4">
+                            <div class="loading-button">Registrieren</div>
+                            <div class="spinner">
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span class="sr-only">Loading...</span>
+                            </div>  
+                          </button>
                         </div>
                       </div>
                     </form>
@@ -115,15 +160,91 @@
 
 <script>
 import { reactive } from "vue";
-import { useStore } from "vuex";
+import { useStore, mapGetters } from "vuex";
+import { Modal } from "bootstrap/dist/js/bootstrap.bundle.js";
+import AlertPopup from '../components/AlertPopup.vue'
 
 export default {
   name: 'AuthView',
+  components: {
+    AlertPopup
+  },
   data() {
     return {
-      company: [],
       logInPressed: false,
-      SignUpPressed: false,
+      signUpPressed: false,
+      resetPressed: false,
+      action: '',
+      alertTitle: '',
+      alertInfo: '',
+      successAlertTitle: 'Erfolgreich',
+      successAlertInfo: 'Aktion wurde erfolgreich durchgeführt',
+      failureAlertTitle: 'Fehler',
+      failureAlertInfo: 'Es ist ein Fehler aufgetreten!'
+    }
+  },
+  computed: {
+    ...mapGetters(['getState'])
+  },
+  watch: {
+    getState(newValue) {
+      var spinners = document.getElementsByClassName("spinner");
+      var loadingButtons = document.getElementsByClassName("loading-button");
+
+      if(newValue == 'loading') {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "visible";
+          spinner.style.position = "relative";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "hidden";
+          button.style.position = "absolute";
+        })
+      }
+      else if(newValue == 'success') {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "hidden";
+          spinner.style.position = "absolute";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "visible";
+          button.style.position = "relative";
+        })
+
+        this.alertTitle = this.successAlertTitle
+        this.alertInfo = this.successAlertInfo
+
+        if(this.alertTitle == '') return;
+        alertModal = new Modal(document.getElementById("alertModal"), {});
+        alertModal.show();
+      }
+      else {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "hidden";
+          spinner.style.position = "absolute";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "visible";
+          button.style.position = "relative";
+        })
+
+        this.alertTitle = this.failureAlertTitle
+        this.alertInfo = this.failureAlertInfo
+
+        if(this.alertTitle == '') return;
+        var alertModal = new Modal(document.getElementById("alertModal"), {});
+        alertModal.show();
+
+        if(this.action == 'login') {
+          this.signInFailure()
+        }
+        else if(this.action == 'register') {
+          this.signUpFailure()
+        }
+      }
     }
   },
   setup() {
@@ -133,6 +254,7 @@ export default {
       password: "",
     });
     const store = useStore();
+
     return {
       store,
       form,
@@ -147,7 +269,7 @@ export default {
         $("html, body").animate({ scrollTop: "0" });
       }
       this.logInPressed = false;
-      this.SignUpPressed = false;
+      this.signUpPressed = false;
 
       var mailInput = document.getElementById("login-mail");
       mailInput.value = ""
@@ -217,30 +339,28 @@ export default {
 
       this.store.dispatch("signInAction", this.form);
 
-      if(this.store.user == null) {
-        var mailInput = document.getElementById("login-mail");
-        var passwInput = document.getElementById("login-passwd");
-        mailInput.classList.remove("is-valid");
-        passwInput.classList.remove("is-valid");
-        mailInput.classList.add("is-invalid");
-        passwInput.classList.add("is-invalid");
+      this.failureAlertTitle = 'Login fehlgeschlagen';
+      this.failureAlertInfo = 'Die angegebene Email oder das Passwort ist falsch!';
+      this.successAlertTitle = ''
 
-        var feedbacks = document.getElementsByClassName("invalid-feedback");
-        Array.from(feedbacks).forEach(feedback => {
-          feedback.style.visibility = "hidden";
-          feedback.style.position = "absolute";
-        })
-      }
-    
-      /* Download corresponding company datas
-      this.company = (await supabase
-        .from('companies')
-        .select()
-        .eq('user_uid', this.auth.user.id)).data
-        */
+      this.action = 'login'
+    },
+    signInFailure() {
+      var mailInput = document.getElementById("login-mail");
+      var passwInput = document.getElementById("login-passwd");
+      mailInput.classList.remove("is-valid");
+      passwInput.classList.remove("is-valid");
+      mailInput.classList.add("is-invalid");
+      passwInput.classList.add("is-invalid");
+
+      var feedbacks = document.getElementsByClassName("invalid-feedback");
+      Array.from(feedbacks).forEach(feedback => {
+        feedback.style.visibility = "hidden";
+        feedback.style.position = "absolute";
+      })
     },
     validateSignUp(pressed) {
-      if(!pressed && !this.SignUpPressed) return;
+      if(!pressed && !this.signUpPressed) return;
 
       var feedbacks = document.getElementsByClassName("invalid-feedback");
       Array.from(feedbacks).forEach(feedback => {
@@ -289,7 +409,7 @@ export default {
         passwValid = true;
       }
 
-      this.SignUpPressed = true;
+      this.signUpPressed = true;
 
       if(passwValid && mailValid && nameValid && pressed) this.signUp();
     },
@@ -300,31 +420,79 @@ export default {
 
       this.store.dispatch("signUpAction", this.form);
 
-      if(this.store.user == null) {
-        var mailInput = document.getElementById("signup-mail");
+      this.failureAlertTitle = 'Registrierung fehlgeschlagen';
+      this.failureAlertInfo = 'Es existiert bereits ein Account mit dieser Email!';
+      this.successAlertTitle = ''
+ 
+      this.action = 'register'
+    },
+    signUpFailure() {
+      var mailInput = document.getElementById("signup-mail");
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.add("is-invalid");
+
+      var feedbacks = document.getElementsByClassName("invalid-feedback");
+      Array.from(feedbacks).forEach(feedback => {
+        feedback.style.visibility = "hidden";
+        feedback.style.position = "absolute";
+      })
+    },
+    validateReset(pressed) {
+      if(!pressed && !this.resetPressed) return;
+
+      var feedback = document.getElementById("invalid-reset-feedback");
+      feedback.style.visibility = "visible";
+      feedback.style.position = "relative";
+
+      var mailInput = document.getElementById("reset-mail");
+      var mailValid = false;
+
+      var regex = mailInput.getAttribute('data-regex');
+      if(!mailInput.value.match(regex)) {
         mailInput.classList.remove("is-valid");
         mailInput.classList.add("is-invalid");
-
-        var feedbacks = document.getElementsByClassName("invalid-feedback");
-        Array.from(feedbacks).forEach(feedback => {
-          feedback.style.visibility = "hidden";
-          feedback.style.position = "absolute";
-        })
       }
-    }
+      else {
+        mailInput.classList.remove("is-invalid");
+        mailInput.classList.add("is-valid");
+        mailValid = true;
+      }
+
+      this.resetPressed = true;
+
+      if(mailValid && pressed) this.resetPassword();
+    },
+    resetPassword() {
+      const mailInput = document.getElementById('reset-mail');
+      this.form.email = mailInput.value;
+      this.store.dispatch("resetPasswordAction", this.form);
+
+      var $ = window.jQuery = require('jquery');
+      $('#resetPasswordPopup').hide();
+      $('.modal-backdrop').hide();
+      
+      this.failureAlertTitle = 'Zurücksetzten fehlgeschlagen';
+      this.failureAlertInfo = 'Es gibt keinen Account mit dieser Email!';
+      this.successAlertTitle = 'Passwort zurückgesetzt'
+      this.successAlertInfo = 'Es wurd ein Link zum Ändern deines Passwortes an deine Email gesendet.'
+
+      mailInput.value = '';
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.remove("is-invalid");
+
+      this.resetPressed = false;
+    },
+    
   }
 }
 </script>
 
 <style scoped>
-.position {
-  height: 500px;
-}
 
 .container {
   padding: 30px;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%);
@@ -479,5 +647,10 @@ p {
 
 .front h2 {
     padding-bottom: 10px;
+}
+
+.spinner {
+  visibility: hidden;
+  position: absolute;
 }
 </style>

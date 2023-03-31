@@ -1,3 +1,5 @@
+
+
 <template>
   <hr>
   <header class="navbar navbar-expand-lg navbar-light sticky-top">
@@ -19,13 +21,64 @@
             <li class="nav-item">
                 <router-link class="nav-link" to="/account">Account</router-link>
             </li>
+            <div class="indicator" id="indicator"></div>
         </ul>
     </div>
   </header>
 </template>
 
+<script>
+export default {
+  name: 'NavBar',
+  props: {
+    info: String,
+  },
+  mounted() {
+    /*
+    const url = window.location.href.split('/');
+    const path = url[url.length-1];
+    const indicator = document.getElementById('indicator');
+    const links = document.getElementsByClassName('nav-link');
+
+    console.log(links[0].innerWidth);
+
+    switch(path) {
+      case "produkte":
+        indicator.style.visibility = "visible";
+        indicator.style.width = links[0].style.width + 'px'
+        break;
+      case "unternehmen":
+        indicator.style.visibility = "visible";
+        indicator.style.width = links[1].style.width + 'px'
+        break;
+      case "account":
+        indicator.style.visibility = "visible";
+        indicator.style.width = links[2].style.width + 'px'
+        break;
+      default:
+        indicator.style.visibility = "hidden";
+        break;
+    }
+    */
+  },
+  methods: {
+    animateIndicator() {
+
+    }
+  }
+}
+</script>
 
 <style scoped>
+
+.indicator {
+  position: absolute;
+  bottom: 20px;
+  height: 4px;
+  width: 100px;
+  background-color: #00a100;
+  visibility: hidden;
+}
 
 .navbar {
   -webkit-box-shadow: 0 8px 6px -6px #b1afaf;
@@ -68,6 +121,10 @@
 }
 
 @media (max-width: 991px) {
+  .indicator {
+    height: 0px;
+  }
+
   label {
     position: static;
   }

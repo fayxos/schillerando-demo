@@ -8,7 +8,8 @@ const store = createStore({
   state: {
     user: null,
     userCompany: null,
-    userCompanyDescription: null
+    userCompanyDescription: null,
+    state: undefined
   },
   mutations: {
     setUser(state, payload) {
@@ -17,6 +18,9 @@ const store = createStore({
     setUserCompany(state, payload) {
       state.userCompany = payload;
     },
+    setState(state, payload) {
+      state.state = payload;
+    },
   },
   getters: {
     getUser (state) {
@@ -24,11 +28,16 @@ const store = createStore({
     },
     getUserCompany (state) {
       return state.userCompany
+    },
+    getState (state) {
+      return state.state
     }
   },
   actions: {
     async signInAction({ commit }, form) {
       try {
+        commit('setState', 'loading')
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email: form.email,
           password: form.password,
@@ -37,36 +46,90 @@ const store = createStore({
         console.log("Successfully signed in");
         commit('setUser', data.user)
         this.dispatch('startUserCompanySubscription') 
+
+        commit('setState', 'success')
+
         await router.replace('/account')
       } catch (error) {
+        commit('setState', 'failure')
         console.log(error.error_description || error.message);
       }
     },
 
     async signUpAction({ commit }, form) {
       try {
+        commit('setState', 'loading')
+
         const { data, error } = await supabase.auth.signUp({
           email: form.email,
           password: form.password,
         });
         if (error) throw error;
         console.log("Successfully registered");
+
+        const { error2 } = await supabase
+          .from('users')
+          .insert({ id: data.user.id, name: form.name, email: data.user.email })
+        if (error2) throw error;
         commit('setUser', data.user)
+
+        commit('setState', 'success')
+
         await router.replace('/account')
       } catch (error) {
+        commit('setState', 'failure')
         console.log(error.error_description || error.message);
       }
     },
 
     async signOutAction({ commit }) {
       try {
+        commit('setState', 'loading')
+
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
         commit('setUser', null)
         console.log("Logged Out successfully");
         this.dispatch('stopUserCompanySubscription')
+
+        commit('setState', 'success')
+
         await router.replace("/auth");
       } catch (error) {
+        commit('setState', 'failure')
+        console.log(error.error_description || error.message);
+      }
+    },
+
+    async resetPasswordAction({ commit }, form) {
+      try {
+        commit('setState', 'loading')
+
+        const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
+          redirectTo: 'http://localhost:8080/update-password', // https://schillerando.de/reset-password
+        })
+        if (error) throw error;
+
+        commit('setState', 'success')
+      } catch (error) {
+        commit('setState', 'failure')
+        console.log(error.error_description || error.message);
+      }
+    },
+    async updatePasswordAction({ commit }, form) {
+      try {
+        commit('setState', 'loading')
+
+        const { error } = await supabase.auth.updateUser({
+          password: form.password
+        })
+        if (error) throw error;
+
+        commit('setState', 'success')
+
+        await router.replace("/account");
+      } catch (error) {
+        commit('setState', 'failure')
         console.log(error.error_description || error.message);
       }
     },
