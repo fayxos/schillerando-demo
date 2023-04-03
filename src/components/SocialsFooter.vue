@@ -1,7 +1,7 @@
 <template>
   <footer id="footer" class="container-fluid">
     <div class="container-fluid">
-      <a href="mailto:schillerando@gmail.com">
+      <a href="mailto:info@schillerando.de">
         <i class="social-icon fa-solid fa-lg fa-envelope"></i>
       </a>
       <a tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-content='
@@ -14,8 +14,8 @@
           <br>Felix Haag
           <br>Schulstraße 34
           <br>71672 Marbach am Neckar
-          <br>Telefon: 015759664764
-          <br>E-Mail: business@schillerando.de
+          <br>Telefon: <a href="tel:+4915759664764">0157 / 59 66 47 64</a>
+          <br>E-Mail: <a href="mailto:info@schillerando.de">info@schillerando.de</a>
         </p>
       </div>'>
         <i class="social-icon fa-solid fa-lg fa-circle-info"></i>

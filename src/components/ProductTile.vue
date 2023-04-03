@@ -1,10 +1,10 @@
 <template>
-    <p>Hier ist ein Unternehmen... ({{ data }})</p>
+    <p>Hier ist ein Produkt... ({{ data }})</p>
 </template>
   
 <script>
 export default {
-    name: 'CompanyTile',
+    name: 'ProductTile',
     props: ['data'],
 }
 </script>

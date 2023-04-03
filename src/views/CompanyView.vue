@@ -1,37 +1,31 @@
 <template>
-  <TitleDiv title="Unternehmen"/>
-  <CompanyTile v-for="company in companies" :key="company.id" :companyObject="company" />
+  <TitleDiv title="Unternehmen" />
+  <SortableList :items="companies" element="CompanyTile" />
 </template>
 
-<script setup>
-import { supabase } from '../supabase'
-import { ref, onMounted } from 'vue'
-
-const companies = ref([])
-
-async function getCompanies() {
-  const { data } = await supabase.from('companies').select("*")
-  companies.value = data
-}
-
-onMounted(() => {
-    getCompanies()
-  })
-</script>
-
 <script>
-import CompanyTile from '../components/CompanyTile.vue'
+import SortableList from '@/components/SortableList.vue';
+import { supabase } from '@/supabase';
 import TitleDiv from '../components/TitleDiv'
-
 
 export default {
   name: 'CompanyView',
   components: {
     TitleDiv,
-    CompanyTile
+    SortableList
   },
   data() {
-    return {}
+    return {
+      companies: []
+    }
   },
+  async created() {
+    const { data, error } = await supabase
+          .from('companies')
+          .select()
+    if (error != null) console.log(error)
+    this.companies = data
+    console.log(this.companies)
+  }
 }
 </script>
