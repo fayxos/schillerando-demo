@@ -3,28 +3,37 @@
     <NavBar/>
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null"/>
+    <ShoppingCard/>
   </div>
 </template>
 
 <script>
 import NavBar from './components/NavBar'
 import SocialsFooter from './components/SocialsFooter'
+import ShoppingCard from './components/ShoppingCard'
+import { supabase } from './supabase'
+import { useStore } from "vuex";
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    SocialsFooter
+    SocialsFooter,
+    ShoppingCard
+  }, 
+  async onLoad() {
+    
+    const { data, error } = await supabase.auth.getSession()
+
+    if(error || data == null) {
+      const store = useStore()
+      store.commit('setUser', null)
+    }
   }
 }
 </script>
 
 <style>
-
-::-webkit-scrollbar {
-  position: absolute;
-  z-index: 9999;
-}
 
 body {
   font-family: "Merriweather Sans",Arial,sans-serif;
@@ -73,6 +82,33 @@ hr {
 
 .bg-primary {
   background-color: #00a100;
+  color: #00a100;
+}
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.btn-primary:hover {
+  background-color: #007400;
+  border-color: #007400;
+}
+
+.btn-link {
+  color: #00a100;
+}
+
+.btn-link:hover {
+  color: #007400;
+}
+
+.bg {
+  background-color: #00a100;
+}
+
+.bg-sec {
+  background-color: white;
   color: #00a100;
 }
 

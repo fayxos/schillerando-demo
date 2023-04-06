@@ -25,7 +25,7 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="removeValidation()">Abbrechen</button>
             <button type="button" @click="validateReset(true)" class="btn btn-primary">Email senden</button>
           </div>
         </div>
@@ -42,7 +42,7 @@
             <!-- Front -->
             <div class="front">
               <div class="card-group mb-0">
-                <div class="card p-4" id="top-card">
+                <div class="card p-4 pb-0" id="top-card">
                   <div class="card-body">
                     <h1>Login</h1>
                     <p class="text-muted">Melde dich mit deinem Account an</p>
@@ -95,7 +95,7 @@
             <!-- Back -->
             <div class="back">
               <div class="card-group mb-0">
-                <div class="card p-4">
+                <div class="card p-4 pb-0">
                   <div class="card-body">
                     <h1>Sign up</h1>
                     <p class="text-muted">Erstelle einen neuen Account</p>
@@ -169,7 +169,7 @@ export default {
   components: {
     AlertPopup
   },
-  data() {
+  data() {    
     return {
       logInPressed: false,
       signUpPressed: false,
@@ -482,6 +482,12 @@ export default {
 
       this.resetPressed = false;
     },
+    removeValidation() {
+      const mailInput = document.getElementById('reset-mail');
+      mailInput.value = '';
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.remove("is-invalid");
+    }
     
   }
 }
@@ -500,12 +506,12 @@ export default {
 
 @media (max-width: 576px) {
   .container {
-      position: relative;
-      top: 0;
-      left: 0;
-      margin-right: 0;
-      transform: translate(0, 0);
-  }
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-right: 0;
+    transform: translate(0, 0);
+}
 }
 
 @media (min-width: 576px) {
@@ -556,33 +562,6 @@ p {
   position: relative;
   display: flex;
   width: 100%;
-}
-
-.bg {
-  background-color: #00a100;
-}
-
-.bg-sec {
-  background-color: white;
-  color: #00a100;
-}
-
-.btn-primary {
-  background-color: #00a100;
-  border-color: #00a100;
-}
-
-.btn-primary:hover {
-  background-color: #007400;
-  border-color: #007400;
-}
-
-.btn-link {
-  color: #00a100;
-}
-
-.btn-link:hover {
-  color: #007400;
 }
 
 /* Flip */

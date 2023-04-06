@@ -90,6 +90,7 @@ export default {
   text-align: left;
   background-color: white;
   
+  z-index: 999;
 }
 
 .navbar-brand {

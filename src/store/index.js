@@ -7,6 +7,7 @@ import { supabase } from '../supabase'
 const store = createStore({
   state: {
     user: null,
+    session: null,
     userCompany: null,
     userCompanyDescription: null,
     state: undefined
@@ -60,12 +61,19 @@ const store = createStore({
       try {
         commit('setState', 'loading')
 
+        const splitName = form.name.split(' ')
+        const name1 = splitName[0].charAt(0).toUpperCase() + splitName[0].slice(1).toLowerCase()
+        const name2 = splitName[1].charAt(0).toUpperCase() + splitName[1].slice(1).toLowerCase()
+        
+        const capitalizedName = name1 + ' ' + name2
+
         const { data, error } = await supabase.auth.signUp({
           email: form.email,
           password: form.password,
           options: {
             data: {
-              name: form.name,
+              name: capitalizedName,
+              credit: 0
             },
           },
         });

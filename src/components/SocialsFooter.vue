@@ -24,7 +24,7 @@
       <a href="https://www.instagram.com/schillerando/">
         <i class="social-icon fab fa-lg fa-instagram"></i>
       </a>
-      <p>© Copyright Schillerando</p>
+      <p>© Schillerando</p>
     </div>
   </footer>
 </template>

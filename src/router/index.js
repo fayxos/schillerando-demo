@@ -36,7 +36,7 @@ const routes = [
     name: 'AuthView',
     component: AuthView,
     meta: {
-      footer: false
+      footer: false, 
     }
   },
   {
@@ -72,7 +72,7 @@ router.beforeEach((to, from, next) => {
   const user = store.getters.getUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  if(requiresAuth && user == null) next('auth');
+  if(requiresAuth && user == null) next({ path: 'auth', params: { route: to.path } });
   else if(!requiresAuth && user != null) next();
   else next();
 })
