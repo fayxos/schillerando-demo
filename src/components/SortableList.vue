@@ -1,5 +1,10 @@
 <template>
-    <input v-model="searchString">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10 col-md-2">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="searchString">
+        </div>
+    </div>
     <div class="sortable-list" ref="sortableList">
         <component :is="element" v-for="ssItem in sortedShownItems" :data="ssItem" v-bind:key="ssItem.id"></component>
     </div>
@@ -115,8 +120,20 @@ export default {
         },
         searchString: function () {
             this.generateShownItems();
+        },
+        dir: function () {
+            this.generateShownItems();
+        },
+        sortBy: function () {
+            this.generateShownItems();
         }
     },
     components: { ProductTile, CompanyTile }
 }
 </script>
+
+<style scoped>
+
+    
+
+</style>

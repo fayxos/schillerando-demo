@@ -11,8 +11,11 @@
     "@popperjs/core": "^2.11.7",
     "@supabase/supabase-js": "^2.12.1",
     "bootstrap": "^5.2.3",
+    "circular-json": "^0.5.9",
     "core-js": "^3.8.3",
     "jquery": "^3.6.4",
+    "json-stringify-safe": "^5.0.1",
+    "util": "^0.12.5",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vuex-persistedstate": "^4.1.0"

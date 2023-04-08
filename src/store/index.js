@@ -9,7 +9,6 @@ const store = createStore({
     user: null,
     session: null,
     userCompany: null,
-    userCompanyDescription: null,
     state: undefined
   },
   mutations: {
@@ -35,7 +34,21 @@ const store = createStore({
     }
   },
   actions: {
-    async signInAction({ commit }, form) {
+    async reload({ commit }) {
+      const { data, error } = await supabase.auth.getSession()
+      console.log('test')
+
+      if(error || data.session == null) {
+        console.log('no session')
+        commit('setUser', null)
+      } else {
+        console.log(data.session.user)
+        commit('setUser', data.session.user)
+        this.dispatch('startUserCompanySubscription') 
+      }
+
+    },
+    async signInAction({ commit }, { form, path }) {
       try {
         commit('setState', 'loading')
 
@@ -50,14 +63,17 @@ const store = createStore({
 
         commit('setState', 'success')
 
-        await router.replace('/account')
+        if(path == null)
+          await router.replace('/account')
+        else 
+          await router.replace(path)
       } catch (error) {
         commit('setState', 'failure')
         console.log(error.error_description || error.message);
       }
     },
 
-    async signUpAction({ commit }, form) {
+    async signUpAction({ commit }, { form, path }) {
       try {
         commit('setState', 'loading')
 
@@ -83,7 +99,10 @@ const store = createStore({
 
         commit('setState', 'success')
 
-        await router.replace('/account')
+        if(path == null)
+          await router.replace('/account')
+        else 
+          await router.replace(path)
       } catch (error) {
         commit('setState', 'failure')
         console.log(error.error_description || error.message);
@@ -154,29 +173,29 @@ const store = createStore({
           return;
         }
 
+        commit('setUserCompany', null)
         if(data[0] == null) return
 
+        console.log(data)
         commit('setUserCompany', data[0])
 
         const companySubscription = supabase
           .channel('any')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'companies', filter: 'id=eq.'+this.getters.getUserCompany.id }, payload => {
-            console.log('Database change received!', payload)
+            console.log('Database change received!', payload.new)
             commit('setUserCompany', payload.new)
           })
 
-          companySubscription.subscribe()
-          this.userCompanyDescription = companySubscription
+        companySubscription.subscribe()
       } catch (error) {
         console.log(error.error_description || error.message);
       }
     },
 
-    async stopUserCompanySubscription() {
+    async stopUserCompanySubscription({ commit }) {
       try {
-        if(this.userCompanyDescription == null) return
-        supabase.removeChannel(this.userCompanyDescription)
-        this.userCompanyDescription = null
+        await supabase.removeAllChannels()
+        commit('setUserCompanySubscription', null)
       } catch (error) {
         console.log(error.error_description || error.message);
       }

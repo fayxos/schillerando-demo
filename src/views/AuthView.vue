@@ -337,7 +337,8 @@ export default {
       this.form.email = document.getElementById('login-mail').value
       this.form.password = document.getElementById('login-passwd').value
 
-      this.store.dispatch("signInAction", this.form);
+      console.log(this.$route.query.redirect)
+      this.store.dispatch("signInAction", { form: this.form, path: this.$route.query.redirect });
 
       this.failureAlertTitle = 'Login fehlgeschlagen';
       this.failureAlertInfo = 'Die angegebene Email oder das Passwort ist falsch!';
@@ -418,7 +419,7 @@ export default {
       this.form.email = document.getElementById('signup-mail').value
       this.form.password = document.getElementById('signup-passwd').value
 
-      this.store.dispatch("signUpAction", this.form);
+      this.store.dispatch("signUpAction", { form: this.form, path: this.$route.query.redirect });
 
       this.failureAlertTitle = 'Registrierung fehlgeschlagen';
       this.failureAlertInfo = 'Es existiert bereits ein Account mit dieser Email!';

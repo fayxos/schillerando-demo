@@ -3,7 +3,7 @@
     <NavBar/>
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null"/>
-    <ShoppingCard/>
+    <ShoppingCard v-if="$route.meta.shoppingCard == null"/>
   </div>
 </template>
 
@@ -11,8 +11,7 @@
 import NavBar from './components/NavBar'
 import SocialsFooter from './components/SocialsFooter'
 import ShoppingCard from './components/ShoppingCard'
-import { supabase } from './supabase'
-import { useStore } from "vuex";
+import { useStore } from 'vuex'
 
 export default {
   name: 'App',
@@ -20,15 +19,12 @@ export default {
     NavBar,
     SocialsFooter,
     ShoppingCard
-  }, 
-  async onLoad() {
-    
-    const { data, error } = await supabase.auth.getSession()
+  },
+  mounted() {
+    console.log('reload')
 
-    if(error || data == null) {
-      const store = useStore()
-      store.commit('setUser', null)
-    }
+    const store = useStore()
+    store.dispatch('reload')
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
 
     <div class="container">
 
@@ -54,7 +54,7 @@
             <p>
               Du hast ein eigenes Unternehmen bei Schule als Staat?
             </p>
-            <button type="submit" class="btn bg-sec register">Unternehmen Registrieren</button>
+            <button @click="$router.push('/companyRegistration')" class="btn bg-sec register">Unternehmen Registrieren</button>
           </div>
 
           <div class="card action p-4" v-else>
@@ -72,6 +72,7 @@
             </div>
             <div class="card-body">
               <p>Hier kannst du dein Unternehmen verwalten</p>
+              {{ companyData }}
             </div>
           </div>
         </div>
@@ -166,6 +167,7 @@ export default {
   },
   setup() {
     const store = useStore();
+
     const userData = computed(() => store.state.user);
     const companyData = computed(() => store.state.userCompany);
     const signOut = () => {
@@ -260,14 +262,14 @@ export default {
       
       const capitalizedName = name1 + ' ' + name2
 
-      if(capitalizedName != this.userData.name) {
+      if(capitalizedName != this.userData.user_metadata.name) {
         
-
         const { data, error } = await supabase.auth.updateUser({data: { name: capitalizedName } })
 
         if (error) throw error;
+
+        console.log(data.user)
         this.store.commit('setUser', data.user)
-        
       }
 
       if(mailInput.value != this.userData.email) {
