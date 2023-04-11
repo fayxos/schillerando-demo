@@ -26,29 +26,29 @@
                   <form class="needs-validation" novalidate>
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa-solid fa-shop"></i></span>
-                      <input type="text" id="signup-name" class="form-control" @input="validateSignUp(false)" placeholder="Name" required>
+                      <input type="text" id="signup-name" class="form-control" @input="validatePage(0, false)" placeholder="Name" :value="form.name" required>
                     </div>
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
-                      <input type="text" id="signup-location" class="form-control" @input="validateSignUp(false)" placeholder="Raum, Pausenhof, ..." required>
+                      <input type="text" id="signup-location" class="form-control" @input="validatePage(0, false)" placeholder="Raum, Pausenhof, ..." :value="form.location" required>
                     </div>
 
                     
 
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa-solid fa-list"></i></span>
-                      <select class="form-select" aria-label="Default select example">
+                      <select class="form-select" id="signup-category" aria-label="Default select example" :value="form.category" @change="validatePage(0, false)">
                         <option selected>Kategorie</option>
                         <option value="1">Gastronomie</option>
                         <option value="2">Kultur</option>
                         <option value="3">Dienstleistung</option>
-                        <option value="3">Gastronomie & Dienstleistung</option>
+                        <option value="4">Gastronomie & Dienstleistung</option>
                       </select>
                     </div>
 
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa-solid fa-circle-info"></i></span>
-                      <textarea type="text" id="signup-info" class="form-control" @input="validateSignUp(false)" placeholder="Beschreibung" required maxlength="400" style="resize: none;" rows="5" cols="50"></textarea>
+                      <textarea type="text" id="signup-info" class="form-control" @input="validatePage(0, false)" placeholder="Beschreibung" required maxlength="400" style="resize: none;" rows="5" cols="50" :value="form.describtion"></textarea>
                     </div>
                   </form>
                 </div>
@@ -61,15 +61,15 @@
                 <h5 class="pt-4">Füge Mitarbeiter hinzu, damit sie bei der Verwaltung deines Unternehmens helfen können!</h5>
                 
                 <div class="py-3 row">
-                  <div class="col-md-6" v-for="employee in employes" :key="employee">
+                  <div class="col-md-6" v-for="(employee, index) in form.employees" :key="employee">
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                      <input id="login-mail" type="email" class="form-control" placeholder="Email" @input="validateSignIn(false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" :value="employee" required />
+                      <input type="email" class="form-control signup-mail" placeholder="Email" @input="validatePage(1, false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" :value="form.employees[index]" required />
                     </div>
                   </div>
                 </div>
                 
-                <button type="button" v-if="this.employes.length < 6" @click="this.employes.push('')" class="btn btn-primary col-md-9 mb-5" style="width: max-content;">
+                <button type="button" v-if="this.form.employees.length < 6" @click="addEmployee()" class="btn btn-primary col-md-9 mb-5" style="width: max-content;">
                   <div class="loading-button">Mitarbeiter hinzufügen</div>
                   <div class="spinner">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -93,7 +93,7 @@
                 
                 <div class="row abo flex-card">
                   <div class="col-lg-4">
-                    <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="card mb-4 rounded-3 shadow-sm" :class="{ 'selected' : form.abo == 'Delivery' }" @click="chooseAbo('Delivery')">
                       <div class="card-header py-3">
                         <h4 class="info-title my-0 fw-normal">Delivery</h4>
                       </div>
@@ -111,7 +111,7 @@
                     </div>
                   </div>
                   <div class="col-lg-4">
-                    <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="card mb-4 rounded-3 shadow-sm" :class="{ 'selected' : form.abo == 'Delivery+' }" @click="chooseAbo('Delivery+')">
                       <div class="card-header py-3">
                         <h4 class="info-title my-0 fw-normal">Delivery+</h4>
                       </div>
@@ -128,7 +128,7 @@
                     </div>
                   </div>
                   <div class="col-lg-4">
-                    <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="card mb-4 rounded-3 shadow-sm" :class="{ 'selected' : form.abo == 'Premium' }" @click="chooseAbo('Premium')">
                       <div class="card-header py-3">
                         <h4 class="info-title my-0 fw-normal">Premium</h4>
                       </div>
@@ -147,11 +147,15 @@
                   </div>
 
                   <div class="col-12">
-                    <div class="card mb-3 rounded-3 shadow-sm" style="text-align: center;">
+                    <div class="card mb-3 rounded-3 shadow-sm" style="text-align: center;" :class="{ 'selected' : form.abo == 'Free' }" @click="chooseAbo('Free')">
                       <div class="card-body">
                         ODER: Kostenlose Registrierung ohne Lieferungen (kann später upgegradet werden)
                       </div>
                     </div>
+                  </div>
+
+                  <div class="alert alert-danger" id="alert-danger" role="alert">
+                    Bitte wähle ein Abo aus!
                   </div>
                   
                 </div>
@@ -161,7 +165,18 @@
               <!-- 4 -->
               <div v-else-if="this.page == 4">
 
-                Unternehmen registrieren
+                <h4>Bedingungen</h4>
+
+                <div class="card mb-4" style="overflow-y: scroll; height:400px;">
+
+                </div>
+
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" value="" id="acceptCheck" @change="validatePage(4, false)">
+                  <label class="form-check-label" for="acceptCheck">
+                    Bedingungen akzeptieren
+                  </label>
+                </div>
                 
               </div>
 
@@ -178,7 +193,7 @@
               </div>
 
               <div class="skip" v-if="this.page == 1 || this.page == 2">
-                <button type="button" @click="this.page++" class="btn btn-secondary">
+                <button type="button" @click="skipPage()" class="btn btn-secondary">
                   <div class="loading-button">Später</div>
                   <div class="spinner">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -188,8 +203,18 @@
               </div>
 
               <div class="continue" v-if="this.page != 4">
-                <button type="button" @click="this.page++" class="btn btn-primary">
+                <button type="button" @click="validatePage(page, true)" class="btn btn-primary">
                   <div class="loading-button">Weiter</div>
+                  <div class="spinner">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                  </div>  
+                </button>
+              </div>
+
+              <div class="continue" v-if="this.page == 4">
+                <button type="button" @click="validatePage(page, true)" class="btn btn-primary">
+                  <div class="loading-button">Registrieren</div>
                   <div class="spinner">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     <span class="sr-only">Loading...</span>
@@ -225,8 +250,8 @@ export default {
   },
   data() {    
     return {
-      page: 3,
-      signUpPressed: false,
+      page: 0,
+      continuePressed: false,
       action: '',
       alertTitle: '',
       alertInfo: '',
@@ -234,7 +259,6 @@ export default {
       successAlertInfo: 'Aktion wurde erfolgreich durchgeführt',
       failureAlertTitle: 'Fehler',
       failureAlertInfo: 'Es ist ein Fehler aufgetreten!',
-      employes: ['']
     }
   },
   computed: {
@@ -296,10 +320,7 @@ export default {
         var alertModal = new Modal(document.getElementById("alertModal"), {});
         alertModal.show();
 
-        if(this.action == 'login') {
-          this.signInFailure()
-        }
-        else if(this.action == 'register') {
+        if(this.action == 'register') {
           this.signUpFailure()
         }
       }
@@ -308,82 +329,207 @@ export default {
   setup() {
     const form = reactive({
       name: "",
-      email: "",
+      location: "",
+      category: "Kategorie",
+      describtion: "",
+      employees: [''],
+      products: [],
+      abo: ""
     });
+
+    const product = reactive({
+      name: "",
+      describtion: "",
+      category: "",
+      price: "",
+    });
+
     const store = useStore();
 
     return {
       store,
       form,
+      product
     };
   },
   methods: {
-    validateSignUp(pressed) {
-      if(!pressed && !this.signUpPressed) return;
+    addEmployee() {
+      var mailInputs = document.getElementsByClassName("signup-mail");
 
-      var feedbacks = document.getElementsByClassName("invalid-feedback");
-      Array.from(feedbacks).forEach(feedback => {
-        feedback.style.visibility = "visible";
-        feedback.style.position = "relative";
+      var index = 0
+      Array.from(mailInputs).forEach(input => {
+        this.form.employees[index] = input.value
+        index++
       })
 
-      var nameInput = document.getElementById("signup-name");
-      var mailInput = document.getElementById("signup-mail");
-      var passwInput = document.getElementById("signup-passwd");
-      if(pressed) nameInput.value = nameInput.value.trim();
-      mailInput.value = mailInput.value.replace(/\s/g,'');
-      passwInput.value = passwInput.value.replace(/\s/g,'');
-      var nameValid = false;
-      var mailValid = false;
-      var passwValid = false;
-
-      if(!nameInput.value.trim().includes(' ') || nameInput.value.length < 5) {
-        nameInput.classList.remove("is-valid");
-        nameInput.classList.add("is-invalid");
-      }
-      else {
-        nameInput.classList.remove("is-invalid");
-        nameInput.classList.add("is-valid");
-        nameValid = true;
+      this.form.employees.push('')
+    },
+    chooseAbo(abo) {
+      this.form.abo = abo
+      this.validatePage(3, false)
+    },
+    skipPage(page) {
+      if(page==1) {
+        this.form.employees = ['']
+      } else 
+      if(page==2) {
+        this.form.products = []
       }
 
-      var regex = mailInput.getAttribute('data-regex');
-      if(!mailInput.value.match(regex)) {
-        mailInput.classList.remove("is-valid");
-        mailInput.classList.add("is-invalid");
-      }
-      else {
-        mailInput.classList.remove("is-invalid");
-        mailInput.classList.add("is-valid");
-        mailValid = true;
+      this.page++
+    },  
+    validatePage(page, pressed) {
+      if(!pressed && !this.continuePressed) return;
+
+      if(page == 0) {
+        var nameInput = document.getElementById("signup-name");
+        var locationInput = document.getElementById("signup-location");
+        var categoryInput = document.getElementById("signup-category");
+        var describtionInput = document.getElementById("signup-info");
+        
+        if(pressed) nameInput.value = nameInput.value.trim();
+        if(pressed) locationInput.value = locationInput.value.trim();
+        if(pressed) describtionInput.value = describtionInput.value.trim();
+        var valid = true
+
+        if(nameInput.value.trim().length < 3) {
+          nameInput.classList.remove("is-valid");
+          nameInput.classList.add("is-invalid");
+          valid = false;
+        }
+        else {
+          nameInput.classList.remove("is-invalid");
+          nameInput.classList.add("is-valid");
+        }
+
+        if(locationInput.value.trim().length < 3 || locationInput.value.trim().length > 40) {
+          locationInput.classList.remove("is-valid");
+          locationInput.classList.add("is-invalid");
+          valid = false;
+        }
+        else {
+          locationInput.classList.remove("is-invalid");
+          locationInput.classList.add("is-valid");
+        }
+
+        if(categoryInput.value == 'Kategorie') {
+          categoryInput.classList.remove("is-valid");
+          categoryInput.classList.add("is-invalid");
+          valid = false;
+        }
+        else {
+          categoryInput.classList.remove("is-invalid");
+          categoryInput.classList.add("is-valid");
+        }
+
+        if(describtionInput.value.trim().length < 10) {
+          describtionInput.classList.remove("is-valid");
+          describtionInput.classList.add("is-invalid");
+          valid = false;
+        }
+        else {
+          describtionInput.classList.remove("is-invalid");
+          describtionInput.classList.add("is-valid");
+        }
+
+        this.continuePressed = true;
+
+        if(valid && pressed) {
+          this.form.name = nameInput.value
+          this.form.location = locationInput.value
+          this.form.category = categoryInput.value
+          this.form.describtion = describtionInput.value
+
+          console.log(this.form)
+
+          this.continuePressed = false
+          this.page++
+        } 
+      } else 
+      if(page == 1) {
+        var mailInputs = document.getElementsByClassName("signup-mail");
+        valid = true
+
+        var regex = mailInputs[0].getAttribute('data-regex');
+        Array.from(mailInputs).forEach(input => {
+          input.value = input.value.replace(/\s/g,'');
+
+          if(!input.value.match(regex) && input.value != '') {
+            input.classList.remove("is-valid");
+            input.classList.add("is-invalid");
+            valid = false
+          }
+          else {
+            input.classList.remove("is-invalid");
+            if(input.value != '') {
+              input.classList.add("is-valid");
+            }
+          }
+        })
+
+        this.continuePressed = true;
+
+        if(valid && pressed) {
+          var index = 0
+          Array.from(mailInputs).forEach(input => {
+            this.form.employees[index] = input.value
+            index++
+          })
+
+          this.continuePressed = false
+          this.page++
+        }  
+      
+      } else
+      if(page == 2) {
+        this.page++
+      } else
+      if (page == 3) {
+        const invalidAbo = document.getElementById('alert-danger')
+        valid = false
+
+        if(this.form.abo == '') {
+          invalidAbo.style.visibility = "visible";
+          invalidAbo.style.position = "relative";
+        } else {
+          invalidAbo.style.visibility = "hidden";
+          invalidAbo.style.position = "absolute";
+          valid = true
+        }
+
+        this.continuePressed = true;
+
+        if(valid && pressed) {
+          console.log(this.form)
+
+          this.continuePressed = false
+          this.page++
+        }
+      } else
+      if (page == 4) {
+        const check = document.getElementById('acceptCheck')
+        valid = false
+
+        if(!check.checked) {
+          check.classList.add("is-invalid");
+          check.classList.remove("is-valid");
+        } else {
+          check.classList.remove("is-invalid");
+          check.classList.add("is-valid");
+          valid = true
+        }
+
+        this.continuePressed = true;
+
+        if(valid && pressed) {
+          this.continuePressed = false
+          this.signUp()
+        }
       }
 
-      if(passwInput.value.length < 6) {
-        passwInput.classList.remove("is-valid");
-        passwInput.classList.add("is-invalid");
-      }
-      else {
-        passwInput.classList.remove("is-invalid");
-        passwInput.classList.add("is-valid");
-        passwValid = true;
-      }
-
-      this.signUpPressed = true;
-
-      if(passwValid && mailValid && nameValid && pressed) this.signUp();
     },
     signUp() {
-      this.form.name = document.getElementById('signup-name').value
-      this.form.email = document.getElementById('signup-mail').value
-      this.form.password = document.getElementById('signup-passwd').value
-
-      this.store.dispatch("signUpAction", { form: this.form, path: this.$route.query.redirect });
-
-      this.failureAlertTitle = 'Registrierung fehlgeschlagen';
-      this.failureAlertInfo = 'Es existiert bereits ein Account mit dieser Email!';
-      this.successAlertTitle = ''
- 
-      this.action = 'register'
+      console.log('signup', this.form)
     },
     signUpFailure() {
       var mailInput = document.getElementById("signup-mail");
@@ -486,9 +632,24 @@ span {
   text-align: center;
 }
 
+.abo .card:hover {
+  cursor: pointer;
+}
+
 .flex-card > div > div.card {
   height: calc(100% - 15px);
   margin-bottom: 15px;
+}
+
+.selected {
+  border-color: rgb(0, 94, 201);
+  border-width: 2px;
+}
+
+.alert-danger {
+  text-align: center;
+  visibility: hidden;
+  position: absolute;  
 }
 
 

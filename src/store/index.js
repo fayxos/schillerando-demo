@@ -35,15 +35,15 @@ const store = createStore({
   },
   actions: {
     async reload({ commit }) {
-      const { data, error } = await supabase.auth.getSession()
+      const { data, error } = await supabase.auth.refreshSession()
       console.log('test')
 
       if(error || data.session == null) {
         console.log('no session')
         commit('setUser', null)
       } else {
-        console.log(data.session.user)
-        commit('setUser', data.session.user)
+        console.log(data.user)
+        commit('setUser', data.user)
         this.dispatch('startUserCompanySubscription') 
       }
 
