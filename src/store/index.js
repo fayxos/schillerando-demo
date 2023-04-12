@@ -36,7 +36,6 @@ const store = createStore({
   actions: {
     async reload({ commit }) {
       const { data, error } = await supabase.auth.refreshSession()
-      console.log('test')
 
       if(error || data.session == null) {
         console.log('no session')
@@ -166,12 +165,9 @@ const store = createStore({
         const { data, error } = await supabase
           .from('companies')
           .select()
-          .eq('user_uid', this.getters.getUser.id)
+          .or('user_uid.eq.' + this.getters.getUser.id + ',employees.cs.' + '{"' + this.getters.getUser.email + '"}')
 
-        if(error != null) {
-          console.log(error.error_description || error.message);
-          return;
-        }
+        if(error) throw error;
 
         commit('setUserCompany', null)
         if(data[0] == null) return
@@ -197,6 +193,69 @@ const store = createStore({
         await supabase.removeAllChannels()
         commit('setUserCompanySubscription', null)
       } catch (error) {
+        console.log(error.error_description || error.message);
+      }
+    },
+
+    async createCompany({ commit }, form) {
+      try {
+        commit('setState', 'loading')      
+
+        const { error } = await supabase
+          .from('companies')
+          .insert({
+            id: form.name.replace(/\s/g,'').toLowerCase(),
+            name: form.name,
+            category: form.category,
+            location: form.location,
+            info: form.description,
+            user_uid: this.getters.getUser.id,
+            employees: form.employees,
+            abo: form.abo,
+          })
+
+        if (error) throw error;
+
+        const productIDs = []
+
+        for(var i=0; i<form.products.length; i++) {
+          const product = form.products[i]
+
+          const { data, error } = await supabase
+            .from('products')
+            .insert({
+              name: product.name,
+              info: product.description,
+              price: product.price,
+              categories: product.categories,
+              company_id: form.name.replace(/\s/g,'').toLowerCase(),
+              auth_uid: this.getters.getUser.id
+            })
+            .select()
+
+          if (error) throw error;
+
+          productIDs.push(data[0].id)
+        }
+
+
+        const { error2 } = await supabase
+          .from('companies')
+          .update({ products: productIDs })
+          .eq('id', form.name.replace(/\s/g,'').toLowerCase())
+
+
+        if (error2) throw error2;
+        
+
+        console.log("Successfully registered");
+
+        commit('setState', 'success')
+
+        this.dispatch('startUserCompanySubscription')
+
+      } catch (error) {
+        commit('setState', 'failure')
         console.log(error.error_description || error.message);
       }
     }

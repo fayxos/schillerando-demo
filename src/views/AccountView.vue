@@ -1,6 +1,8 @@
 <template>
   <div>
 
+    <AlertPopup :title="this.alertTitle" :info="this.alertInfo"/>
+
     <div class="container">
 
       <div class="row mb-0">
@@ -71,8 +73,91 @@
               Unternehmen
             </div>
             <div class="card-body">
-              <p>Hier kannst du dein Unternehmen verwalten</p>
-              {{ companyData }}
+              <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Informationen
+                    </button>
+                  </h2>
+                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <form class="needs-validation" novalidate>
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"><i class="fa-solid fa-shop"></i></span>
+                          <input type="text" id="company-name" class="form-control" placeholder="Name" @input="validateCompanyChange(false)" :value="companyData.name" required disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                          <input type="text" id="company-location" class="form-control" placeholder="Raum, Pausenhof, ..." @input="validateCompanyChange(false)" :value="companyData.location" required disabled>
+                        </div>
+    
+                        
+    
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"><i class="fa-solid fa-list"></i></span>
+                          <select class="form-select" id="company-category" aria-label="Default select example" :value="companyData.category" @change="validateCompanyChange(false)" disabled>
+                            <option selected>Kategorie</option>
+                            <option value="1">Gastronomie</option>
+                            <option value="2">Kultur</option>
+                            <option value="3">Dienstleistung</option>
+                            <option value="4">Gastronomie & Dienstleistung</option>
+                          </select>
+                        </div>
+    
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"><i class="fa-solid fa-circle-info"></i></span>
+                          <textarea type="text" id="company-info" class="form-control" placeholder="Beschreibung" required maxlength="400" style="resize: none;" rows="5" cols="50" @input="validateCompanyChange(false)" :value="companyData.info" disabled></textarea>
+                        </div>
+                      </form>
+
+                      <div v-if="!isCompanyEditing" class="py-2" style="width: fit-content;">
+                        <button type="button" class="btn btn-primary px-2 mx-2" @click="editCompany()">Bearbeiten</button>
+                      </div>
+                      <div v-else class="py-2" style="width: fit-content;">
+                        <button type="button" class="btn btn-primary px-2 mx-2" @click="validateCompanyChange(true)">
+                          <div class="loading-button">Speichern</div>
+                          <div class="spinner">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                          </div> 
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      Mitarbeiter
+                    </button>
+                  </h2>
+                  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <div v-for="(employee, index) in this.employees" :key="employee">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                          <input type="email" class="form-control signup-mail" placeholder="Email" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" :value="employees[index]" required />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      Produkte
+                    </button>
+                  </h2>
+                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <div v-for="product in this.products" :key="product">
+                        {{ product }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,18 +237,32 @@
 
 <script>
 import { supabase } from '../supabase'
-import { useStore } from "vuex";
+import { reactive } from "vue";
+import { useStore, mapGetters } from "vuex"
 import { computed } from "vue";
+import { Modal } from "bootstrap/dist/js/bootstrap.bundle.js";
+import AlertPopup from '../components/AlertPopup.vue'
 
 export default {
   name: 'AccountView',
+  components: {
+    AlertPopup
+  },
   data() {
     return {
       isCompanyMode: false,
       isAccountEditing: false,
-      saveAccountPressed: false,
+      isCompanyEditing: false,
+      saveCompanyPressed: false,
       orders: [], 
+      employees: [],
+      products: [], 
+      alertTitle: 'Name schon vergeben',
+      alertInfo: 'Es gibt bereits ein Unternehmen mit diesem Namen. Bitte wähle einen anderen!',
     }
+  },
+  computed: {
+    ...mapGetters(['getState'])
   },
   setup() {
     const store = useStore();
@@ -173,23 +272,104 @@ export default {
     const signOut = () => {
       store.dispatch("signOutAction");
     };
+
+    const form = reactive({
+      name: "",
+      location: "",
+      category: "Kategorie",
+      description: "",
+      employees: [''],
+      products: [],
+      abo: ""
+    });
+
+    const product = reactive({
+      name: "",
+      description: "",
+      categories: [],
+      price: "",
+    });
+
     return {
       signOut,
       store,
       userData,
-      companyData
+      companyData,
+      form,
+      product
     };
+  },
+  watch: {
+    companyData: function() {
+      this.employees = this.companyData.employees
+      this.loadProducts()
+    },
+    getState(newValue) {
+      var spinners = document.getElementsByClassName("spinner");
+      var loadingButtons = document.getElementsByClassName("loading-button");
+
+      if(newValue == 'loading') {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "visible";
+          spinner.style.position = "relative";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "hidden";
+          button.style.position = "absolute";
+        })
+      }
+      else if(newValue == 'success') {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "hidden";
+          spinner.style.position = "absolute";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "visible";
+          button.style.position = "relative";
+        })
+      }
+      else {
+        Array.from(spinners).forEach(spinner => {
+          spinner.style.visibility = "hidden";
+          spinner.style.position = "absolute";
+        })
+
+        Array.from(loadingButtons).forEach(button => {
+          button.style.visibility = "visible";
+          button.style.position = "relative";
+        })
+
+        if(this.alertTitle == '') return;
+        var alertModal = new Modal(document.getElementById("alertModal"), {});
+        alertModal.show();
+      }
+    }
   },
   async created() {
     const { data, error } = await supabase
           .from('orders')
           .select()
           .eq('buyer', this.userData.id)
-    console.log(data)
-    if (error != null) console.log(error)
+
+    if (error) throw error
+
     this.orders = data
+    this.employees = this.companyData.employees
+
+    this.loadProducts()
   },
   methods: {
+    async loadProducts() {
+      const { data, error } = await supabase
+          .from('products')
+          .select()
+          .eq('company_id', this.companyData.id)
+
+      if (error) throw error
+      this.products = data
+    },
     switchCompanyMode() {
       this.isCompanyMode = !this.isCompanyMode
     },
@@ -207,6 +387,18 @@ export default {
       var mailInput = document.getElementById("account-mail");
       nameInput.disabled = false
       mailInput.disabled = false
+    },
+    editCompany() {
+      this.isCompanyEditing = true
+
+      var nameInput = document.getElementById("company-name");
+      var locationInput = document.getElementById("company-location");
+      var categoryInput = document.getElementById("company-category");
+      var descriptionInput = document.getElementById("company-info");
+      nameInput.disabled = false
+      locationInput.disabled = false
+      categoryInput.disabled = false
+      descriptionInput.disabled = false
     },
     validateAccountChange(pressed) {
       if(!pressed && !this.saveAccountPressed) return;
@@ -249,6 +441,93 @@ export default {
 
       if(mailValid && nameValid && pressed) this.saveAccount();
     },
+    async validateCompanyChange(pressed) {
+      if(!pressed && !this.saveCompanyPressed) return;
+
+      var nameInput = document.getElementById("company-name");
+      var locationInput = document.getElementById("company-location");
+      var categoryInput = document.getElementById("company-category");
+      var descriptionInput = document.getElementById("company-info");
+      
+      if(pressed) nameInput.value = nameInput.value.trim();
+      if(pressed) locationInput.value = locationInput.value.trim();
+      if(pressed) descriptionInput.value = descriptionInput.value.trim();
+      var valid = true
+
+      if(nameInput.value.trim().length < 3) {
+        nameInput.classList.remove("is-valid");
+        nameInput.classList.add("is-invalid");
+        valid = false;
+      }
+      else {
+        nameInput.classList.remove("is-invalid");
+        nameInput.classList.add("is-valid");
+      }
+
+      if(locationInput.value.trim().length < 3 || locationInput.value.trim().length > 40) {
+        locationInput.classList.remove("is-valid");
+        locationInput.classList.add("is-invalid");
+        valid = false;
+      }
+      else {
+        locationInput.classList.remove("is-invalid");
+        locationInput.classList.add("is-valid");
+      }
+
+      if(categoryInput.value == 'Kategorie') {
+        categoryInput.classList.remove("is-valid");
+        categoryInput.classList.add("is-invalid");
+        valid = false;
+      }
+      else {
+        categoryInput.classList.remove("is-invalid");
+        categoryInput.classList.add("is-valid");
+      }
+
+      if(descriptionInput.value.trim().length < 10) {
+        descriptionInput.classList.remove("is-valid");
+        descriptionInput.classList.add("is-invalid");
+        valid = false;
+      }
+      else {
+        descriptionInput.classList.remove("is-invalid");
+        descriptionInput.classList.add("is-valid");
+      }
+
+      this.continuePressed = true;
+
+      if(valid && pressed) {
+
+        this.store.commit('setState', 'loading')
+
+        if(nameInput.value.replace(/\s/g,'').toLowerCase() != this.companyData.id) {
+          const { data, error } = await supabase
+          .from('companies')
+          .select()
+          .eq('id', nameInput.value.replace(/\s/g,'').toLowerCase())
+
+          if(error || data[0] != null) {
+            this.store.commit('setState', 'failure')
+            nameInput.classList.remove("is-valid");
+            nameInput.classList.add("is-invalid");
+
+            this.form.name = nameInput.value
+            this.form.location = locationInput.value
+            this.form.category = categoryInput.value
+            this.form.description = descriptionInput.value
+
+            return
+          } 
+        }
+
+        this.form.name = nameInput.value
+        this.form.location = locationInput.value
+        this.form.description = descriptionInput.value
+        this.form.category = categoryInput.value
+
+        this.saveCompany()
+      } 
+    },
     async saveAccount() {
       this.isAccountEditing = false
       this.saveAccountPressed = false
@@ -286,6 +565,50 @@ export default {
       nameInput.classList.remove("is-invalid");
       mailInput.classList.remove("is-valid");
       mailInput.classList.remove("is-invalid");
+    },
+    async saveCompany() {
+      try {
+        this.isCompanyEditing = false
+        this.saveCompanyPressed = false
+
+        var nameInput = document.getElementById("company-name");
+        var locationInput = document.getElementById("company-location");
+        var categoryInput = document.getElementById("company-category");
+        var descriptionInput = document.getElementById("company-info");
+
+        const { data, error } = await supabase
+          .from('companies')
+          .update({
+            id: this.form.name.replace(/\s/g,'').toLowerCase(),
+            name: this.form.name,
+            category: this.form.category,
+            location: this.form.location,
+            info: this.form.description,
+          })
+          .eq('id', this.companyData.id)
+          .select()
+
+        if (error) throw error;
+
+        this.store.commit('setUserCompany', data[0])
+        this.store.commit('setState', 'success')
+
+        nameInput.disabled = true
+        locationInput.disabled = true
+        categoryInput.disabled = true
+        descriptionInput.disabled = true
+        nameInput.classList.remove("is-valid");
+        nameInput.classList.remove("is-invalid");
+        locationInput.classList.remove("is-valid");
+        locationInput.classList.remove("is-invalid");
+        categoryInput.classList.remove("is-valid");
+        categoryInput.classList.remove("is-invalid");
+        descriptionInput.classList.remove("is-valid");
+        descriptionInput.classList.remove("is-invalid");
+      } catch (error) {
+        this.store.commit('setState', 'failure')
+        console.log(error.error_description || error.message);
+      }
     }
   }
 }
@@ -361,6 +684,23 @@ export default {
 
 .price {
   width: 70px;
+}
+
+
+.input-group-text {
+  width: 40px;
+  padding: 0;
+  padding-left: 10px;
+}
+
+.fa-location-dot {
+  position: relative;
+  left: 3px;
+}
+
+.spinner {
+  visibility: hidden;
+  position: absolute;
 }
 
 </style>

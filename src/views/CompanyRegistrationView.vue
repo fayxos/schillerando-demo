@@ -5,7 +5,7 @@
 
     <div class="container">
       <div class="row justify-content-center">
-        <div>
+        <div class="mb-4">
 
           <div class="card container-card p-4 pb-0">
             <div class="card-body">
@@ -48,7 +48,7 @@
 
                     <div class="input-group mb-3">
                       <span class="input-group-text"><i class="fa-solid fa-circle-info"></i></span>
-                      <textarea type="text" id="signup-info" class="form-control" @input="validatePage(0, false)" placeholder="Beschreibung" required maxlength="400" style="resize: none;" rows="5" cols="50" :value="form.describtion"></textarea>
+                      <textarea type="text" id="signup-info" class="form-control" @input="validatePage(0, false)" placeholder="Beschreibung" required maxlength="400" style="resize: none;" rows="5" cols="50" :value="form.description"></textarea>
                     </div>
                   </form>
                 </div>
@@ -82,8 +82,37 @@
               <!-- 2 -->
               <div v-else-if="this.page == 2">
 
-                Produkte hinzufügen
+                <h4>Produkte hinzufügen</h4>  
+
+                <div class="product" v-for="product in this.form.products" :key="product">
                 
+                  <div class="card d-flex mb-3">
+                    <div>
+                      {{ product.name }}
+                    </div>
+                    <div>
+                      {{ product.description }}
+                    </div>
+                    <div>
+                      {{ product.price }}
+                    </div>
+                    <div>
+                      <button type="button" class="btn-close btn-edit" aria-label="Edit"></button>
+                    </div>
+                    <div>
+                      <button type="button" class="btn-close" aria-label="Close"></button>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" @click="addProduct()" class="btn btn-primary col-md-9 mt-3 mb-2" style="width: max-content;">
+                  <div class="loading-button">Produkt hinzufügen</div>
+                  <div class="spinner">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                  </div>  
+                </button>
+
               </div>
 
               <!-- 3 -->
@@ -225,7 +254,7 @@
             </div>
           </div>
 
-          <div class="container">
+          <div class="progress-container">
             <div class="progress" style="height: 20px;">
               <div class="progress-bar" id="progress" role="progressbar" aria-label="Example 20px high" style="width: 20%;"></div>
             </div>
@@ -242,6 +271,7 @@ import { reactive } from "vue";
 import { useStore, mapGetters } from "vuex";
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.js";
 import AlertPopup from '../components/AlertPopup.vue'
+import { supabase } from "@/supabase";
 
 export default {
   name: 'CompanyRegistrationView',
@@ -331,7 +361,7 @@ export default {
       name: "",
       location: "",
       category: "Kategorie",
-      describtion: "",
+      description: "",
       employees: [''],
       products: [],
       abo: ""
@@ -339,8 +369,8 @@ export default {
 
     const product = reactive({
       name: "",
-      describtion: "",
-      category: "",
+      description: "",
+      categories: [],
       price: "",
     });
 
@@ -364,6 +394,9 @@ export default {
 
       this.form.employees.push('')
     },
+    addProduct() {
+      this.form.products.push({ name: 'Cola', description: 'Eine normale Cola', category: 'Getränk', price: 25 })
+    },
     chooseAbo(abo) {
       this.form.abo = abo
       this.validatePage(3, false)
@@ -378,18 +411,18 @@ export default {
 
       this.page++
     },  
-    validatePage(page, pressed) {
+    async validatePage(page, pressed) {
       if(!pressed && !this.continuePressed) return;
 
       if(page == 0) {
         var nameInput = document.getElementById("signup-name");
         var locationInput = document.getElementById("signup-location");
         var categoryInput = document.getElementById("signup-category");
-        var describtionInput = document.getElementById("signup-info");
+        var descriptionInput = document.getElementById("signup-info");
         
         if(pressed) nameInput.value = nameInput.value.trim();
         if(pressed) locationInput.value = locationInput.value.trim();
-        if(pressed) describtionInput.value = describtionInput.value.trim();
+        if(pressed) descriptionInput.value = descriptionInput.value.trim();
         var valid = true
 
         if(nameInput.value.trim().length < 3) {
@@ -422,23 +455,49 @@ export default {
           categoryInput.classList.add("is-valid");
         }
 
-        if(describtionInput.value.trim().length < 10) {
-          describtionInput.classList.remove("is-valid");
-          describtionInput.classList.add("is-invalid");
+        if(descriptionInput.value.trim().length < 10) {
+          descriptionInput.classList.remove("is-valid");
+          descriptionInput.classList.add("is-invalid");
           valid = false;
         }
         else {
-          describtionInput.classList.remove("is-invalid");
-          describtionInput.classList.add("is-valid");
+          descriptionInput.classList.remove("is-invalid");
+          descriptionInput.classList.add("is-valid");
         }
 
         this.continuePressed = true;
 
         if(valid && pressed) {
+
+          this.store.commit('setState', 'loading')
+
+          const { data, error } = await supabase
+            .from('companies')
+            .select()
+            .eq('id', nameInput.value.replace(/\s/g,'').toLowerCase())
+
+          if(error || data[0] != null) {
+            this.failureAlertTitle = 'Name schon vergeben'
+            this.failureAlertInfo = 'Es gibt bereits ein Unternehmen mit diesem Namen. Bitte wähle einen anderen!'
+            this.store.commit('setState', 'failure')
+            nameInput.classList.remove("is-valid");
+            nameInput.classList.add("is-invalid");
+
+            this.form.name = nameInput.value
+            this.form.location = locationInput.value
+            this.form.description = descriptionInput.value
+            this.form.category = categoryInput.value
+
+            return
+          } 
+
+          this.successAlertTitle = ''
+          this.store.commit('setState', 'success')
+
           this.form.name = nameInput.value
           this.form.location = locationInput.value
+          this.form.description = descriptionInput.value
           this.form.category = categoryInput.value
-          this.form.describtion = describtionInput.value
 
           console.log(this.form)
 
@@ -529,7 +588,13 @@ export default {
 
     },
     signUp() {
-      console.log('signup', this.form)
+
+      this.store.dispatch('createCompany', this.form)
+
+      this.failureAlertTitle = 'Registrierung fehlgeschlagen';
+      this.failureAlertInfo = 'Bei der Registrierung deines Unternehmens ist ein Fehler aufgetreten! Versuche es später erneut.';
+      this.successAlertTitle = ''
+
     },
     signUpFailure() {
       var mailInput = document.getElementById("signup-mail");
@@ -561,6 +626,12 @@ export default {
   height: 95%;
   margin: 2.5% auto;
   text-align: left;
+}
+
+.progress-container {
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
 }
 
 @media (max-width: 576px) {
@@ -614,11 +685,7 @@ img {
   background-color: #00a100;
 }
 
-.progress {
-  margin: 0 10px;
-}
-
-span {
+.input-group-text {
   width: 40px;
   padding: 0;
   padding-left: 10px;
@@ -652,5 +719,17 @@ span {
   position: absolute;  
 }
 
+.product .card div {
+  margin: 5px 10px;
+}
+
+.product .d-flex {
+  flex-direction: row;
+}
+
+.fa-location-dot {
+  position: relative;
+  left: 3px;
+}
 
 </style>
