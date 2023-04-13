@@ -9,6 +9,7 @@ const store = createStore({
     user: null,
     session: null,
     userCompany: null,
+    isCompanyMode: false,
     state: undefined
   },
   mutations: {
@@ -17,6 +18,9 @@ const store = createStore({
     },
     setUserCompany(state, payload) {
       state.userCompany = payload;
+    },
+    setCompanyMode(state, payload) {
+      state.isCompanyMode = payload;
     },
     setState(state, payload) {
       state.state = payload;
@@ -28,6 +32,9 @@ const store = createStore({
     },
     getUserCompany (state) {
       return state.userCompany
+    },
+    getCompanyMode (state) {
+      return state.isCompanyMode
     },
     getState (state) {
       return state.state
@@ -43,9 +50,22 @@ const store = createStore({
       } else {
         console.log(data.user)
         commit('setUser', data.user)
+
+        this.dispatch('updateMissingMetadata')
+
         this.dispatch('startUserCompanySubscription') 
       }
 
+    },
+    async updateMissingMetadata({ commit }) {
+      if(this.getters.getUser.user_metadata.credit == null) {
+        const { data } = await supabase.auth.updateUser({data: { credit: 0 } })
+        commit('setUser', data.user)
+      } 
+      if(this.getters.getUser.user_metadata.credit == null) {
+        const { data } = await supabase.auth.updateUser({data: { isCompanyLeader: false } })
+        commit('setUser', data.user)
+      }
     },
     async signInAction({ commit }, { form, path }) {
       try {
@@ -88,7 +108,8 @@ const store = createStore({
           options: {
             data: {
               name: capitalizedName,
-              credit: 0
+              credit: 0,
+              isCompanyLeader: false
             },
           },
         });
@@ -214,6 +235,10 @@ const store = createStore({
             abo: form.abo,
           })
 
+        const { data, error3 } = await supabase.auth.updateUser({data: { isCompanyLeader: true } })
+        commit('setUser', data.user)
+
+        if (error3) throw error3;
         if (error) throw error;
 
         const productIDs = []

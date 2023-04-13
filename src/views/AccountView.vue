@@ -75,7 +75,7 @@
 
           <div class="card action p-4" v-else>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" @click="switchCompanyMode()" unchecked>
+              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" @click="switchCompanyMode()" :checked="isCompanyMode">
               <label class="form-check-label" for="flexSwitchCheckChecked">Unternehmen Verwaltung</label>
             </div>
           </div>
@@ -163,25 +163,28 @@
                         </div>
                       </div>
 
-                      <div v-if="!isEmployeesEditing" class="py-2" style="width: fit-content;">
-                        <button type="button" class="btn btn-primary px-2 mx-2" @click="editEmployees()">Bearbeiten</button>
-                      </div>
-                      <div v-else style="display: flex;">
-                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
-                          <button type="button" class="btn btn-primary px-2 mx-2" @click="validateEmployeesChange(true, 0)">
-                            <div class="loading-button">Speichern</div>
-                            <div class="spinner">
-                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                              <span class="sr-only">Loading...</span>
-                            </div> 
-                          </button>
+                      <div v-if="userData.user_metadata.isCompanyLeader">
+                        <div v-if="!isEmployeesEditing" class="py-2" style="width: fit-content;">
+                          <button type="button" class="btn btn-primary px-2 mx-2" @click="editEmployees()">Bearbeiten</button>
                         </div>
-                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
-                          <button type="button" class="btn btn-warning px-2 mx-2" @click="cancelEmployeesChange()">
-                            Abbrechen
-                          </button>
+                        <div v-else style="display: flex;">
+                          <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                            <button type="button" class="btn btn-primary px-2 mx-2" @click="validateEmployeesChange(true, 0)">
+                              <div class="loading-button">Speichern</div>
+                              <div class="spinner">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span class="sr-only">Loading...</span>
+                              </div> 
+                            </button>
+                          </div>
+                          <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                            <button type="button" class="btn btn-warning px-2 mx-2" @click="cancelEmployeesChange()">
+                              Abbrechen
+                            </button>
+                          </div>
                         </div>
                       </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -292,7 +295,6 @@ export default {
   },
   data() {
     return {
-      isCompanyMode: false,
       isAccountEditing: false,
       isCompanyEditing: false,
       isEmployeesEditing: false,
@@ -318,6 +320,7 @@ export default {
 
     const userData = computed(() => store.state.user);
     const companyData = computed(() => store.state.userCompany);
+    const isCompanyMode = computed(() => store.state.isCompanyMode);
     const signOut = () => {
       store.dispatch("signOutAction");
     };
@@ -344,6 +347,7 @@ export default {
       store,
       userData,
       companyData,
+      isCompanyMode,
       form,
       product
     };
@@ -430,7 +434,7 @@ export default {
       this.products = data
     },
     switchCompanyMode() {
-      this.isCompanyMode = !this.isCompanyMode
+      this.store.commit('setCompanyMode', !this.isCompanyMode)
     },
     async saveChanges() {
       const { error } = await supabase
@@ -739,8 +743,32 @@ export default {
         console.log(error.error_description || error.message);
       }
     },
-    saveEmployees() {
-      console.log(743)
+    async saveEmployees() {
+      try {
+        const employees = []
+
+        var emailInputs = document.getElementsByClassName("employees-mail");
+        Array.from(emailInputs).forEach(input => {
+          employees.push(input.value)
+          input.disabled = true
+          input.classList.remove("is-valid");
+          input.classList.remove("is-invalid");
+        })
+
+        const { error } = await supabase
+          .from('companies')
+          .update({ employees: employees })
+          .eq('user_uid', this.userData.id)
+
+        if (error) throw error;
+
+      } catch(error) {
+        this.failureAlertTitle = 'Fehler'
+        this.failureAlertInfo = 'Beim Ändern der Mitarbeiter ist ein Fehler aufgetreten!'
+        this.store.commit('setState', 'failure')
+        this.cancelEmployeesChange()
+        console.log(error.error_description || error.message);
+      }    
     },
     cancelAccountChange() {
       this.isAccountEditing = false
