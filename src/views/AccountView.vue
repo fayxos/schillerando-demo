@@ -40,15 +40,29 @@
                   </div>
                 </div>
               </form>
-              <div v-if="!isAccountEditing" class="py-2" style="display: inline; float: left; width: fit-content;">
-                <button type="button" class="btn btn-primary px-2 mx-2" @click="editAccount">Bearbeiten</button>
+              <div v-if="!isAccountEditing" class="py-2">
+                <button type="button" class="btn btn-primary px-2 mx-2" style="display: inline; float: left; width: fit-content;" @click="editAccount">Bearbeiten</button>
+                <div style="display: inline; float: left; width: fit-content;">
+                  <button type="button" class="btn btn-danger px-2 mx-2" @click.prevent="signOut">Abmelden</button>
+                </div>
               </div>
-              <div v-else class="py-2" style="display: inline; float: left; width: fit-content;">
-                <button type="button" class="btn btn-primary px-2 mx-2" @click="validateAccountChange(true)">Speichern</button>
+              <div v-else>
+                <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                  <button type="button" class="btn btn-primary px-2 mx-2" @click="validateAccountChange(true)">
+                    <div class="loading-button">Speichern</div>
+                    <div class="spinner">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span class="sr-only">Loading...</span>
+                    </div> 
+                  </button>
+                </div>
+                <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                  <button type="button" class="btn btn-warning px-2 mx-2" @click="cancelAccountChange()">
+                    Abbrechen
+                  </button>
+                </div>
               </div>
-              <div class="py-2" style="display: inline; float: left; width: fit-content;">
-                <button type="button" class="btn btn-danger px-2 mx-2" @click.prevent="signOut">Abmelden</button>
-              </div>
+              
             </div>
           </div>
           
@@ -76,7 +90,7 @@
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" @click="cancelChanges()">
                       Informationen
                     </button>
                   </h2>
@@ -114,21 +128,29 @@
                       <div v-if="!isCompanyEditing" class="py-2" style="width: fit-content;">
                         <button type="button" class="btn btn-primary px-2 mx-2" @click="editCompany()">Bearbeiten</button>
                       </div>
-                      <div v-else class="py-2" style="width: fit-content;">
-                        <button type="button" class="btn btn-primary px-2 mx-2" @click="validateCompanyChange(true)">
-                          <div class="loading-button">Speichern</div>
-                          <div class="spinner">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            <span class="sr-only">Loading...</span>
-                          </div> 
-                        </button>
+                      <div v-else style="display: flex;">
+                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                          <button type="button" class="btn btn-primary px-2 mx-2" @click="validateCompanyChange(true)">
+                            <div class="loading-button">Speichern</div>
+                            <div class="spinner">
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span class="sr-only">Loading...</span>
+                            </div> 
+                          </button>
+                        </div>
+                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                          <button type="button" class="btn btn-warning px-2 mx-2" @click="cancelCompanyChange()">
+                            Abbrechen
+                          </button>
+                        </div>
                       </div>
+                      
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" @click="cancelChanges()">
                       Mitarbeiter
                     </button>
                   </h2>
@@ -137,7 +159,27 @@
                       <div v-for="(employee, index) in this.employees" :key="employee">
                         <div class="input-group mb-3">
                           <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                          <input type="email" class="form-control signup-mail" placeholder="Email" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" :value="employees[index]" required />
+                          <input type="email" class="form-control employees-mail" placeholder="Email" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" :value="employees[index]" required disabled @input="validateEmployeesChange(false, index)"/>
+                        </div>
+                      </div>
+
+                      <div v-if="!isEmployeesEditing" class="py-2" style="width: fit-content;">
+                        <button type="button" class="btn btn-primary px-2 mx-2" @click="editEmployees()">Bearbeiten</button>
+                      </div>
+                      <div v-else style="display: flex;">
+                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                          <button type="button" class="btn btn-primary px-2 mx-2" @click="validateEmployeesChange(true, 0)">
+                            <div class="loading-button">Speichern</div>
+                            <div class="spinner">
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span class="sr-only">Loading...</span>
+                            </div> 
+                          </button>
+                        </div>
+                        <div class="py-2 mx-0" style="display: inline; float: left; width: fit-content;">
+                          <button type="button" class="btn btn-warning px-2 mx-2" @click="cancelEmployeesChange()">
+                            Abbrechen
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -145,7 +187,7 @@
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" @click="cancelChanges()">
                       Produkte
                     </button>
                   </h2>
@@ -253,12 +295,19 @@ export default {
       isCompanyMode: false,
       isAccountEditing: false,
       isCompanyEditing: false,
+      isEmployeesEditing: false,
+      saveAccountPressed: false,
       saveCompanyPressed: false,
+      saveEmployeesPressed: false,
       orders: [], 
       employees: [],
-      products: [], 
-      alertTitle: 'Name schon vergeben',
-      alertInfo: 'Es gibt bereits ein Unternehmen mit diesem Namen. Bitte wähle einen anderen!',
+      products: [],
+      alertTitle: '',
+      alertInfo: '',
+      successAlertTitle: 'Erfolgreich',
+      successAlertInfo: 'Aktion wurde erfolgreich durchgeführt',
+      failureAlertTitle: 'Fehler',
+      failureAlertInfo: 'Es ist ein Fehler aufgetreten!', 
     }
   },
   computed: {
@@ -329,6 +378,13 @@ export default {
           button.style.visibility = "visible";
           button.style.position = "relative";
         })
+
+        this.alertTitle = this.successAlertTitle
+        this.alertInfo = this.successAlertInfo
+
+        if(this.alertTitle == '') return;
+        alertModal = new Modal(document.getElementById("alertModal"), {});
+        alertModal.show();
       }
       else {
         Array.from(spinners).forEach(spinner => {
@@ -340,6 +396,9 @@ export default {
           button.style.visibility = "visible";
           button.style.position = "relative";
         })
+
+        this.alertTitle = this.failureAlertTitle
+        this.alertInfo = this.failureAlertInfo
 
         if(this.alertTitle == '') return;
         var alertModal = new Modal(document.getElementById("alertModal"), {});
@@ -380,6 +439,9 @@ export default {
         .eq('user_uid', this.userData.id)
       if (error != null) console.log("Error signing up", error)
     },
+    cancelChanges() {
+      this.cancelCompanyChange()
+    },
     editAccount() {
       this.isAccountEditing = true
 
@@ -399,6 +461,14 @@ export default {
       locationInput.disabled = false
       categoryInput.disabled = false
       descriptionInput.disabled = false
+    },
+    editEmployees() {
+      this.isEmployeesEditing = true
+
+      var emailInputs = document.getElementsByClassName("employees-mail");
+      Array.from(emailInputs).forEach(input => {
+        input.disabled = false
+      })
     },
     validateAccountChange(pressed) {
       if(!pressed && !this.saveAccountPressed) return;
@@ -494,7 +564,7 @@ export default {
         descriptionInput.classList.add("is-valid");
       }
 
-      this.continuePressed = true;
+      this.saveCompanyPressed = true;
 
       if(valid && pressed) {
 
@@ -507,7 +577,7 @@ export default {
           .eq('id', nameInput.value.replace(/\s/g,'').toLowerCase())
 
           if(error || data[0] != null) {
-            this.store.commit('setState', 'failure')
+
             nameInput.classList.remove("is-valid");
             nameInput.classList.add("is-invalid");
 
@@ -515,6 +585,10 @@ export default {
             this.form.location = locationInput.value
             this.form.category = categoryInput.value
             this.form.description = descriptionInput.value
+
+            this.failureAlertTitle = 'Name schon vergeben'
+            this.failureAlertInfo = 'Es gibt bereits ein Unternehmen mit diesem Namen. Bitte wähle einen anderen!'
+            this.store.commit('setState', 'failure')
 
             return
           } 
@@ -528,43 +602,93 @@ export default {
         this.saveCompany()
       } 
     },
+    validateEmployeesChange(pressed, index) {
+      if(!pressed && !this.saveEmployeesPressed) return;
+
+      var emailInputs = document.getElementsByClassName("employees-mail");
+      var regex = emailInputs[index].getAttribute('data-regex');
+      var valid = true
+
+      if(!pressed) {
+        if(!emailInputs[index].value.match(regex)) {
+          emailInputs[index].classList.remove("is-valid");
+          emailInputs[index].classList.add("is-invalid");
+          valid = false
+        }
+        else {
+          emailInputs[index].classList.remove("is-invalid");
+          emailInputs[index].classList.add("is-valid");
+        }
+      } else {
+        Array.from(emailInputs).forEach(input => {
+          if(!input.value.match(regex)) {
+            input.classList.remove("is-valid");
+            input.classList.add("is-invalid");
+            valid = false
+          }
+          else {
+            input.classList.remove("is-invalid");
+            input.classList.add("is-valid");
+          }
+        })
+      }
+
+      this.saveEmployeesPressed = true;
+
+      if(valid && pressed) this.saveEmployees();
+
+    },
     async saveAccount() {
-      this.isAccountEditing = false
-      this.saveAccountPressed = false
+      try {
+        this.store.commit('setState', 'loading')
 
-      var nameInput = document.getElementById("account-name");
-      var mailInput = document.getElementById("account-mail");
+        this.isAccountEditing = false
+        this.saveAccountPressed = false
 
-      const splitName = nameInput.value.split(' ')
-      const name1 = splitName[0].charAt(0).toUpperCase() + splitName[0].slice(1).toLowerCase()
-      const name2 = splitName[1].charAt(0).toUpperCase() + splitName[1].slice(1).toLowerCase()
-      
-      const capitalizedName = name1 + ' ' + name2
+        var nameInput = document.getElementById("account-name");
+        var mailInput = document.getElementById("account-mail");
 
-      if(capitalizedName != this.userData.user_metadata.name) {
+        const splitName = nameInput.value.split(' ')
+        const name1 = splitName[0].charAt(0).toUpperCase() + splitName[0].slice(1).toLowerCase()
+        const name2 = splitName[1].charAt(0).toUpperCase() + splitName[1].slice(1).toLowerCase()
         
-        const { data, error } = await supabase.auth.updateUser({data: { name: capitalizedName } })
+        const capitalizedName = name1 + ' ' + name2
 
-        if (error) throw error;
+        if(capitalizedName != this.userData.user_metadata.name) {
+          
+          const { data, error } = await supabase.auth.updateUser({data: { name: capitalizedName } })
 
-        console.log(data.user)
-        this.store.commit('setUser', data.user)
+          if (error) throw error;
+
+          console.log(data.user)
+          this.store.commit('setUser', data.user)
+        }
+
+        if(mailInput.value != this.userData.email) {
+          const { data, error } = await supabase.auth.updateUser({email: mailInput.value })
+
+          if (error) throw error;
+
+          this.store.commit('setUser', data.user)
+        }
+
+        this.successAlertTitle = ''
+        this.store.commit('setState', 'success')
+
+        nameInput.disabled = true
+        mailInput.disabled = true
+        nameInput.classList.remove("is-valid");
+        nameInput.classList.remove("is-invalid");
+        mailInput.classList.remove("is-valid");
+        mailInput.classList.remove("is-invalid");
+      } catch(error) {
+        this.failureAlertTitle = 'Email schon vergeben'
+        this.failureAlertInfo = 'Es gibt bereits einen Account mit dieser Email!'
+        this.store.commit('setState', 'failure')
+        this.cancelAccountChange()
+        console.log(error.error_description || error.message);
       }
-
-      if(mailInput.value != this.userData.email) {
-        const { data, error } = await supabase.auth.updateUser({email: mailInput.value })
-
-        if (error) throw error;
-
-        this.store.commit('setUser', data.user)
-      }
-
-      nameInput.disabled = true
-      mailInput.disabled = true
-      nameInput.classList.remove("is-valid");
-      nameInput.classList.remove("is-invalid");
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.remove("is-invalid");
+      
     },
     async saveCompany() {
       try {
@@ -591,6 +715,8 @@ export default {
         if (error) throw error;
 
         this.store.commit('setUserCompany', data[0])
+
+        this.successAlertTitle = ''
         this.store.commit('setState', 'success')
 
         nameInput.disabled = true
@@ -606,9 +732,73 @@ export default {
         descriptionInput.classList.remove("is-valid");
         descriptionInput.classList.remove("is-invalid");
       } catch (error) {
+        this.failureAlertTitle = 'Fehler'
+        this.failureAlertInfo = 'Beim Ändern der Unternehmens-Daten ist ein Fehler aufgetreten!'
         this.store.commit('setState', 'failure')
+        this.cancelCompanyChange()
         console.log(error.error_description || error.message);
       }
+    },
+    saveEmployees() {
+      console.log(743)
+    },
+    cancelAccountChange() {
+      this.isAccountEditing = false
+      this.saveAccountPressed = false
+
+      var nameInput = document.getElementById("account-name");
+      var mailInput = document.getElementById("account-mail");
+
+      nameInput.value = this.userData.user_metadata.name
+      mailInput.value = this.userData.mail
+
+      nameInput.disabled = true
+      mailInput.disabled = true
+      nameInput.classList.remove("is-valid");
+      nameInput.classList.remove("is-invalid");
+      mailInput.classList.remove("is-valid");
+      mailInput.classList.remove("is-invalid");
+    },
+    cancelCompanyChange() {
+      this.isCompanyEditing = false
+      this.saveCompanyPressed = false
+
+      var nameInput = document.getElementById("company-name");
+      var locationInput = document.getElementById("company-location");
+      var categoryInput = document.getElementById("company-category");
+      var descriptionInput = document.getElementById("company-info");
+
+      nameInput.value = this.companyData.name
+      locationInput.value = this.companyData.location
+      categoryInput.value = this.companyData.category
+      descriptionInput.value = this.companyData.info
+
+      nameInput.disabled = true
+      locationInput.disabled = true
+      categoryInput.disabled = true
+      descriptionInput.disabled = true
+      nameInput.classList.remove("is-valid");
+      nameInput.classList.remove("is-invalid");
+      locationInput.classList.remove("is-valid");
+      locationInput.classList.remove("is-invalid");
+      categoryInput.classList.remove("is-valid");
+      categoryInput.classList.remove("is-invalid");
+      descriptionInput.classList.remove("is-valid");
+      descriptionInput.classList.remove("is-invalid");
+    },
+    cancelEmployeesChange() {
+      this.isEmployeesEditing = false
+      this.saveEmployeesPressed = false
+
+      var emailInputs = document.getElementsByClassName("employees-mail");
+      var index = 0
+      Array.from(emailInputs).forEach(input => {
+        input.value = this.employees[index]
+        input.disabled = true
+        input.classList.remove("is-valid");
+        input.classList.remove("is-invalid");
+        index++
+      })
     }
   }
 }
@@ -694,6 +884,15 @@ export default {
 }
 
 .fa-location-dot {
+  position: relative;
+  left: 3px;
+}
+
+.fa-envelope {
+  position: relative;
+  left: 1px;
+}
+.fa-user {
   position: relative;
   left: 3px;
 }
