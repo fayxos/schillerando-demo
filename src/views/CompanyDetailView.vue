@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import TitleDiv from '../components/TitleDiv'
+import TitleDiv from '../components/TitleDiv';
 
 export default {
   name: 'CompanyView',
   components: {
     TitleDiv,
   },
-}
+};
 </script>

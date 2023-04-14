@@ -1,28 +1,34 @@
-
-
 <template>
-  <hr>
+  <hr />
   <header class="navbar navbar-expand-lg navbar-light sticky-top">
     <router-link to="/" class="brand navbar-brand">
-      <img class="logo" src="@/assets/logo_transparent.png"/>
+      <img class="logo" src="@/assets/logo_transparent.png" />
       Schillerando
     </router-link>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler">
-        <span class="navbar-toggler-icon"></span>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarToggler"
+      aria-controls="navbarToggler"
+    >
+      <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarToggler">
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <router-link class="nav-link" to="/produkte">Produkte</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link class="nav-link" to="/unternehmen">Unternehmen</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link class="nav-link" to="/account">Account</router-link>
-            </li>
-            <div class="indicator" id="indicator"></div>
-        </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <router-link class="nav-link" to="/produkte">Produkte</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/unternehmen"
+            >Unternehmen</router-link
+          >
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/account">Account</router-link>
+        </li>
+        <div class="indicator" id="indicator"></div>
+      </ul>
     </div>
   </header>
 </template>
@@ -62,15 +68,12 @@ export default {
     */
   },
   methods: {
-    animateIndicator() {
-
-    }
-  }
-}
+    animateIndicator() {},
+  },
+};
 </script>
 
 <style scoped>
-
 .indicator {
   position: absolute;
   bottom: 20px;
@@ -89,13 +92,13 @@ export default {
   padding: 12px 20px;
   text-align: left;
   background-color: white;
-  
+
   z-index: 999;
 }
 
 .navbar-brand {
   font-size: 1.5rem;
-  color: #00a100; 
+  color: #00a100;
   font-weight: 900;
   position: relative;
   top: 5px;
@@ -134,5 +137,4 @@ export default {
     content: '';
   }
 }
-
 </style>

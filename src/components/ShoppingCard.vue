@@ -1,11 +1,17 @@
 <template>
-  
   <!-- Overlay -->
-  <div class="overlay" v-if="userData != null" :class="{'open': showCard}">
+  <div class="overlay" v-if="userData != null" :class="{ open: showCard }">
     <!-- Icon -->
     <Transition>
-      <button type="button" class="icon" v-if="!showCard" @click="showCard = true">
-        <div v-if="this.products.length > 0" class="product-count">{{ products.length }}</div>
+      <button
+        type="button"
+        class="icon"
+        v-if="!showCard"
+        @click="showCard = true"
+      >
+        <div v-if="this.products.length > 0" class="product-count">
+          {{ products.length }}
+        </div>
         <i class="fa-solid fa-cart-shopping fa-2xl"></i>
       </button>
     </Transition>
@@ -16,37 +22,35 @@
           <div class="card-header">
             <div>
               <h4 class="card-title">Warenkorb</h4>
-              <button type="button" class="btn-close" aria-label="Close" @click="showCard = false"></button>
+              <button
+                type="button"
+                class="btn-close"
+                aria-label="Close"
+                @click="showCard = false"
+              ></button>
             </div>
-            
           </div>
-          <div class="card-body">
-
-          </div>
+          <div class="card-body"></div>
           <div class="card-footer">
-            <button class="btn btn-primary order-button">
-              Bestellen
-            </button>
+            <button class="btn btn-primary order-button">Bestellen</button>
           </div>
         </div>
       </div>
     </Transition>
-
   </div>
-
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { computed } from "vue";
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   name: 'ShoppingCard',
   data() {
     return {
       showCard: false,
-      products: []
-    }
+      products: [],
+    };
   },
   setup() {
     const store = useStore();
@@ -55,11 +59,10 @@ export default {
       userData,
     };
   },
-}
+};
 </script>
 
 <style scoped>
-
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -130,7 +133,6 @@ export default {
   box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.5);
 }
 
-
 i {
   color: #fff;
 }
@@ -173,7 +175,7 @@ i {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999
+  z-index: 9999;
 }
 
 .fa-x {
@@ -187,5 +189,4 @@ i {
 .order-button {
   font-size: 1.1rem;
 }
-
 </style>

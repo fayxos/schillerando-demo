@@ -1,22 +1,44 @@
 <template>
   <div>
-
-    <AlertPopup :title="this.alertTitle" :info="this.alertInfo"/>
+    <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
 
     <!-- Reset password pop up -->
-    <div class="modal fade" id="resetPasswordPopup" tabindex="-1" aria-labelledby="resetPasswordPopupLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="resetPasswordPopup"
+      tabindex="-1"
+      aria-labelledby="resetPasswordPopupLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="resetPasswordPopupLabel">Passwort zurücksetzten</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h1 class="modal-title fs-5" id="resetPasswordPopupLabel">
+              Passwort zurücksetzten
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
             <p>Wir senden dir eine Email um dein Passwort zurückzusetzten.</p>
             <form class="needs-validation" novalidate>
               <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                <input id="reset-mail" type="email" class="form-control" placeholder="Email" @input="validateReset(false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+                <span class="input-group-text"
+                  ><i class="fa fa-envelope"></i
+                ></span>
+                <input
+                  id="reset-mail"
+                  type="email"
+                  class="form-control"
+                  placeholder="Email"
+                  @input="validateReset(false)"
+                  data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                  required
+                />
 
                 <div id="invalid-reset-feedback" class="invalid-feedback">
                   Bitte gebe eine gültige Email an
@@ -25,19 +47,30 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="removeValidation()">Abbrechen</button>
-            <button type="button" @click="validateReset(true)" class="btn btn-primary">Email senden</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              @click="removeValidation()"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              @click="validateReset(true)"
+              class="btn btn-primary"
+            >
+              Email senden
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-
     <!-- Log in -->
     <div class="container">
       <div class="row justify-content-center">
         <div id="flipper" class="flipper col-md-8">
-
           <div class="card-flipper">
             <!-- Front -->
             <div class="front">
@@ -48,16 +81,35 @@
                     <p class="text-muted">Melde dich mit deinem Account an</p>
                     <form class="needs-validation" novalidate>
                       <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input id="login-mail" type="email" class="form-control" placeholder="Email" @input="validateSignIn(false)" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required />
+                        <span class="input-group-text"
+                          ><i class="fa fa-envelope"></i
+                        ></span>
+                        <input
+                          id="login-mail"
+                          type="email"
+                          class="form-control"
+                          placeholder="Email"
+                          @input="validateSignIn(false)"
+                          data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                          required
+                        />
 
                         <div class="invalid-feedback">
                           Bitte gebe eine gültige Email an
                         </div>
                       </div>
                       <div class="input-group mb-3" id="login-passwd-group">
-                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input id="login-passwd" type="password" class="form-control" @input="validateSignIn(false)" placeholder="Password" required />
+                        <span class="input-group-text"
+                          ><i class="fa fa-lock"></i
+                        ></span>
+                        <input
+                          id="login-passwd"
+                          type="password"
+                          class="form-control"
+                          @input="validateSignIn(false)"
+                          placeholder="Password"
+                          required
+                        />
 
                         <div class="invalid-feedback">
                           Bitte gebe ein gültiges Passwort an
@@ -65,16 +117,32 @@
                       </div>
                       <div class="row">
                         <div class="col-5">
-                          <button type="button" @click="validateSignIn(true)" class="btn btn-primary px-4" value="validate">
+                          <button
+                            type="button"
+                            @click="validateSignIn(true)"
+                            class="btn btn-primary px-4"
+                            value="validate"
+                          >
                             <div class="loading-button">Login</div>
                             <div class="spinner">
-                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span
+                                class="spinner-border spinner-border-sm"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
                               <span class="sr-only">Loading...</span>
-                            </div>  
+                            </div>
                           </button>
                         </div>
                         <div class="col-7 text-right">
-                          <button type="button" class="btn btn-link px-0" data-bs-toggle="modal" data-bs-target="#resetPasswordPopup">Passwort vergessen?</button>
+                          <button
+                            type="button"
+                            class="btn btn-link px-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#resetPasswordPopup"
+                          >
+                            Passwort vergessen?
+                          </button>
                         </div>
                       </div>
                     </form>
@@ -84,8 +152,18 @@
                   <div class="card-body text-center">
                     <div>
                       <h2>Sign up</h2>
-                      <p>Du hast noch keinen Account? Dann registriere dich jetzt um Bestellungen zu tätigen oder dein Unternehmen anzumelden!</p>
-                      <button type="button" @click="flipCard" class="btn bg-sec mt-3 register">Registrieren</button>
+                      <p>
+                        Du hast noch keinen Account? Dann registriere dich jetzt
+                        um Bestellungen zu tätigen oder dein Unternehmen
+                        anzumelden!
+                      </p>
+                      <button
+                        type="button"
+                        @click="flipCard"
+                        class="btn bg-sec mt-3 register"
+                      >
+                        Registrieren
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -102,24 +180,52 @@
 
                     <form class="needs-validation" novalidate>
                       <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                        <input type="text" id="signup-name" class="form-control" @input="validateSignUp(false)" placeholder="Name" required>
+                        <span class="input-group-text"
+                          ><i class="fa fa-user"></i
+                        ></span>
+                        <input
+                          type="text"
+                          id="signup-name"
+                          class="form-control"
+                          @input="validateSignUp(false)"
+                          placeholder="Name"
+                          required
+                        />
 
                         <div class="invalid-feedback">
                           Bitte gib deinen Vor- und Nachnamen an
                         </div>
                       </div>
                       <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input type="email" id="signup-mail" class="form-control" data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" @input="validateSignUp(false)" placeholder="Email" required>
+                        <span class="input-group-text"
+                          ><i class="fa fa-envelope"></i
+                        ></span>
+                        <input
+                          type="email"
+                          id="signup-mail"
+                          class="form-control"
+                          data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                          @input="validateSignUp(false)"
+                          placeholder="Email"
+                          required
+                        />
 
                         <div class="invalid-feedback">
                           Bitte gib eine gültige Email an
                         </div>
                       </div>
                       <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" id="signup-passwd" class="form-control" @input="validateSignUp(false)" placeholder="Password" required>
+                        <span class="input-group-text"
+                          ><i class="fa fa-lock"></i
+                        ></span>
+                        <input
+                          type="password"
+                          id="signup-passwd"
+                          class="form-control"
+                          @input="validateSignUp(false)"
+                          placeholder="Password"
+                          required
+                        />
 
                         <div class="invalid-feedback">
                           Dass Passwort muss mind. 6 Zeichen lang sein
@@ -127,12 +233,20 @@
                       </div>
                       <div class="row">
                         <div class="col-12">
-                          <button type="button" @click="validateSignUp(true)" class="btn btn-primary px-4">
+                          <button
+                            type="button"
+                            @click="validateSignUp(true)"
+                            class="btn btn-primary px-4"
+                          >
                             <div class="loading-button">Registrieren</div>
                             <div class="spinner">
-                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span
+                                class="spinner-border spinner-border-sm"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
                               <span class="sr-only">Loading...</span>
-                            </div>  
+                            </div>
                           </button>
                         </div>
                       </div>
@@ -143,33 +257,41 @@
                   <div class="card-body text-center">
                     <div>
                       <h2>Log in</h2>
-                      <p>Du hast schon einen Account? Dann melde dich mit deiner Email und deinem Passwort an!</p>
-                      <button type="submit" @click="flipCard" class="btn bg-sec mt-3 register">Log in</button>
+                      <p>
+                        Du hast schon einen Account? Dann melde dich mit deiner
+                        Email und deinem Passwort an!
+                      </p>
+                      <button
+                        type="submit"
+                        @click="flipCard"
+                        class="btn bg-sec mt-3 register"
+                      >
+                        Log in
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import { reactive } from "vue";
-import { useStore, mapGetters } from "vuex";
-import { Modal } from "bootstrap/dist/js/bootstrap.bundle.js";
-import AlertPopup from '../components/AlertPopup.vue'
+import { reactive } from 'vue';
+import { useStore, mapGetters } from 'vuex';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import AlertPopup from '../components/AlertPopup.vue';
 
 export default {
   name: 'AuthView',
   components: {
-    AlertPopup
+    AlertPopup,
   },
-  data() {    
+  data() {
     return {
       logInPressed: false,
       signUpPressed: false,
@@ -180,78 +302,75 @@ export default {
       successAlertTitle: 'Erfolgreich',
       successAlertInfo: 'Aktion wurde erfolgreich durchgeführt',
       failureAlertTitle: 'Fehler',
-      failureAlertInfo: 'Es ist ein Fehler aufgetreten!'
-    }
+      failureAlertInfo: 'Es ist ein Fehler aufgetreten!',
+    };
   },
   computed: {
-    ...mapGetters(['getState'])
+    ...mapGetters(['getState']),
   },
   watch: {
     getState(newValue) {
-      var spinners = document.getElementsByClassName("spinner");
-      var loadingButtons = document.getElementsByClassName("loading-button");
+      var spinners = document.getElementsByClassName('spinner');
+      var loadingButtons = document.getElementsByClassName('loading-button');
 
-      if(newValue == 'loading') {
-        Array.from(spinners).forEach(spinner => {
-          spinner.style.visibility = "visible";
-          spinner.style.position = "relative";
-        })
+      if (newValue == 'loading') {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'visible';
+          spinner.style.position = 'relative';
+        });
 
-        Array.from(loadingButtons).forEach(button => {
-          button.style.visibility = "hidden";
-          button.style.position = "absolute";
-        })
-      }
-      else if(newValue == 'success') {
-        Array.from(spinners).forEach(spinner => {
-          spinner.style.visibility = "hidden";
-          spinner.style.position = "absolute";
-        })
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'hidden';
+          button.style.position = 'absolute';
+        });
+      } else if (newValue == 'success') {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'hidden';
+          spinner.style.position = 'absolute';
+        });
 
-        Array.from(loadingButtons).forEach(button => {
-          button.style.visibility = "visible";
-          button.style.position = "relative";
-        })
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'visible';
+          button.style.position = 'relative';
+        });
 
-        this.alertTitle = this.successAlertTitle
-        this.alertInfo = this.successAlertInfo
+        this.alertTitle = this.successAlertTitle;
+        this.alertInfo = this.successAlertInfo;
 
-        if(this.alertTitle == '') return;
-        alertModal = new Modal(document.getElementById("alertModal"), {});
+        if (this.alertTitle == '') return;
+        alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
-      }
-      else {
-        Array.from(spinners).forEach(spinner => {
-          spinner.style.visibility = "hidden";
-          spinner.style.position = "absolute";
-        })
+      } else {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'hidden';
+          spinner.style.position = 'absolute';
+        });
 
-        Array.from(loadingButtons).forEach(button => {
-          button.style.visibility = "visible";
-          button.style.position = "relative";
-        })
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'visible';
+          button.style.position = 'relative';
+        });
 
-        this.alertTitle = this.failureAlertTitle
-        this.alertInfo = this.failureAlertInfo
+        this.alertTitle = this.failureAlertTitle;
+        this.alertInfo = this.failureAlertInfo;
 
-        if(this.alertTitle == '') return;
-        var alertModal = new Modal(document.getElementById("alertModal"), {});
+        if (this.alertTitle == '') return;
+        var alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
 
-        if(this.action == 'login') {
-          this.signInFailure()
-        }
-        else if(this.action == 'register') {
-          this.signUpFailure()
+        if (this.action == 'login') {
+          this.signInFailure();
+        } else if (this.action == 'register') {
+          this.signUpFailure();
         }
       }
-    }
+    },
   },
   setup() {
     const form = reactive({
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     });
     const store = useStore();
 
@@ -262,240 +381,241 @@ export default {
   },
   methods: {
     flipCard() {
-      var element = document.getElementById("flipper");
-      element.classList.toggle("flip");
-      if( window.innerWidth < 576) {
-        var $ = window.jQuery = require('jquery');
-        $("html, body").animate({ scrollTop: "0" });
+      var element = document.getElementById('flipper');
+      element.classList.toggle('flip');
+      if (window.innerWidth < 576) {
+        var $ = (window.jQuery = require('jquery'));
+        $('html, body').animate({ scrollTop: '0' });
       }
       this.logInPressed = false;
       this.signUpPressed = false;
 
-      var mailInput = document.getElementById("login-mail");
-      mailInput.value = ""
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.remove("is-invalid");
-      var passwInput = document.getElementById("login-passwd");
-      passwInput.value = ""
-      passwInput.classList.remove("is-valid");
-      passwInput.classList.remove("is-invalid");
-      var nameInput = document.getElementById("signup-name");
-      nameInput.value = ""
-      nameInput.classList.remove("is-valid");
-      nameInput.classList.remove("is-invalid");
-      mailInput = document.getElementById("signup-mail");
-      mailInput.value = ""
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.remove("is-invalid");
-      passwInput = document.getElementById("signup-passwd");
-      passwInput.value = ""
-      passwInput.classList.remove("is-valid");
-      passwInput.classList.remove("is-invalid");
+      var mailInput = document.getElementById('login-mail');
+      mailInput.value = '';
+      mailInput.classList.remove('is-valid');
+      mailInput.classList.remove('is-invalid');
+      var passwInput = document.getElementById('login-passwd');
+      passwInput.value = '';
+      passwInput.classList.remove('is-valid');
+      passwInput.classList.remove('is-invalid');
+      var nameInput = document.getElementById('signup-name');
+      nameInput.value = '';
+      nameInput.classList.remove('is-valid');
+      nameInput.classList.remove('is-invalid');
+      mailInput = document.getElementById('signup-mail');
+      mailInput.value = '';
+      mailInput.classList.remove('is-valid');
+      mailInput.classList.remove('is-invalid');
+      passwInput = document.getElementById('signup-passwd');
+      passwInput.value = '';
+      passwInput.classList.remove('is-valid');
+      passwInput.classList.remove('is-invalid');
     },
     validateSignIn(pressed) {
-      if(!pressed && !this.logInPressed) return;
+      if (!pressed && !this.logInPressed) return;
 
-      var feedbacks = document.getElementsByClassName("invalid-feedback");
-      Array.from(feedbacks).forEach(feedback => {
-        feedback.style.visibility = "visible";
-        feedback.style.position = "relative";
-      })
+      var feedbacks = document.getElementsByClassName('invalid-feedback');
+      Array.from(feedbacks).forEach((feedback) => {
+        feedback.style.visibility = 'visible';
+        feedback.style.position = 'relative';
+      });
 
-      var mailInput = document.getElementById("login-mail");
-      var passwInput = document.getElementById("login-passwd");
-      mailInput.value = mailInput.value.replace(/\s/g,'');
-      passwInput.value = passwInput.value.replace(/\s/g,'');
+      var mailInput = document.getElementById('login-mail');
+      var passwInput = document.getElementById('login-passwd');
+      mailInput.value = mailInput.value.replace(/\s/g, '');
+      passwInput.value = passwInput.value.replace(/\s/g, '');
       var mailValid = false;
       var passwValid = false;
 
       var regex = mailInput.getAttribute('data-regex');
-      if(!mailInput.value.match(regex)) {
-        mailInput.classList.remove("is-valid");
-        mailInput.classList.add("is-invalid");
-      }
-      else {
-        mailInput.classList.remove("is-invalid");
-        mailInput.classList.add("is-valid");
+      if (!mailInput.value.match(regex)) {
+        mailInput.classList.remove('is-valid');
+        mailInput.classList.add('is-invalid');
+      } else {
+        mailInput.classList.remove('is-invalid');
+        mailInput.classList.add('is-valid');
         mailValid = true;
       }
 
-      if(passwInput.value.length < 6) {
-        passwInput.classList.remove("is-valid");
-        passwInput.classList.add("is-invalid");
-      }
-      else {
-        passwInput.classList.remove("is-invalid");
-        passwInput.classList.add("is-valid");
+      if (passwInput.value.length < 6) {
+        passwInput.classList.remove('is-valid');
+        passwInput.classList.add('is-invalid');
+      } else {
+        passwInput.classList.remove('is-invalid');
+        passwInput.classList.add('is-valid');
         passwValid = true;
       }
 
       this.logInPressed = true;
 
-      if(passwValid && mailValid && pressed) this.signIn();
+      if (passwValid && mailValid && pressed) this.signIn();
     },
     signIn() {
-      this.form.email = document.getElementById('login-mail').value
-      this.form.password = document.getElementById('login-passwd').value
+      this.form.email = document.getElementById('login-mail').value;
+      this.form.password = document.getElementById('login-passwd').value;
 
-      console.log(this.$route.query.redirect)
-      this.store.dispatch("signInAction", { form: this.form, path: this.$route.query.redirect });
+      console.log(this.$route.query.redirect);
+      this.store.dispatch('signInAction', {
+        form: this.form,
+        path: this.$route.query.redirect,
+      });
 
       this.failureAlertTitle = 'Login fehlgeschlagen';
-      this.failureAlertInfo = 'Die angegebene Email oder das Passwort ist falsch!';
-      this.successAlertTitle = ''
+      this.failureAlertInfo =
+        'Die angegebene Email oder das Passwort ist falsch!';
+      this.successAlertTitle = '';
 
-      this.action = 'login'
+      this.action = 'login';
     },
     signInFailure() {
-      var mailInput = document.getElementById("login-mail");
-      var passwInput = document.getElementById("login-passwd");
-      mailInput.classList.remove("is-valid");
-      passwInput.classList.remove("is-valid");
-      mailInput.classList.add("is-invalid");
-      passwInput.classList.add("is-invalid");
+      var mailInput = document.getElementById('login-mail');
+      var passwInput = document.getElementById('login-passwd');
+      mailInput.classList.remove('is-valid');
+      passwInput.classList.remove('is-valid');
+      mailInput.classList.add('is-invalid');
+      passwInput.classList.add('is-invalid');
 
-      var feedbacks = document.getElementsByClassName("invalid-feedback");
-      Array.from(feedbacks).forEach(feedback => {
-        feedback.style.visibility = "hidden";
-        feedback.style.position = "absolute";
-      })
+      var feedbacks = document.getElementsByClassName('invalid-feedback');
+      Array.from(feedbacks).forEach((feedback) => {
+        feedback.style.visibility = 'hidden';
+        feedback.style.position = 'absolute';
+      });
     },
     validateSignUp(pressed) {
-      if(!pressed && !this.signUpPressed) return;
+      if (!pressed && !this.signUpPressed) return;
 
-      var feedbacks = document.getElementsByClassName("invalid-feedback");
-      Array.from(feedbacks).forEach(feedback => {
-        feedback.style.visibility = "visible";
-        feedback.style.position = "relative";
-      })
+      var feedbacks = document.getElementsByClassName('invalid-feedback');
+      Array.from(feedbacks).forEach((feedback) => {
+        feedback.style.visibility = 'visible';
+        feedback.style.position = 'relative';
+      });
 
-      var nameInput = document.getElementById("signup-name");
-      var mailInput = document.getElementById("signup-mail");
-      var passwInput = document.getElementById("signup-passwd");
-      if(pressed) nameInput.value = nameInput.value.trim();
-      mailInput.value = mailInput.value.replace(/\s/g,'');
-      passwInput.value = passwInput.value.replace(/\s/g,'');
+      var nameInput = document.getElementById('signup-name');
+      var mailInput = document.getElementById('signup-mail');
+      var passwInput = document.getElementById('signup-passwd');
+      if (pressed) nameInput.value = nameInput.value.trim();
+      mailInput.value = mailInput.value.replace(/\s/g, '');
+      passwInput.value = passwInput.value.replace(/\s/g, '');
       var nameValid = false;
       var mailValid = false;
       var passwValid = false;
 
-      if(!nameInput.value.trim().includes(' ') || nameInput.value.length < 5) {
-        nameInput.classList.remove("is-valid");
-        nameInput.classList.add("is-invalid");
-      }
-      else {
-        nameInput.classList.remove("is-invalid");
-        nameInput.classList.add("is-valid");
+      if (!nameInput.value.trim().includes(' ') || nameInput.value.length < 5) {
+        nameInput.classList.remove('is-valid');
+        nameInput.classList.add('is-invalid');
+      } else {
+        nameInput.classList.remove('is-invalid');
+        nameInput.classList.add('is-valid');
         nameValid = true;
       }
 
       var regex = mailInput.getAttribute('data-regex');
-      if(!mailInput.value.match(regex)) {
-        mailInput.classList.remove("is-valid");
-        mailInput.classList.add("is-invalid");
-      }
-      else {
-        mailInput.classList.remove("is-invalid");
-        mailInput.classList.add("is-valid");
+      if (!mailInput.value.match(regex)) {
+        mailInput.classList.remove('is-valid');
+        mailInput.classList.add('is-invalid');
+      } else {
+        mailInput.classList.remove('is-invalid');
+        mailInput.classList.add('is-valid');
         mailValid = true;
       }
 
-      if(passwInput.value.length < 6) {
-        passwInput.classList.remove("is-valid");
-        passwInput.classList.add("is-invalid");
-      }
-      else {
-        passwInput.classList.remove("is-invalid");
-        passwInput.classList.add("is-valid");
+      if (passwInput.value.length < 6) {
+        passwInput.classList.remove('is-valid');
+        passwInput.classList.add('is-invalid');
+      } else {
+        passwInput.classList.remove('is-invalid');
+        passwInput.classList.add('is-valid');
         passwValid = true;
       }
 
       this.signUpPressed = true;
 
-      if(passwValid && mailValid && nameValid && pressed) this.signUp();
+      if (passwValid && mailValid && nameValid && pressed) this.signUp();
     },
     signUp() {
-      this.form.name = document.getElementById('signup-name').value
-      this.form.email = document.getElementById('signup-mail').value
-      this.form.password = document.getElementById('signup-passwd').value
+      this.form.name = document.getElementById('signup-name').value;
+      this.form.email = document.getElementById('signup-mail').value;
+      this.form.password = document.getElementById('signup-passwd').value;
 
-      this.store.dispatch("signUpAction", { form: this.form, path: this.$route.query.redirect });
+      this.store.dispatch('signUpAction', {
+        form: this.form,
+        path: this.$route.query.redirect,
+      });
 
       this.failureAlertTitle = 'Registrierung fehlgeschlagen';
-      this.failureAlertInfo = 'Es existiert bereits ein Account mit dieser Email!';
-      this.successAlertTitle = ''
- 
-      this.action = 'register'
+      this.failureAlertInfo =
+        'Es existiert bereits ein Account mit dieser Email!';
+      this.successAlertTitle = '';
+
+      this.action = 'register';
     },
     signUpFailure() {
-      var mailInput = document.getElementById("signup-mail");
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.add("is-invalid");
+      var mailInput = document.getElementById('signup-mail');
+      mailInput.classList.remove('is-valid');
+      mailInput.classList.add('is-invalid');
 
-      var feedbacks = document.getElementsByClassName("invalid-feedback");
-      Array.from(feedbacks).forEach(feedback => {
-        feedback.style.visibility = "hidden";
-        feedback.style.position = "absolute";
-      })
+      var feedbacks = document.getElementsByClassName('invalid-feedback');
+      Array.from(feedbacks).forEach((feedback) => {
+        feedback.style.visibility = 'hidden';
+        feedback.style.position = 'absolute';
+      });
     },
     validateReset(pressed) {
-      if(!pressed && !this.resetPressed) return;
+      if (!pressed && !this.resetPressed) return;
 
-      var feedback = document.getElementById("invalid-reset-feedback");
-      feedback.style.visibility = "visible";
-      feedback.style.position = "relative";
+      var feedback = document.getElementById('invalid-reset-feedback');
+      feedback.style.visibility = 'visible';
+      feedback.style.position = 'relative';
 
-      var mailInput = document.getElementById("reset-mail");
+      var mailInput = document.getElementById('reset-mail');
       var mailValid = false;
 
       var regex = mailInput.getAttribute('data-regex');
-      if(!mailInput.value.match(regex)) {
-        mailInput.classList.remove("is-valid");
-        mailInput.classList.add("is-invalid");
-      }
-      else {
-        mailInput.classList.remove("is-invalid");
-        mailInput.classList.add("is-valid");
+      if (!mailInput.value.match(regex)) {
+        mailInput.classList.remove('is-valid');
+        mailInput.classList.add('is-invalid');
+      } else {
+        mailInput.classList.remove('is-invalid');
+        mailInput.classList.add('is-valid');
         mailValid = true;
       }
 
       this.resetPressed = true;
 
-      if(mailValid && pressed) this.resetPassword();
+      if (mailValid && pressed) this.resetPassword();
     },
     resetPassword() {
       const mailInput = document.getElementById('reset-mail');
       this.form.email = mailInput.value;
-      this.store.dispatch("resetPasswordAction", this.form);
+      this.store.dispatch('resetPasswordAction', this.form);
 
-      var $ = window.jQuery = require('jquery');
+      var $ = (window.jQuery = require('jquery'));
       $('#resetPasswordPopup').hide();
       $('.modal-backdrop').hide();
-      
+
       this.failureAlertTitle = 'Zurücksetzten fehlgeschlagen';
       this.failureAlertInfo = 'Es gibt keinen Account mit dieser Email!';
-      this.successAlertTitle = 'Passwort zurückgesetzt'
-      this.successAlertInfo = 'Es wurd ein Link zum Ändern deines Passwortes an deine Email gesendet.'
+      this.successAlertTitle = 'Passwort zurückgesetzt';
+      this.successAlertInfo =
+        'Es wurd ein Link zum Ändern deines Passwortes an deine Email gesendet.';
 
       mailInput.value = '';
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.remove("is-invalid");
+      mailInput.classList.remove('is-valid');
+      mailInput.classList.remove('is-invalid');
 
       this.resetPressed = false;
     },
     removeValidation() {
       const mailInput = document.getElementById('reset-mail');
       mailInput.value = '';
-      mailInput.classList.remove("is-valid");
-      mailInput.classList.remove("is-invalid");
-    }
-    
-  }
-}
+      mailInput.classList.remove('is-valid');
+      mailInput.classList.remove('is-invalid');
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 .container {
   padding: 30px;
   position: absolute;
@@ -512,24 +632,24 @@ export default {
     left: 0;
     margin-right: 0;
     transform: translate(0, 0);
-}
+  }
 }
 
 @media (min-width: 576px) {
   .container {
-      max-width: 540px;
+    max-width: 540px;
   }
 }
 
 @media (min-width: 768px) {
   .container {
-      max-width: 960px;
+    max-width: 960px;
   }
 }
 
 @media (min-width: 1200px) {
   .container {
-      max-width: 1140px;
+    max-width: 1140px;
   }
 }
 
@@ -539,12 +659,12 @@ export default {
 
 @media (min-width: 576px) {
   .card-columns {
-      column-count: 3;
-      column-gap: 1.25rem;
+    column-count: 3;
+    column-gap: 1.25rem;
   }
   .card-columns .card {
-      display: inline-block;
-      width: 100%;
+    display: inline-block;
+    width: 100%;
   }
 }
 .text-muted {
@@ -568,65 +688,65 @@ p {
 /* Flip */
 
 .up {
-    color: #55DD11;
+  color: #55dd11;
 }
 
 .flipper {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin-bottom: 10px;
-    perspective: 1000px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-bottom: 10px;
+  perspective: 1000px;
 }
-    
+
 .register:hover > .card-flipper {
-    transform: rotateY(80deg);
+  transform: rotateY(80deg);
 }
 
 .flipper.flip .card-flipper {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
 .flipper.flip .back {
-    z-index: 3;
+  z-index: 3;
 }
-    
+
 .card-flipper {
-    text-align: center;
-    width: 100%;
-    height: 300px;
-    position: relative;
-    transition: transform 1500ms;
-    transform-style: preserve-3d;
-    top: 0;
-    left: 0;
+  text-align: center;
+  width: 100%;
+  height: 300px;
+  position: relative;
+  transition: transform 1500ms;
+  transform-style: preserve-3d;
+  top: 0;
+  left: 0;
 }
-    
+
 .front,
 .back {
-    width: 100%;
-    padding: 5px;
-    position: absolute;
-    backface-visibility: hidden;
+  width: 100%;
+  padding: 5px;
+  position: absolute;
+  backface-visibility: hidden;
 }
 
 .front {
-    z-index: 2;
+  z-index: 2;
 }
-    
+
 .back {
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .back h2 {
-    padding-bottom: 30px;
+  padding-bottom: 30px;
 }
 
 .front h2 {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .spinner {

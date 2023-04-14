@@ -1,9 +1,9 @@
 <template>
-  <TitleDiv title="Home"/>
+  <TitleDiv title="Home" />
 </template>
 
 <script>
-import TitleDiv from '../components/TitleDiv'
+import TitleDiv from '../components/TitleDiv';
 
 export default {
   name: 'HomeView',
@@ -11,7 +11,7 @@ export default {
     TitleDiv,
   },
   data() {
-    return {}
-  }
-}
+    return {};
+  },
+};
 </script>

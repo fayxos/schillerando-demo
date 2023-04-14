@@ -1,39 +1,38 @@
 <template>
   <div>
-    <NavBar/>
+    <NavBar />
     <router-view></router-view>
-    <SocialsFooter v-if="$route.meta.footer == null"/>
-    <ShoppingCard v-if="$route.meta.shoppingCard == null"/>
+    <SocialsFooter v-if="$route.meta.footer == null" />
+    <ShoppingCard v-if="$route.meta.shoppingCard == null" />
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar'
-import SocialsFooter from './components/SocialsFooter'
-import ShoppingCard from './components/ShoppingCard'
-import { useStore } from 'vuex'
+import NavBar from './components/NavBar';
+import SocialsFooter from './components/SocialsFooter';
+import ShoppingCard from './components/ShoppingCard';
+import { useStore } from 'vuex';
 
 export default {
   name: 'App',
   components: {
     NavBar,
     SocialsFooter,
-    ShoppingCard
+    ShoppingCard,
   },
   mounted() {
-    console.log('reload')
+    console.log('reload');
 
-    const store = useStore()
-    store.dispatch('reload')
-  }
-}
+    const store = useStore();
+    store.dispatch('reload');
+  },
+};
 </script>
 
 <style>
-
 body {
-  font-family: "Merriweather Sans",Arial,sans-serif;
-  text-align: center; 
+  font-family: 'Merriweather Sans', Arial, sans-serif;
+  text-align: center;
   font-weight: 500;
   scrollbar-gutter: stable;
 }
@@ -107,5 +106,4 @@ hr {
   background-color: white;
   color: #00a100;
 }
-
 </style>

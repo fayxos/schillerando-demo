@@ -10,10 +10,15 @@
           </div>
           <div class="card-body">
             <ul class="list-unstyled mt-3 mb-4">
-              <li class="info-text">Übersicht über alle Unternehmen, Angebote und Aktivitäten im Staat</li>
+              <li class="info-text">
+                Übersicht über alle Unternehmen, Angebote und Aktivitäten im
+                Staat
+              </li>
               <li class="info-text">Übersicht über alle Produkte</li>
               <li class="info-text">Preisvergleich</li>
-              <li class="info-text">Bestellung und schnelle Lieferung von Produkten</li>
+              <li class="info-text">
+                Bestellung und schnelle Lieferung von Produkten
+              </li>
             </ul>
             <!-- <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button> -->
           </div>
@@ -72,11 +77,9 @@ section {
   padding: 0 20px;
 }
 
-
 @media (max-device-width: 480px) {
-
   .info-text {
-      padding-bottom: 30px;
+    padding-bottom: 30px;
   }
 }
 </style>

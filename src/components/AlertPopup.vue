@@ -1,7 +1,11 @@
-
-
 <template>
-  <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertPopupLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="alertModal"
+    tabindex="-1"
+    aria-labelledby="alertPopupLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -11,7 +15,13 @@
           <p>{{ info }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Schließen
+          </button>
         </div>
       </div>
     </div>
@@ -24,12 +34,11 @@ export default {
   data() {
     return {
       show: false,
-    }
+    };
   },
   props: {
     title: String,
     info: String,
   },
-}
+};
 </script>
-

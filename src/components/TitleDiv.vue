@@ -11,8 +11,8 @@ export default {
   name: 'TitleDiv',
   props: {
     title: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -28,7 +28,6 @@ section {
 }
 
 @media (max-device-width: 480px) {
-
   section {
     padding: 100px 0 50px 0;
     background-color: #fff;
