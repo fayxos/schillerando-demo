@@ -30,8 +30,8 @@
                     @input="validateAccountChange(false)"
                     placeholder="Name"
                     :value="this.userData.user_metadata.name"
+                    :disabled="!isAccountEditing"
                     required
-                    disabled
                   />
 
                   <div class="invalid-feedback">
@@ -50,8 +50,8 @@
                     @input="validateAccountChange(false)"
                     placeholder="Email"
                     :value="this.userData.email"
+                    :disabled="!isAccountEditing"
                     required
-                    disabled
                   />
 
                   <div class="invalid-feedback">
@@ -180,8 +180,8 @@
                             placeholder="Name"
                             @input="validateCompanyChange(false)"
                             :value="companyData.name"
+                            :disabled="!isCompanyEditing"
                             required
-                            disabled
                           />
                         </div>
                         <div class="input-group mb-3">
@@ -195,8 +195,8 @@
                             placeholder="Raum, Pausenhof, ..."
                             @input="validateCompanyChange(false)"
                             :value="companyData.location"
+                            :disabled="!isCompanyEditing"
                             required
-                            disabled
                           />
                         </div>
 
@@ -210,7 +210,8 @@
                             aria-label="Default select example"
                             :value="companyData.category"
                             @change="validateCompanyChange(false)"
-                            disabled
+                            :disabled="!isCompanyEditing"
+                            required
                           >
                             <option selected>Kategorie</option>
                             <option value="1">Gastronomie</option>
@@ -238,7 +239,7 @@
                             cols="50"
                             @input="validateCompanyChange(false)"
                             :value="companyData.info"
-                            disabled
+                            :disabled="!isCompanyEditing"
                           ></textarea>
                         </div>
                       </form>
@@ -257,14 +258,7 @@
                         </button>
                       </div>
                       <div v-else style="display: flex">
-                        <div
-                          class="py-2 mx-0"
-                          style="
-                            display: inline;
-                            float: left;
-                            width: fit-content;
-                          "
-                        >
+                        <div class="py-2 mx-0 edit-buttons">
                           <button
                             type="button"
                             class="btn btn-primary px-2 mx-2"
@@ -281,14 +275,7 @@
                             </div>
                           </button>
                         </div>
-                        <div
-                          class="py-2 mx-0"
-                          style="
-                            display: inline;
-                            float: left;
-                            width: fit-content;
-                          "
-                        >
+                        <div class="py-2 mx-0 edit-buttons">
                           <button
                             type="button"
                             class="btn btn-warning px-2 mx-2"
@@ -336,10 +323,17 @@
                             placeholder="Email"
                             data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                             :value="employees[index]"
+                            :disabled="!isEmployeesEditing"
                             required
-                            disabled
                             @input="validateEmployeesChange(false, index)"
                           />
+                          <button
+                            v-if="isEmployeesEditing"
+                            class="input-group-text"
+                            @click="employees.splice(index, 1)"
+                          >
+                            <i class="fa fa-trash"></i>
+                          </button>
                         </div>
                       </div>
 
@@ -357,46 +351,43 @@
                             Bearbeiten
                           </button>
                         </div>
-                        <div v-else style="display: flex">
-                          <div
-                            class="py-2 mx-0"
-                            style="
-                              display: inline;
-                              float: left;
-                              width: fit-content;
-                            "
+                        <div v-else>
+                          <button
+                            type="button"
+                            v-if="this.employees.length < 6"
+                            @click="addEmployee()"
+                            class="btn btn-primary my-4"
+                            style="width: max-content; display: block"
                           >
-                            <button
-                              type="button"
-                              class="btn btn-primary px-2 mx-2"
-                              @click="validateEmployeesChange(true, 0)"
-                            >
-                              <div class="loading-button">Speichern</div>
-                              <div class="spinner">
-                                <span
-                                  class="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                ></span>
-                                <span class="sr-only">Loading...</span>
-                              </div>
-                            </button>
-                          </div>
-                          <div
-                            class="py-2 mx-0"
-                            style="
-                              display: inline;
-                              float: left;
-                              width: fit-content;
-                            "
-                          >
-                            <button
-                              type="button"
-                              class="btn btn-warning px-2 mx-2"
-                              @click="cancelEmployeesChange()"
-                            >
-                              Abbrechen
-                            </button>
+                            Mitarbeiter hinzufügen
+                          </button>
+                          <div style="display: flex">
+                            <div class="py-2 mx-0 edit-buttons">
+                              <button
+                                type="button"
+                                class="btn btn-primary px-2 mx-2"
+                                @click="validateEmployeesChange(true, 0)"
+                              >
+                                <div class="loading-button">Speichern</div>
+                                <div class="spinner">
+                                  <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                  ></span>
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                              </button>
+                            </div>
+                            <div class="py-2 mx-0 edit-buttons">
+                              <button
+                                type="button"
+                                class="btn btn-warning px-2 mx-2"
+                                @click="cancelEmployeesChange()"
+                              >
+                                Abbrechen
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -574,7 +565,10 @@ export default {
   },
   watch: {
     companyData: function () {
-      this.employees = this.companyData.employees;
+      const employees = this.companyData.employees;
+      employees.forEach((employee, index) => {
+        this.employees[index] = employee;
+      });
       this.loadProducts();
     },
     getState(newValue) {
@@ -660,6 +654,18 @@ export default {
         .update({ name: this.companyData.name })
         .eq('user_uid', this.userData.id);
       if (error != null) console.log('Error signing up', error);
+    },
+    addEmployee() {
+      var emailInputs = document.getElementsByClassName('employees-mail');
+      var index = 0;
+      Array.from(emailInputs).forEach((input) => {
+        this.employees[index] = input.value;
+        input.classList.remove('is-valid');
+        input.classList.remove('is-invalid');
+        index++;
+      });
+
+      this.employees.push('');
     },
     cancelChanges() {
       this.cancelCompanyChange();
@@ -900,8 +906,6 @@ export default {
         this.successAlertTitle = '';
         this.store.commit('setState', 'success');
 
-        nameInput.disabled = true;
-        mailInput.disabled = true;
         nameInput.classList.remove('is-valid');
         nameInput.classList.remove('is-invalid');
         mailInput.classList.remove('is-valid');
@@ -944,10 +948,6 @@ export default {
         this.successAlertTitle = '';
         this.store.commit('setState', 'success');
 
-        nameInput.disabled = true;
-        locationInput.disabled = true;
-        categoryInput.disabled = true;
-        descriptionInput.disabled = true;
         nameInput.classList.remove('is-valid');
         nameInput.classList.remove('is-invalid');
         locationInput.classList.remove('is-valid');
@@ -971,18 +971,30 @@ export default {
 
         var emailInputs = document.getElementsByClassName('employees-mail');
         Array.from(emailInputs).forEach((input) => {
-          employees.push(input.value);
-          input.disabled = true;
+          if (input.value != '') employees.push(input.value);
           input.classList.remove('is-valid');
           input.classList.remove('is-invalid');
         });
 
-        const { error } = await supabase
-          .from('companies')
-          .update({ employees: employees })
-          .eq('user_uid', this.userData.id);
+        if (
+          JSON.stringify(employees) !=
+          JSON.stringify(this.companyData.employees)
+        ) {
+          const { error } = await supabase
+            .from('companies')
+            .update({ employees: employees })
+            .eq('user_uid', this.userData.id);
 
-        if (error) throw error;
+          if (error) throw error;
+        }
+
+        this.isEmployeesEditing = false;
+        this.saveEmployeesPressed = false;
+
+        Array.from(emailInputs).forEach((input) => {
+          input.classList.remove('is-valid');
+          input.classList.remove('is-invalid');
+        });
       } catch (error) {
         this.failureAlertTitle = 'Fehler';
         this.failureAlertInfo =
@@ -1002,8 +1014,6 @@ export default {
       nameInput.value = this.userData.user_metadata.name;
       mailInput.value = this.userData.mail;
 
-      nameInput.disabled = true;
-      mailInput.disabled = true;
       nameInput.classList.remove('is-valid');
       nameInput.classList.remove('is-invalid');
       mailInput.classList.remove('is-valid');
@@ -1023,10 +1033,6 @@ export default {
       categoryInput.value = this.companyData.category;
       descriptionInput.value = this.companyData.info;
 
-      nameInput.disabled = true;
-      locationInput.disabled = true;
-      categoryInput.disabled = true;
-      descriptionInput.disabled = true;
       nameInput.classList.remove('is-valid');
       nameInput.classList.remove('is-invalid');
       locationInput.classList.remove('is-valid');
@@ -1040,11 +1046,16 @@ export default {
       this.isEmployeesEditing = false;
       this.saveEmployeesPressed = false;
 
+      this.employees = this.companyData.employees.filter(
+        (employee) => employee != ''
+      );
+
+      console.log(this.employees);
+
       var emailInputs = document.getElementsByClassName('employees-mail');
       var index = 0;
       Array.from(emailInputs).forEach((input) => {
         input.value = this.employees[index];
-        input.disabled = true;
         input.classList.remove('is-valid');
         input.classList.remove('is-invalid');
         index++;
@@ -1145,8 +1156,20 @@ export default {
   left: 3px;
 }
 
+.fa-trash {
+  position: relative;
+  left: 1px;
+  color: red;
+}
+
 .spinner {
   visibility: hidden;
   position: absolute;
+}
+
+.edit-buttons {
+  display: inline;
+  float: left;
+  width: fit-content;
 }
 </style>
