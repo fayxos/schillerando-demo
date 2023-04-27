@@ -26,7 +26,7 @@ export default {
     console.log(this.companies);
 
     this.companies.forEach((company) => {
-      switch (company.category) {
+      switch (company.categories[0]) {
         case '1':
           company.category = 'Gastronomie';
           break;

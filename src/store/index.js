@@ -208,21 +208,19 @@ const store = createStore({
         console.log(data);
         commit('setUserCompany', data[0]);
 
-        const companySubscription = supabase
-          .channel('any')
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'companies',
-              filter: 'id=eq.' + this.getters.getUserCompany.id,
-            },
-            (payload) => {
-              console.log('Database change received!', payload.new);
-              commit('setUserCompany', payload.new);
-            }
-          );
+        const companySubscription = supabase.channel('any').on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'companies',
+            filter: 'id=eq.' + this.getters.getUserCompany.id,
+          },
+          (payload) => {
+            console.log('Database change received!', payload.new);
+            commit('setUserCompany', payload.new);
+          }
+        );
 
         companySubscription.subscribe();
       } catch (error) {
@@ -246,7 +244,7 @@ const store = createStore({
         const { error } = await supabase.from('companies').insert({
           id: form.name.replace(/\s/g, '').toLowerCase(),
           name: form.name,
-          category: form.category,
+          categories: [form.category],
           location: form.location,
           info: form.description,
           user_uid: this.getters.getUser.id,

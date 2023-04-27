@@ -223,7 +223,7 @@
                             class="form-select"
                             id="company-category"
                             aria-label="Default select example"
-                            :value="companyData.category"
+                            :value="parseInt(companyData.categories[0])"
                             @change="validateCompanyChange(false)"
                             :disabled="!isCompanyEditing"
                             required
@@ -949,7 +949,7 @@ export default {
           .update({
             id: this.form.name.replace(/\s/g, '').toLowerCase(),
             name: this.form.name,
-            category: this.form.category,
+            categories: [this.form.category],
             location: this.form.location,
             info: this.form.description,
           })
@@ -1045,7 +1045,7 @@ export default {
 
       nameInput.value = this.companyData.name;
       locationInput.value = this.companyData.location;
-      categoryInput.value = this.companyData.category;
+      categoryInput.value = this.companyData.categories[0];
       descriptionInput.value = this.companyData.info;
 
       nameInput.classList.remove('is-valid');
