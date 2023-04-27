@@ -24,6 +24,26 @@ export default {
     if (error != null) console.log(error);
     this.companies = data;
     console.log(this.companies);
+
+    this.companies.forEach((company) => {
+      switch (company.category) {
+        case '1':
+          company.category = 'Gastronomie';
+          break;
+        case '2':
+          company.category = 'Kultur';
+          break;
+        case '3':
+          company.category = 'Dienstleistung';
+          break;
+        case '4':
+          company.category = 'Gastronomie & Deinstleistung';
+          break;
+        default:
+          company.category = 'Keine kategorie';
+          break;
+      }
+    });
   },
 };
 </script>

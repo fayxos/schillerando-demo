@@ -3,21 +3,18 @@
     <div class="col-1"></div>
     <div class="col-10 col-md-2">
       <input
-        class="form-control me-2"
+        class="form-control form-control-lg me-2"
         type="search"
-        placeholder="Search"
-        aria-label="Search"
+        placeholder="Suchen..."
+        aria-label="Suchen..."
         v-model="searchString"
       />
     </div>
   </div>
   <div class="sortable-list" ref="sortableList">
-    <component
-      :is="element"
-      v-for="ssItem in sortedShownItems"
-      :data="ssItem"
-      v-bind:key="ssItem.id"
-    ></component>
+    <div v-for="ssItem in sortedShownItems" v-bind:key="ssItem.id" class="item">
+      <component :is="element" :data="ssItem"></component>
+    </div>
   </div>
 </template>
 
@@ -134,4 +131,20 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.sortable-list {
+  margin: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.row {
+  padding-top: 0;
+  margin-top: 0;
+  margin: 0 20px;
+}
+
+.item {
+  margin: 0 10px 20px 10px;
+}
+</style>

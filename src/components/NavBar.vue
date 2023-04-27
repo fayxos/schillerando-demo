@@ -74,6 +74,10 @@ export default {
 </script>
 
 <style scoped>
+.navbar-toggler {
+  margin-right: 10px;
+}
+
 .indicator {
   position: absolute;
   bottom: 20px;
@@ -110,6 +114,10 @@ export default {
 
 .nav-item {
   padding: 0 18px;
+}
+
+.nav-link:hover {
+  color: #00a100;
 }
 
 .nav-link {

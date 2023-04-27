@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div translate="no">
     <NavBar />
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null" />
@@ -30,11 +30,18 @@ export default {
 </script>
 
 <style>
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Merriweather Sans', Arial, sans-serif;
   text-align: center;
   font-weight: 500;
-  scrollbar-gutter: stable;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 h1 {

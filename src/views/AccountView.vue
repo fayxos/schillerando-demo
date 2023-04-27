@@ -5,6 +5,7 @@
     <div class="container">
       <div class="row mb-0">
         <div class="col-md-4">
+          <!--
           <div class="card">
             <div class="row py-3">
               <div class="credit col-5 py-1">
@@ -15,6 +16,15 @@
               </div>
             </div>
           </div>
+          -->
+          <a href="http://localhost:8081/setup" class="btn pay-setup p-0 mt-2">
+            <!-- https://pay.schillerando.de/setup -->
+            <img
+              class="img-fluid"
+              src="@/assets/schillerpay_einrichten.png"
+              alt="Schillerpay einrichten"
+            />
+          </a>
 
           <div class="card">
             <div class="row py-3">
@@ -63,7 +73,12 @@
                 <button
                   type="button"
                   class="btn btn-primary px-2 mx-2"
-                  style="display: inline; float: left; width: fit-content"
+                  style="
+                    display: inline;
+                    float: left;
+                    width: fit-content;
+                    margin-bottom: 10px;
+                  "
                   @click="editAccount"
                 >
                   Bearbeiten
@@ -1171,5 +1186,18 @@ export default {
   display: inline;
   float: left;
   width: fit-content;
+}
+
+.pay-setup:hover {
+  transform: scale(1.02);
+}
+
+.pay-setup:active {
+  transform: scale(0.98);
+}
+
+.pay-setup {
+  border: none;
+  transition: all 0.2s ease-in-out;
 }
 </style>
