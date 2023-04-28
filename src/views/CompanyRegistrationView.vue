@@ -71,10 +71,12 @@
                         @change="validatePage(0, false)"
                       >
                         <option selected>Kategorie</option>
-                        <option value="1">Gastronomie</option>
-                        <option value="2">Kultur</option>
-                        <option value="3">Dienstleistung</option>
-                        <option value="4">Gastronomie & Dienstleistung</option>
+                        <option value="Gastronomie">Gastronomie</option>
+                        <option value="Kultur">Kultur</option>
+                        <option value="Dienstleistung">Dienstleistung</option>
+                        <option value="Gastronomie & Dienstleistung">
+                          Gastronomie & Dienstleistung
+                        </option>
                       </select>
                     </div>
 

@@ -23,11 +23,13 @@
           class="form-select form-select-md mb-3"
           aria-label=".form-select-lg example"
         >
-          <option selected>Kategorie</option>
-          <option value="1">Gastronomie</option>
-          <option value="2">Kultur</option>
-          <option value="3">Dienstleistung</option>
-          <option value="4">Gastronomie & Dienstleistung</option>
+          <option value="" selected>Kategorie</option>
+          <option value="Gastronomie">Gastronomie</option>
+          <option value="Kultur">Kultur</option>
+          <option value="Dienstleistung">Dienstleistung</option>
+          <option value="Gastronomie & Dienstleistung">
+            Gastronomie & Dienstleistung
+          </option>
         </select>
         <select
           v-else
@@ -36,11 +38,11 @@
           class="form-select form-select-md mb-3"
           aria-label=".form-select-lg example"
         >
-          <option selected>Kategorie</option>
-          <option value="1">Essen</option>
-          <option value="2">Trinken</option>
-          <option value="3">Gegenstand</option>
-          <option value="4">Dienstleistung</option>
+          <option value="" selected>Kategorie</option>
+          <option value="Essen">Essen</option>
+          <option value="Trinken">Trinken</option>
+          <option value="Gegenstand">Gegenstand</option>
+          <option value="Dienstleistung">Dienstleistung</option>
         </select>
         <select
           v-if="element == 'CompanyTile'"
@@ -49,10 +51,10 @@
           class="form-select form-select-right form-select-md mb-3"
           aria-label=".form-select-lg example"
         >
-          <option selected>Sortieren</option>
-          <option value="1">Relevanz</option>
-          <option value="2">Bewertung</option>
-          <option value="3">Name</option>
+          <option value="relevance" selected>Sortieren</option>
+          <option value="relevance">Relevanz</option>
+          <option value="review">Bewertung</option>
+          <option value="name">Name</option>
         </select>
         <select
           v-else
@@ -61,10 +63,10 @@
           class="form-select form-select-right form-select-md mb-3"
           aria-label=".form-select-lg example"
         >
-          <option selected>Sortieren</option>
-          <option value="1">Preis</option>
-          <option value="2">Bewertung</option>
-          <option value="3">Name</option>
+          <option value="relevance" selected>Sortieren</option>
+          <option value="price">Preis</option>
+          <option value="review">Bewertung</option>
+          <option value="name">Name</option>
         </select>
       </div>
     </div>
@@ -118,7 +120,10 @@ export default {
       let instances = 0;
       if (typeof object == 'object') {
         if (!(object instanceof Array)) {
-          object = Object.values(object);
+          let values = [];
+          let searchKeys = ['name', 'location', 'info'];
+          searchKeys.forEach((key) => values.push(object[key]));
+          object = values;
         }
         for (let i = 0; i < object.length; i++) {
           instances += this.searchForString(string, object[i]);
@@ -171,48 +176,24 @@ export default {
     companyCategoryChange() {
       const select = document.getElementById('companyCategory');
       const value = select.value;
-      if (value == 'Kategorie') this.chosenCategories = [];
+      if (value == '') this.chosenCategories = [];
       else this.chosenCategories = [value];
     },
     productCategoryChange() {
       const select = document.getElementById('productCategory');
       const value = select.value;
-      if (value == 'Kategorie') this.chosenCategories = [];
+      if (value == '') this.chosenCategories = [];
       else this.chosenCategories = [value];
     },
     companySortChange() {
       const select = document.getElementById('companySort');
       const value = select.value;
-      switch (value) {
-        case '1':
-          this.sortBy = 'relevance';
-          break;
-        case '2':
-          this.sortBy = 'review';
-          break;
-        case '3':
-          this.sortBy = 'name';
-          break;
-        default:
-          this.sortBy = 'relevance';
-      }
+      this.sortBy = value;
     },
     productSortChange() {
       const select = document.getElementById('productSort');
       const value = select.value;
-      switch (value) {
-        case '1':
-          this.sortBy = 'price';
-          break;
-        case '2':
-          this.sortBy = 'review';
-          break;
-        case '3':
-          this.sortBy = 'name';
-          break;
-        default:
-          this.sortBy = '';
-      }
+      this.sortBy = value;
     },
   },
   mounted() {
@@ -248,7 +229,7 @@ export default {
 .sortable-list {
   margin: 0 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .row {

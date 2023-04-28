@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="category">
-        {{ data.category }}
+        {{ data.categories[0] }}
       </div>
       <div class="row">
         <div class="col-9 location">
