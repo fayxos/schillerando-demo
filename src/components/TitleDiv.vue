@@ -17,19 +17,19 @@ export default {
 
 <style scoped>
 section {
-  padding: 80px 0;
+  padding: 40px 0 30px 0;
   background-color: #fff;
 }
 
 .title {
-  font-size: 5rem;
+  font-size: 4rem;
   color: #00a100;
   padding: 0 20px;
 }
 
 @media (max-device-width: 480px) {
   section {
-    padding: 20px 0 10px 0;
+    padding: 30px 0 20px 0;
     background-color: #fff;
   }
 

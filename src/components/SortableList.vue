@@ -1,6 +1,7 @@
 <template>
   <div class="row">
-    <div class="search-comp col-12">
+    <div class="col-md-3 col-xl-4"></div>
+    <div class="search-comp col-12 col-md-6 col-xl-4">
       <input
         class="search form-control form-control-lg me-2"
         type="search"
@@ -8,6 +9,11 @@
         aria-label="Suchen..."
         v-model="searchString"
       />
+    </div>
+    <div class="col-md-3 col-xl-4"></div>
+    <div class="col-md-3 col-xl-4"></div>
+
+    <div class="col-12 col-md-6 col-xl-4">
       <div class="settings">
         <button
           class="direction btn btn-outline-secondary"
@@ -148,9 +154,9 @@ export default {
             if (!item.categories.includes(this.chosenCategories[j]))
               matches = false;
             if (
-              item.categories == '4' &&
-              (this.chosenCategories[j] == '1' ||
-                this.chosenCategories[j] == '3')
+              item.categories[0] == 'Gastronomie & Dienstleistung' &&
+              (this.chosenCategories[j] == 'Gastronomie' ||
+                this.chosenCategories[j] == 'Dienstleistung')
             )
               matches = true;
           }
@@ -189,6 +195,7 @@ export default {
       const select = document.getElementById('companySort');
       const value = select.value;
       this.sortBy = value;
+      console.log(value);
     },
     productSortChange() {
       const select = document.getElementById('productSort');
@@ -261,13 +268,10 @@ export default {
 
 .settings {
   position: relative;
+  margin-bottom: 30px;
 }
 
 .search {
   margin-bottom: 5px;
-}
-
-.search-comp {
-  margin-bottom: 30px;
 }
 </style>

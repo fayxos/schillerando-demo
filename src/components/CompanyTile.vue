@@ -2,12 +2,12 @@
   <div class="sizing">
     <div class="card">
       <div class="image">
-        <div class="no-image"></div>
         <img
           v-if="data.name == 'Schillerando'"
           src="@/assets/logo_reversed_background.png"
           alt=""
         />
+        <div v-else-if="data.header_picture == null" class="no-image"></div>
         <img
           v-else
           src="https://upload.wikimedia.org/wikipedia/commons/3/3a/M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg"
