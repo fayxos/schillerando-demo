@@ -47,7 +47,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       footer: false,
-      shoppingCard: false,
+      ShoppingCart: false,
     },
   },
   {

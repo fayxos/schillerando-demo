@@ -549,9 +549,6 @@ export default {
     const userData = computed(() => store.state.user);
     const companyData = computed(() => store.state.userCompany);
     const isCompanyMode = computed(() => store.state.isCompanyMode);
-    const signOut = () => {
-      store.dispatch('signOutAction');
-    };
 
     const form = reactive({
       name: '',
@@ -571,7 +568,6 @@ export default {
     });
 
     return {
-      signOut,
       store,
       userData,
       companyData,
@@ -664,6 +660,11 @@ export default {
     },
     switchCompanyMode() {
       this.store.commit('setCompanyMode', !this.isCompanyMode);
+    },
+    signOut() {
+      this.successAlertTitle = '';
+      this.failureAlertTitle = '';
+      this.store.dispatch('signOutAction');
     },
     async saveChanges() {
       const { error } = await supabase

@@ -3,14 +3,14 @@
     <NavBar />
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null" />
-    <ShoppingCard v-if="$route.meta.shoppingCard == null" />
+    <ShoppingCart v-if="$route.meta.ShoppingCart == null" />
   </div>
 </template>
 
 <script>
 import NavBar from './components/NavBar';
 import SocialsFooter from './components/SocialsFooter';
-import ShoppingCard from './components/ShoppingCard';
+import ShoppingCart from './components/ShoppingCart';
 import { useStore } from 'vuex';
 
 export default {
@@ -18,7 +18,7 @@ export default {
   components: {
     NavBar,
     SocialsFooter,
-    ShoppingCard,
+    ShoppingCart,
   },
   mounted() {
     console.log('reload');
@@ -33,15 +33,13 @@ export default {
 html,
 body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   font-family: 'Merriweather Sans', Arial, sans-serif;
   text-align: center;
   font-weight: 500;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 h1 {

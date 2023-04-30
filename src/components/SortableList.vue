@@ -81,6 +81,7 @@
     <div v-for="ssItem in sortedShownItems" v-bind:key="ssItem.id" class="item">
       <component :is="element" :data="ssItem"></component>
     </div>
+    <div v-for="index in 2" :key="index" class="item"></div>
   </div>
 </template>
 
@@ -127,7 +128,10 @@ export default {
       if (typeof object == 'object') {
         if (!(object instanceof Array)) {
           let values = [];
-          let searchKeys = ['name', 'location', 'info'];
+          let searchKeys = [];
+          if (this.element == 'CompanyTile')
+            searchKeys = ['name', 'location', 'info'];
+          else searchKeys = ['name', 'company_name', 'info'];
           searchKeys.forEach((key) => values.push(object[key]));
           object = values;
         }
@@ -236,7 +240,7 @@ export default {
 .sortable-list {
   margin: 0 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
 }
 
 .row {

@@ -10,6 +10,7 @@ const store = createStore({
     userCompany: null,
     isCompanyMode: false,
     state: undefined,
+    shoppingCart: [],
   },
   mutations: {
     setUser(state, payload) {
@@ -24,6 +25,12 @@ const store = createStore({
     setState(state, payload) {
       state.state = payload;
     },
+    addProductToCart(state, payload) {
+      state.shoppingCart.push(payload);
+    },
+    removeProductToCart(state, payload) {
+      state.shoppingCart.filter((product) => product.id != payload.id);
+    },
   },
   getters: {
     getUser(state) {
@@ -37,6 +44,9 @@ const store = createStore({
     },
     getState(state) {
       return state.state;
+    },
+    getProductsInCart(state) {
+      return state.shoppingCart;
     },
   },
   actions: {

@@ -68,206 +68,208 @@
     </div>
 
     <!-- Log in -->
-    <div class="container">
-      <div class="row justify-content-center">
-        <div id="flipper" class="flipper col-md-8">
-          <div class="card-flipper">
-            <!-- Front -->
-            <div class="front">
-              <div class="card-group mb-0">
-                <div class="card p-4 pb-0" id="top-card">
-                  <div class="card-body">
-                    <h1>Login</h1>
-                    <p class="text-muted">Melde dich mit deinem Account an</p>
-                    <form class="needs-validation" novalidate>
-                      <div class="input-group mb-3">
-                        <span class="input-group-text"
-                          ><i class="fa fa-envelope"></i
-                        ></span>
-                        <input
-                          id="login-mail"
-                          type="email"
-                          class="form-control"
-                          placeholder="Email"
-                          @input="validateSignIn(false)"
-                          data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                          required
-                        />
+    <div class="cont">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div id="flipper" class="flipper col-md-8">
+            <div class="card-flipper">
+              <!-- Front -->
+              <div class="front">
+                <div class="card-group mb-0">
+                  <div class="card p-4 pb-0" id="top-card">
+                    <div class="card-body">
+                      <h1>Login</h1>
+                      <p class="text-muted">Melde dich mit deinem Account an</p>
+                      <form class="needs-validation" novalidate>
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"
+                            ><i class="fa fa-envelope"></i
+                          ></span>
+                          <input
+                            id="login-mail"
+                            type="email"
+                            class="form-control"
+                            placeholder="Email"
+                            @input="validateSignIn(false)"
+                            data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                            required
+                          />
 
-                        <div class="invalid-feedback">
-                          Bitte gebe eine gültige Email an
+                          <div class="invalid-feedback">
+                            Bitte gebe eine gültige Email an
+                          </div>
                         </div>
-                      </div>
-                      <div class="input-group mb-3" id="login-passwd-group">
-                        <span class="input-group-text"
-                          ><i class="fa fa-lock"></i
-                        ></span>
-                        <input
-                          id="login-passwd"
-                          type="password"
-                          class="form-control"
-                          @input="validateSignIn(false)"
-                          placeholder="Password"
-                          required
-                        />
+                        <div class="input-group mb-3" id="login-passwd-group">
+                          <span class="input-group-text"
+                            ><i class="fa fa-lock"></i
+                          ></span>
+                          <input
+                            id="login-passwd"
+                            type="password"
+                            class="form-control"
+                            @input="validateSignIn(false)"
+                            placeholder="Password"
+                            required
+                          />
 
-                        <div class="invalid-feedback">
-                          Bitte gebe ein gültiges Passwort an
+                          <div class="invalid-feedback">
+                            Bitte gebe ein gültiges Passwort an
+                          </div>
                         </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-5">
-                          <button
-                            type="button"
-                            @click="validateSignIn(true)"
-                            class="btn btn-primary px-4"
-                            value="validate"
-                          >
-                            <div class="loading-button">Login</div>
-                            <div class="spinner">
-                              <span
-                                class="spinner-border spinner-border-sm"
-                                role="status"
-                                aria-hidden="true"
-                              ></span>
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                          </button>
+                        <div class="row">
+                          <div class="col-5">
+                            <button
+                              type="button"
+                              @click="validateSignIn(true)"
+                              class="btn btn-primary px-4"
+                              value="validate"
+                            >
+                              <div class="loading-button">Login</div>
+                              <div class="spinner">
+                                <span
+                                  class="spinner-border spinner-border-sm"
+                                  role="status"
+                                  aria-hidden="true"
+                                ></span>
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </button>
+                          </div>
+                          <div class="col-7 text-right">
+                            <button
+                              type="button"
+                              class="btn btn-link px-0"
+                              data-bs-toggle="modal"
+                              data-bs-target="#resetPasswordPopup"
+                            >
+                              Passwort vergessen?
+                            </button>
+                          </div>
                         </div>
-                        <div class="col-7 text-right">
-                          <button
-                            type="button"
-                            class="btn btn-link px-0"
-                            data-bs-toggle="modal"
-                            data-bs-target="#resetPasswordPopup"
-                          >
-                            Passwort vergessen?
-                          </button>
-                        </div>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
-                </div>
-                <div class="card text-white py-5 d-md-down-none bg">
-                  <div class="card-body text-center">
-                    <div>
-                      <h2>Sign up</h2>
-                      <p>
-                        Du hast noch keinen Account? Dann registriere dich jetzt
-                        um Bestellungen zu tätigen oder dein Unternehmen
-                        anzumelden!
-                      </p>
-                      <button
-                        type="button"
-                        @click="flipCard"
-                        class="btn bg-sec mt-3 register"
-                      >
-                        Registrieren
-                      </button>
+                  <div class="card text-white py-5 d-md-down-none bg">
+                    <div class="card-body text-center">
+                      <div>
+                        <h2>Sign up</h2>
+                        <p>
+                          Du hast noch keinen Account? Dann registriere dich
+                          jetzt um Bestellungen zu tätigen oder dein Unternehmen
+                          anzumelden!
+                        </p>
+                        <button
+                          type="button"
+                          @click="flipCard"
+                          class="btn bg-sec mt-3 register"
+                        >
+                          Registrieren
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Back -->
-            <div class="back">
-              <div class="card-group mb-0">
-                <div class="card p-4 pb-0">
-                  <div class="card-body">
-                    <h1>Sign up</h1>
-                    <p class="text-muted">Erstelle einen neuen Account</p>
+              <!-- Back -->
+              <div class="back">
+                <div class="card-group mb-0">
+                  <div class="card p-4 pb-0">
+                    <div class="card-body">
+                      <h1>Sign up</h1>
+                      <p class="text-muted">Erstelle einen neuen Account</p>
 
-                    <form class="needs-validation" novalidate>
-                      <div class="input-group mb-3">
-                        <span class="input-group-text"
-                          ><i class="fa fa-user"></i
-                        ></span>
-                        <input
-                          type="text"
-                          id="signup-name"
-                          class="form-control"
-                          @input="validateSignUp(false)"
-                          placeholder="Name"
-                          required
-                        />
+                      <form class="needs-validation" novalidate>
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"
+                            ><i class="fa fa-user"></i
+                          ></span>
+                          <input
+                            type="text"
+                            id="signup-name"
+                            class="form-control"
+                            @input="validateSignUp(false)"
+                            placeholder="Name"
+                            required
+                          />
 
-                        <div class="invalid-feedback">
-                          Bitte gib deinen Vor- und Nachnamen an
+                          <div class="invalid-feedback">
+                            Bitte gib deinen Vor- und Nachnamen an
+                          </div>
                         </div>
-                      </div>
-                      <div class="input-group mb-3">
-                        <span class="input-group-text"
-                          ><i class="fa fa-envelope"></i
-                        ></span>
-                        <input
-                          type="email"
-                          id="signup-mail"
-                          class="form-control"
-                          data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                          @input="validateSignUp(false)"
-                          placeholder="Email"
-                          required
-                        />
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"
+                            ><i class="fa fa-envelope"></i
+                          ></span>
+                          <input
+                            type="email"
+                            id="signup-mail"
+                            class="form-control"
+                            data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                            @input="validateSignUp(false)"
+                            placeholder="Email"
+                            required
+                          />
 
-                        <div class="invalid-feedback">
-                          Bitte gib eine gültige Email an
+                          <div class="invalid-feedback">
+                            Bitte gib eine gültige Email an
+                          </div>
                         </div>
-                      </div>
-                      <div class="input-group mb-3">
-                        <span class="input-group-text"
-                          ><i class="fa fa-lock"></i
-                        ></span>
-                        <input
-                          type="password"
-                          id="signup-passwd"
-                          class="form-control"
-                          @input="validateSignUp(false)"
-                          placeholder="Password"
-                          required
-                        />
+                        <div class="input-group mb-3">
+                          <span class="input-group-text"
+                            ><i class="fa fa-lock"></i
+                          ></span>
+                          <input
+                            type="password"
+                            id="signup-passwd"
+                            class="form-control"
+                            @input="validateSignUp(false)"
+                            placeholder="Password"
+                            required
+                          />
 
-                        <div class="invalid-feedback">
-                          Dass Passwort muss mind. 6 Zeichen lang sein
+                          <div class="invalid-feedback">
+                            Dass Passwort muss mind. 6 Zeichen lang sein
+                          </div>
                         </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-12">
-                          <button
-                            type="button"
-                            @click="validateSignUp(true)"
-                            class="btn btn-primary px-4"
-                          >
-                            <div class="loading-button">Registrieren</div>
-                            <div class="spinner">
-                              <span
-                                class="spinner-border spinner-border-sm"
-                                role="status"
-                                aria-hidden="true"
-                              ></span>
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                          </button>
+                        <div class="row">
+                          <div class="col-12">
+                            <button
+                              type="button"
+                              @click="validateSignUp(true)"
+                              class="btn btn-primary px-4"
+                            >
+                              <div class="loading-button">Registrieren</div>
+                              <div class="spinner">
+                                <span
+                                  class="spinner-border spinner-border-sm"
+                                  role="status"
+                                  aria-hidden="true"
+                                ></span>
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
-                </div>
-                <div class="card text-white py-5 d-md-down-none bg">
-                  <div class="card-body text-center">
-                    <div>
-                      <h2>Log in</h2>
-                      <p>
-                        Du hast schon einen Account? Dann melde dich mit deiner
-                        Email und deinem Passwort an!
-                      </p>
-                      <button
-                        type="submit"
-                        @click="flipCard"
-                        class="btn bg-sec mt-3 register"
-                      >
-                        Log in
-                      </button>
+                  <div class="card text-white py-5 d-md-down-none bg">
+                    <div class="card-body text-center">
+                      <div>
+                        <h2>Log in</h2>
+                        <p>
+                          Du hast schon einen Account? Dann melde dich mit
+                          deiner Email und deinem Passwort an!
+                        </p>
+                        <button
+                          type="submit"
+                          @click="flipCard"
+                          class="btn bg-sec mt-3 register"
+                        >
+                          Log in
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -625,6 +627,7 @@ export default {
   transform: translate(-50%, -50%);
 }
 
+/* ERROR */
 @media (max-width: 576px) {
   .container {
     position: relative;
