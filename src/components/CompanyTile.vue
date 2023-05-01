@@ -7,7 +7,9 @@
           src="@/assets/logo_reversed_background.png"
           alt=""
         />
-        <div v-else-if="data.header_picture == null" class="no-image"></div>
+        <div v-else-if="data.header_picture == null" class="no-image">
+          <i class="fa-solid fa-image fa-2xl"></i>
+        </div>
         <img
           v-else
           src="https://upload.wikimedia.org/wikipedia/commons/3/3a/M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg"
@@ -128,5 +130,12 @@ img {
 .company-badge {
   float: right;
   margin-right: 5px;
+}
+
+.fa-image {
+  position: absolute;
+  font-size: 6rem;
+  top: 50%;
+  left: calc(50% - 3rem);
 }
 </style>
