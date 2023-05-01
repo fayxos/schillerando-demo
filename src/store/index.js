@@ -7,20 +7,12 @@ const store = createStore({
   state: {
     user: null,
     session: null,
-    userCompany: null,
-    isCompanyMode: false,
     state: undefined,
     shoppingCart: [],
   },
   mutations: {
     setUser(state, payload) {
       state.user = payload;
-    },
-    setUserCompany(state, payload) {
-      state.userCompany = payload;
-    },
-    setCompanyMode(state, payload) {
-      state.isCompanyMode = payload;
     },
     setState(state, payload) {
       state.state = payload;
@@ -35,12 +27,6 @@ const store = createStore({
   getters: {
     getUser(state) {
       return state.user;
-    },
-    getUserCompany(state) {
-      return state.userCompany;
-    },
-    getCompanyMode(state) {
-      return state.isCompanyMode;
     },
     getState(state) {
       return state.state;
@@ -62,7 +48,7 @@ const store = createStore({
 
         this.dispatch('updateMissingMetadata');
 
-        this.dispatch('startUserCompanySubscription');
+        this.dispatch('checkUserCompany');
       }
     },
     async updateMissingMetadata({ commit }) {
@@ -90,7 +76,7 @@ const store = createStore({
         if (error) throw error;
         console.log('Successfully signed in');
         commit('setUser', data.user);
-        this.dispatch('startUserCompanySubscription');
+        this.dispatch('checkUserCompany');
 
         commit('setState', 'success');
 
@@ -133,6 +119,8 @@ const store = createStore({
 
         commit('setState', 'success');
 
+        this.dispatch('checkUserCompany');
+
         if (path == null) await router.replace('/account');
         else await router.replace(path);
       } catch (error) {
@@ -149,7 +137,6 @@ const store = createStore({
         if (error) throw error;
         commit('setUser', null);
         console.log('Logged Out successfully');
-        this.dispatch('stopUserCompanySubscription');
 
         commit('setState', 'success');
 
@@ -196,7 +183,7 @@ const store = createStore({
       }
     },
 
-    async startUserCompanySubscription({ commit }) {
+    async checkUserCompany({ commit }) {
       try {
         const { data, error } = await supabase
           .from('companies')
@@ -212,100 +199,14 @@ const store = createStore({
 
         if (error) throw error;
 
-        commit('setUserCompany', null);
+        let user = this.getters.getUser;
+        user.hasCompany = false;
+        commit('setUser', user);
         if (data[0] == null) return;
 
-        console.log(data);
-        commit('setUserCompany', data[0]);
-
-        const companySubscription = supabase.channel('any').on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'companies',
-            filter: 'id=eq.' + this.getters.getUserCompany.id,
-          },
-          (payload) => {
-            console.log('Database change received!', payload.new);
-            commit('setUserCompany', payload.new);
-          }
-        );
-
-        companySubscription.subscribe();
+        user.hasCompany = true;
+        commit('setUser', user);
       } catch (error) {
-        console.log(error.error_description || error.message);
-      }
-    },
-
-    async stopUserCompanySubscription({ commit }) {
-      try {
-        await supabase.removeAllChannels();
-        commit('setUserCompanySubscription', null);
-      } catch (error) {
-        console.log(error.error_description || error.message);
-      }
-    },
-
-    async createCompany({ commit }, form) {
-      try {
-        commit('setState', 'loading');
-
-        const { error } = await supabase.from('companies').insert({
-          id: form.name.replace(/\s/g, '').toLowerCase(),
-          name: form.name,
-          categories: [form.category],
-          location: form.location,
-          info: form.description,
-          user_uid: this.getters.getUser.id,
-          employees: form.employees,
-          abo: form.abo,
-        });
-
-        const { data, error3 } = await supabase.auth.updateUser({
-          data: { isCompanyLeader: true },
-        });
-        commit('setUser', data.user);
-
-        if (error3) throw error3;
-        if (error) throw error;
-
-        const productIDs = [];
-
-        for (var i = 0; i < form.products.length; i++) {
-          const product = form.products[i];
-
-          const { data, error } = await supabase
-            .from('products')
-            .insert({
-              name: product.name,
-              info: product.description,
-              price: product.price,
-              categories: product.categories,
-              company_id: form.name.replace(/\s/g, '').toLowerCase(),
-              auth_uid: this.getters.getUser.id,
-            })
-            .select();
-
-          if (error) throw error;
-
-          productIDs.push(data[0].id);
-        }
-
-        const { error2 } = await supabase
-          .from('companies')
-          .update({ products: productIDs })
-          .eq('id', form.name.replace(/\s/g, '').toLowerCase());
-
-        if (error2) throw error2;
-
-        console.log('Successfully registered');
-
-        commit('setState', 'success');
-
-        this.dispatch('startUserCompanySubscription');
-      } catch (error) {
-        commit('setState', 'failure');
         console.log(error.error_description || error.message);
       }
     },
