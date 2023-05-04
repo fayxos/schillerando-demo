@@ -53,7 +53,7 @@
         :left="false"
         :forCompanies="true"
         image="accounting.png"
-        title="Buchhaltung"
+        title="Buchhaltung*"
         text="Habe immer alle Einnahmen und Ausgaben deines Unternehmens im Blick."
         link="https://business.schillerando.de"
         linkTitle="Buchhaltung"
@@ -68,6 +68,23 @@
         linkTitle="Services"
       ></FeatureTile>
     </div>
+
+    <p
+      style="
+        font-size: 0.9rem;
+        margin-bottom: 40px;
+        padding: 10px;
+        color: #111111;
+      "
+    >
+      * Nach §9 des Wirtschaftsgesetzes ist jedes Unternehmen dazu verpflichtet
+      über seine Finanzen (Lohnausgaben, Umsätze, Ausgaben für Warenbeschaffung
+      und Miete) Buch zu führen. Mit der
+      <span style="font-weight: 700; color: #000000"
+        >Schillerando Buchhaltungssoftware</span
+      >
+      geht das unkompliziert und übersichtlich.
+    </p>
   </section>
 </template>
 
