@@ -78,8 +78,8 @@
     </div>
   </div>
   <div class="sortable-list" ref="sortableList">
-    <div v-for="ssItem in sortedShownItems" v-bind:key="ssItem.id" class="item">
-      <component :is="element" :data="ssItem"></component>
+    <div v-for="ssItem in sortedShownItems" v-bind:key="ssItem.id">
+      <component :is="element" :data="ssItem" class="item"></component>
     </div>
     <div v-for="index in 2" :key="index" class="item"></div>
   </div>

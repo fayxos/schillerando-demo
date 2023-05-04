@@ -63,7 +63,7 @@
         :forCompanies="true"
         image="service.png"
         title="Services"
-        text="Lasse dir vor und während Schule als Staat Ware für dein Unternehmen aus dem Ausland liefern, deinen Müll entsorgen und weiteres."
+        text="Lasse dir vor und während Schule als Staat Ware für dein Unternehmen aus dem Ausland liefern, deinen Müll entsorgen und vieles mehr."
         link="https://business.schillerando.de/service"
         linkTitle="Services"
       ></FeatureTile>

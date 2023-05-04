@@ -18,6 +18,7 @@
       <p class="price">{{ data.price }} $</p>
 
       <button
+        v-if="data.delivery"
         class="btn btn-primary"
         @click="addProductToCart"
         type="button"

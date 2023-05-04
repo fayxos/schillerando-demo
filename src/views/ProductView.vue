@@ -34,7 +34,10 @@ export default {
     };
   },
   async created() {
-    const { data, error } = await supabase.from('products').select();
+    const { data, error } = await supabase
+      .from('products')
+      .select()
+      .eq('public', true);
     if (error != null) console.log(error);
     this.products = data;
 
