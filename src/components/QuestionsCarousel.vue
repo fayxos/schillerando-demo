@@ -28,13 +28,26 @@
             </div>
             <div class="question carousel-item" data-bs-interval="4000">
               <h3 class="question-text">
-                Du bist Arbeitslos und willst schnelles Geld verdienen?
+                Du willst einen Überblick über die Einnahmen und Ausgaben deines
+                Unternehmens behalten?
               </h3>
             </div>
             <div class="question carousel-item" data-bs-interval="4000">
               <h3 class="question-text">
-                Du willst einen flexiblen Job ohne feste Arbeitszeiten und
-                tristes Rumsitzen?
+                Deine Waren gehen mitten am Tag aus und du kannst keine neuen
+                besorgen?
+              </h3>
+            </div>
+            <div class="question carousel-item" data-bs-interval="4000">
+              <h3 class="question-text">
+                Du willst zeigen, dass dein Unternehmen die besten und
+                günstigsten Produkte verkauft?
+              </h3>
+            </div>
+            <div class="question carousel-item" data-bs-interval="4000">
+              <h3 class="question-text">
+                Du hast keine Zeit oder Transportmöglichkeit um Waren für dein
+                Unternehmen einzukaufen?
               </h3>
             </div>
           </div>
@@ -52,15 +65,25 @@ section {
   padding: 40px 0 50px 0;
 }
 
-.question {
-  color: white;
-}
-
 .answer {
   color: #00a100;
   background-color: #fff;
   width: fit-content;
   margin: 30px auto;
   padding: 5px 5px 2px 5px;
+}
+
+@media (max-width: 576px) {
+  section {
+    padding: 10px 0 20px 0;
+  }
+
+  .answer {
+    margin-top: 10px;
+  }
+}
+
+.question {
+  color: white;
 }
 </style>

@@ -83,6 +83,13 @@
     </div>
     <div v-for="index in 2" :key="index" class="item"></div>
   </div>
+
+  <div v-if="shownItems.length == 0" style="margin-bottom: 50px">
+    <h4 v-if="element == 'CompanyTile'">
+      Es wurden keine Unternehmen gefunden
+    </h4>
+    <h4 v-else>Es wurden keine Produkte gefunden</h4>
+  </div>
 </template>
 
 <script>

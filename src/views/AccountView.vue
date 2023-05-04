@@ -17,7 +17,11 @@
             </div>
           </div>
           -->
-          <a href="http://localhost:8081/setup" class="btn pay-setup p-0 mt-2">
+          <a
+            v-if="false"
+            href="http://localhost:8081/setup"
+            class="btn pay-setup p-0 mt-2"
+          >
             <!-- https://pay.schillerando.de/setup -->
             <img
               class="img-fluid"
@@ -155,11 +159,17 @@
           <div class="card">
             <div class="card-header">Bestellungen</div>
             <div class="card-body">
-              <p v-if="this.orders.length == 0">
-                Hier siehst du alle deine getätigten Bestellungen
+              <p v-if="true">
+                Hier siehst du später alle deine getätigten Bestellungen.
+                Bestellungen sind erst ab dem 23.20.2023 möglich.
               </p>
 
-              <div class="order" v-for="order in this.orders" :key="order">
+              <div
+                v-else
+                class="order"
+                v-for="order in this.orders"
+                :key="order"
+              >
                 <div class="card d-flex">
                   <div class="product-count" v-if="order.products != null">
                     {{ order.products.length }}

@@ -2,19 +2,11 @@
   <div class="sizing">
     <div class="card">
       <div class="image">
-        <img
-          v-if="data.name == 'Schillerando'"
-          src="@/assets/logo_reversed_background.png"
-          alt=""
-        />
-        <div v-else-if="data.header_picture == null" class="no-image">
+        <div v-if="this.data.image == null" class="no-image">
           <i class="fa-solid fa-image fa-2xl"></i>
+          {{ this.data.image }}
         </div>
-        <img
-          v-else
-          src="https://upload.wikimedia.org/wikipedia/commons/3/3a/M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg"
-          alt=""
-        />
+        <img v-else :src="this.image" alt="" />
       </div>
       <div class="row">
         <h2 class="col-9 name">
@@ -24,6 +16,7 @@
           <CompanyBadge
             :verified="data.verified"
             :premium="data.abo == 'Premium'"
+            :self="data.id == 'schillerando'"
             class="company-badge"
           />
         </div>
@@ -48,6 +41,21 @@ export default {
   name: 'CompanyTile',
   props: ['data'],
   components: { CompanyBadge },
+  data() {
+    return {
+      image: null,
+    };
+  },
+  mounted() {
+    if (this.data.image != null) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        this.image = e.target.result;
+        console.log(this.image);
+      };
+      reader.readAsDataURL(this.data.image);
+    }
+  },
 };
 </script>
 

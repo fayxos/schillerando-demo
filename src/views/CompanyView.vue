@@ -1,6 +1,14 @@
 <template>
   <TitleDiv title="Unternehmen" />
   <SortableList :items="companies" element="CompanyTile" />
+  <div
+    v-if="loading"
+    class="spinner-border"
+    style="width: 4rem; height: 4rem; border-width: 7px"
+    role="status"
+  >
+    <span class="visually-hidden">Loading...</span>
+  </div>
 </template>
 
 <script>
@@ -17,13 +25,31 @@ export default {
   data() {
     return {
       companies: [],
+      loading: true,
     };
   },
   async created() {
     const { data, error } = await supabase.from('companies').select();
     if (error != null) console.log(error);
     this.companies = data;
-    console.log(this.companies);
+
+    this.companies.forEach(async (company) => {
+      if (company.header_picture != null) {
+        const { data } = await supabase.storage
+          .from('sellers-headings')
+          .download(company.header_picture);
+
+        company.image = data;
+      } else company.image = null;
+    });
+
+    this.loading = false;
   },
 };
 </script>
+
+<style>
+.spinner-border {
+  color: #00a100;
+}
+</style>

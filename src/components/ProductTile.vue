@@ -1,8 +1,11 @@
 <template>
   <div class="card">
     <div class="image">
-      <div v-if="data.product_picture == null" class="no-image"></div>
-      <img v-else src="@/assets/cola.png" alt="" />
+      <div v-if="this.data.image == null" class="no-image">
+        <i class="fa-solid fa-image fa-2xl"></i>
+        {{ this.data.image }}
+      </div>
+      <img v-else :src="this.image" alt="" />
     </div>
     <div class="info">
       <div>
@@ -14,7 +17,12 @@
 
       <p class="price">{{ data.price }} $</p>
 
-      <button class="btn btn-primary" @click="addProductToCart">
+      <button
+        class="btn btn-primary"
+        @click="addProductToCart"
+        type="button"
+        disabled
+      >
         <i class="fa-solid fa-cart-plus fa-lg"></i>
       </button>
     </div>
@@ -129,6 +137,18 @@ img {
   top: 0;
   left: 0;
   object-fit: scale-down;
+}
+
+.btn:disabled {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.fa-image {
+  position: absolute;
+  font-size: 4rem;
+  top: 50%;
+  left: calc(50% - 2rem);
 }
 
 /*   border-radius: 0.375rem 0 0 0.375rem; */

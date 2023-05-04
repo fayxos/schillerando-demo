@@ -7,7 +7,9 @@
     data-bs-trigger="focus"
     data-bs-placement="left"
     :data-bs-content="[
-      premium
+      self
+        ? 'Das sind wir!'
+        : premium
         ? 'Schillerando Premium-Partner'
         : 'Verifizierter Schillerando-Partner',
     ]"
@@ -15,9 +17,10 @@
     <div class="container_row">
       <i
         class="layer1 fa-solid fa-certificate fa-xl"
-        :style="{ color: [premium ? '#f6b600' : '#3798f0'] }"
+        :style="{ color: [self ? '#00a100' : premium ? '#f6b600' : '#3798f0'] }"
       ></i>
-      <i v-if="premium" class="layer2 fa-solid fa-crown fa-xs"></i>
+      <i v-if="self" class="layer2 fa-solid fa-house fa-xs"></i>
+      <i v-else-if="premium" class="layer2 fa-solid fa-crown fa-xs"></i>
       <i v-else class="layer2 fa-solid fa-check fa-sm"></i>
     </div>
   </a>
@@ -31,6 +34,7 @@ export default {
   props: {
     verified: Boolean,
     premium: Boolean,
+    self: Boolean,
   },
   mounted() {
     Array.from(
@@ -56,5 +60,10 @@ export default {
 
 .layer2 {
   color: #ffffff;
+}
+
+.fa-house {
+  position: relative;
+  bottom: 1px;
 }
 </style>
