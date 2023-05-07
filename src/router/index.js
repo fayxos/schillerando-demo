@@ -5,6 +5,7 @@ import CompanyView from '../views/CompanyView';
 import AccountView from '../views/AccountView';
 import AuthView from '../views/AuthView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
+import AGBView from '../views/AGBView';
 import store from '../store/index';
 
 const routes = [
@@ -46,6 +47,11 @@ const routes = [
     meta: {
       footer: false,
     },
+  },
+  {
+    path: '/agb',
+    name: 'AGBView',
+    component: AGBView,
   },
   {
     path: '/qr1',
