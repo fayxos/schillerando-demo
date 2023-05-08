@@ -29,7 +29,10 @@ export default {
     };
   },
   async created() {
-    const { data, error } = await supabase.from('companies').select();
+    const { data, error } = await supabase
+      .from('companies')
+      .select()
+      .neq('abo', null);
     if (error != null) console.log(error);
     this.companies = data;
 

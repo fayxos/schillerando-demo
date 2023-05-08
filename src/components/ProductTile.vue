@@ -12,7 +12,7 @@
         <p class="name">{{ data.name }}</p>
       </div>
       <div>
-        <p class="company_name">{{ data.company_name }}</p>
+        <p class="company_name">{{ data.company.name }}</p>
       </div>
 
       <p class="price">{{ data.price }} $</p>

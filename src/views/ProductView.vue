@@ -36,20 +36,17 @@ export default {
   async created() {
     const { data, error } = await supabase
       .from('products')
-      .select()
+      .select(`*, company:companies(name, abo)`)
       .eq('public', true);
+
     if (error != null) console.log(error);
-    this.products = data;
 
-    this.products.forEach(async (product) => {
-      const { data, error } = await supabase
-        .from('companies')
-        .select('name')
-        .eq('id', product.company_id);
-
-      if (error != null) console.log(error);
-      if (data[0] != null) product.company_name = data[0].name;
+    var filtered = [];
+    data.forEach((product) => {
+      if (product.company.abo != null) filtered.push(product);
     });
+
+    this.products = filtered;
 
     this.loading = false;
   },
