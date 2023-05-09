@@ -4,6 +4,17 @@
 
     <div class="container">
       <div class="row mb-0">
+        <div class="col-12">
+          <div
+            v-if="userData.email_confirmed_at == null"
+            class="alert alert-warning"
+            role="alert"
+          >
+            Bestätige deine Email um Bestellungen zu tätigen oder dein
+            Unternehmen zu Registrieren!
+          </div>
+        </div>
+
         <div class="col-md-4">
           <!--
           <div class="card">
@@ -139,6 +150,7 @@
             <button
               @click="$router.push('/companyRegistration')"
               class="btn bg-sec register"
+              :disabled="userData.email_confirmed_at == null"
             >
               Unternehmen Registrieren
             </button>
@@ -161,7 +173,7 @@
             <div class="card-body">
               <p v-if="true">
                 Hier siehst du später alle deine getätigten Bestellungen.
-                Bestellungen sind erst ab dem 23.20.2023 möglich.
+                Bestellungen sind erst ab dem 23.10.2023 möglich.
               </p>
 
               <div

@@ -32,6 +32,7 @@ export default {
     const { data, error } = await supabase
       .from('companies')
       .select()
+      .eq('verified', true)
       .neq('abo', null);
     if (error != null) console.log(error);
     this.companies = data;
