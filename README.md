@@ -22,3 +22,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+## Depolyment
+- CNAME file is needed
+- copy the contents of index.html to 404.html for vuex-router
