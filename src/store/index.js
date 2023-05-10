@@ -47,7 +47,6 @@ const store = createStore({
         commit('setUser', data.user);
 
         this.dispatch('updateMissingMetadata');
-
         this.dispatch('checkUserCompany');
       }
     },
@@ -81,7 +80,11 @@ const store = createStore({
         commit('setState', 'success');
 
         if (path == null) await router.replace('/account');
-        else await router.replace(path);
+        else if (path.split('_')[0] == 'ext') {
+          window.location.replace(
+            'http://localhost:8081' + path.split('_')[1] + '?ext=true'
+          );
+        } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
