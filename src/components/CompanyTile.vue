@@ -2,11 +2,14 @@
   <div class="sizing">
     <div class="card">
       <div class="image">
-        <div v-if="this.data.image == null" class="no-image">
+        <div v-if="this.picture == null" class="no-image">
           <i class="fa-solid fa-image fa-2xl"></i>
-          {{ this.data.image }}
         </div>
-        <img v-else :src="this.image" alt="" />
+        <img
+          v-else
+          :src="picture"
+          alt=""
+        />
       </div>
       <div class="row">
         <h2 class="col-9 name">
@@ -16,7 +19,6 @@
           <CompanyBadge
             :verified="data.verified"
             :premium="data.abo == 'Premium'"
-            :self="data.id == 'schillerando'"
             class="company-badge"
           />
         </div>
@@ -36,26 +38,24 @@
 
 <script>
 import CompanyBadge from './CompanyBadge.vue';
+import { supabase } from '../supabase';
 
 export default {
   name: 'CompanyTile',
   props: ['data'],
-  components: { CompanyBadge },
   data() {
     return {
-      image: null,
-    };
-  },
-  mounted() {
-    if (this.data.image != null) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        this.image = e.target.result;
-        console.log(this.image);
-      };
-      reader.readAsDataURL(this.data.image);
+      picture: null
     }
   },
+  components: { CompanyBadge },
+  async mounted() {
+    if(this.data.header_picture != null) {
+      const response = await supabase.storage.from('public/sellers-headings').download(this.data.header_picture)
+      if(response.data != null)this.picture = await response.data.text()
+      if(response.error) console.warn(response.error)
+    }
+  }
 };
 </script>
 
