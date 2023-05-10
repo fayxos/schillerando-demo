@@ -109,6 +109,7 @@ export default {
       sortedShownItems: [],
       sortBy: this.element == 'CompanyTile' ? 'relevance' : '', //empty string if no sort is needed
       dir: 'up', //or 'down'
+      directLinks: [],
     };
   },
   props: ['items', 'element'],
@@ -130,6 +131,7 @@ export default {
       return;
     },
     searchForString: function (string, object) {
+      if (string.startsWith("/")) string = string.substring(1)
       if (object == null) return 0;
       let instances = 0;
       if (typeof object == 'object') {
@@ -228,6 +230,12 @@ export default {
     },
     searchString: function () {
       this.generateShownItems();
+      this.directLinks = [];
+      if (this.searchString.startsWith("/")) {
+        for(let i = 0; i < this.items.length; i++) {
+          if(this.items[i].alias !== undefined && this.items[i].alias.startsWith(this.searchString.substring(1))) this.directLinks.push(this.items[i])
+        }
+      }
     },
     dir: function () {
       this.generateShownItems();
