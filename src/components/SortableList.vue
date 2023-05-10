@@ -7,8 +7,28 @@
         type="search"
         placeholder="Suchen..."
         aria-label="Suchen..."
+        on-
+        @focus="focus = true"
+        @focusout="focus = false"
         v-model="searchString"
       />
+      <div
+        v-if="this.directLinks.length > 0 && this.focus"
+        class="alias-wrapper"
+      >
+        <div class="alias-suggestions">
+          <div
+            v-for="link in directLinks"
+            :key="link.id"
+            style="display: block"
+          >
+            <button class="btn btn-light alias-link">
+              {{ link.alias }}
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-3 col-xl-4"></div>
     <div class="col-md-3 col-xl-4"></div>
@@ -110,6 +130,7 @@ export default {
       sortBy: this.element == 'CompanyTile' ? 'relevance' : '', //empty string if no sort is needed
       dir: 'up', //or 'down'
       directLinks: [],
+      focus: false,
     };
   },
   props: ['items', 'element'],
@@ -131,7 +152,7 @@ export default {
       return;
     },
     searchForString: function (string, object) {
-      if (string.startsWith("/")) string = string.substring(1)
+      if (string.startsWith('/')) string = string.substring(1);
       if (object == null) return 0;
       let instances = 0;
       if (typeof object == 'object') {
@@ -231,9 +252,15 @@ export default {
     searchString: function () {
       this.generateShownItems();
       this.directLinks = [];
-      if (this.searchString.startsWith("/")) {
-        for(let i = 0; i < this.items.length; i++) {
-          if(this.items[i].alias !== undefined && this.items[i].alias.startsWith(this.searchString.substring(1))) this.directLinks.push(this.items[i])
+      if (this.element == 'CompanyTile') {
+        if (this.searchString.startsWith('/')) {
+          for (let i = 0; i < this.items.length; i++) {
+            if (
+              this.items[i].alias !== undefined &&
+              this.items[i].alias.startsWith(this.searchString.substring(1))
+            )
+              this.directLinks.push(this.items[i]);
+          }
         }
       }
     },
@@ -292,5 +319,33 @@ export default {
 
 .search {
   margin-bottom: 5px;
+}
+
+.alias-suggestions {
+  background-color: white;
+  width: 100%;
+  position: absolute;
+  z-index: 10;
+  border-radius: 0 0 0.375rem 0.375rem;
+  border-color: #87b7ff;
+  border-width: 0 1px 1px 1px;
+  border-style: solid;
+  text-align: left;
+  padding-top: 10px;
+}
+
+.alias-wrapper {
+  position: relative;
+  bottom: 12px;
+}
+
+.alias-link {
+  margin: 0 10px 10px 10px;
+  font-size: 1.2rem;
+  font-weight: 200;
+}
+
+.fa-arrow-right {
+  margin-left: 5px;
 }
 </style>
