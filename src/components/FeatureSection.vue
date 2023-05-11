@@ -46,7 +46,7 @@
         image="boosting.png"
         title="Werbung"
         text="Mache dein Unternehmen bekannt und erreiche mehr Kunden."
-        link="https://business.schillerando.de/companyRegistration"
+        :link="businessUrl + '/companyRegistration'"
         linkTitle="Business"
       ></FeatureTile>
       <FeatureTile
@@ -55,7 +55,7 @@
         image="accounting.png"
         title="Buchhaltung*"
         text="Habe immer alle Einnahmen und Ausgaben deines Unternehmens im Blick."
-        link="https://business.schillerando.de"
+        :link="businessUrl + '/buchhaltung'"
         linkTitle="Buchhaltung"
       ></FeatureTile>
       <FeatureTile
@@ -64,7 +64,7 @@
         image="service.png"
         title="Services"
         text="Lasse dir vor und während Schule als Staat Ware für dein Unternehmen aus dem Ausland liefern, deinen Müll entsorgen und vieles mehr."
-        link="https://business.schillerando.de/service"
+        :link="businessUrl + '/service'"
         linkTitle="Services"
       ></FeatureTile>
     </div>
@@ -95,6 +95,11 @@ export default {
   name: 'FeatureSection',
   components: {
     FeatureTile,
+  },
+  data() {
+    return {
+      businessUrl: process.env.VUE_APP_BUSINESS_URL,
+    };
   },
 };
 </script>

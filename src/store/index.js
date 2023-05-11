@@ -36,18 +36,45 @@ const store = createStore({
     },
   },
   actions: {
-    async reload({ commit }) {
-      const { data, error } = await supabase.auth.refreshSession();
+    async reload() {
+      this.dispatch('getSharedLogin');
+      this.timer = setInterval(() => {
+        this.dispatch('getSharedLogin');
+      }, 1000);
+    },
+    async getSharedLogin({ commit }) {
+      const cookies = document.cookie
+        .split(/\s*;\s*/)
+        .map((cookie) => cookie.split('='));
+      const accessTokenCookie = cookies.find(
+        (x) => x[0] == 'supabase-access-token'
+      );
+      const refreshTokenCookie = cookies.find(
+        (x) => x[0] == 'supabase-refresh-token'
+      );
+      if (accessTokenCookie && refreshTokenCookie) {
+        if (this.getters.getUser != null) return;
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessTokenCookie[1],
+          refresh_token: refreshTokenCookie[1],
+        });
 
-      if (error || data.session == null) {
-        console.log('no session');
+        if (error || data.session == null) {
+          commit('setUser', null);
+          router.go(router.currentRoute);
+        } else {
+          commit('setUser', data.user);
+
+          this.dispatch('updateMissingMetadata');
+          this.dispatch('checkUserCompany');
+
+          router.go(router.currentRoute);
+        }
+      } else if (this.getters.getUser != null) {
         commit('setUser', null);
+        router.go(router.currentRoute);
       } else {
-        console.log(data.user);
-        commit('setUser', data.user);
-
-        this.dispatch('updateMissingMetadata');
-        this.dispatch('checkUserCompany');
+        commit('setUser', null);
       }
     },
     async updateMissingMetadata({ commit }) {
@@ -81,8 +108,8 @@ const store = createStore({
 
         if (path == null) await router.replace('/account');
         else if (path.split('_')[0] == 'ext') {
-          window.location.replace(
-            'http://localhost:8081' + path.split('_')[1] + '?ext=true'
+          location.replace(
+            process.env.VUE_APP_BUSINESS_URL + path.split('_')[1] + '?ext=true'
           );
         } else await router.replace(path);
       } catch (error) {
@@ -157,7 +184,7 @@ const store = createStore({
         const { error } = await supabase.auth.resetPasswordForEmail(
           form.email,
           {
-            redirectTo: 'http://localhost:8080/update-password', // https://schillerando.de/reset-password
+            redirectTo: process.env.VUE_APP_MAIN_URL + '/update-password',
           }
         );
         if (error) throw error;

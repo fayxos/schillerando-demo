@@ -19,7 +19,7 @@
     <p>
       (1) Die folgenden Regelungen über den Vertragsabschluss gelten für
       Bestellungen über unseren Onlineshop
-      <a href="https://www.schillerando.de">https://www.schillerando.de</a>.
+      <a :href="mainUrl">https://www.schillerando.de</a>.
     </p>
 
     <h3>(2) Im Falle des Vertragsschlusses kommt der Vertrag zwischen</h3>
@@ -65,9 +65,7 @@
       (5) Speicherung des Vertragstextes bei Bestellungen über unseren
       Onlineshop: Schillerrando speichert den Vertragstext, sowie das
       Einverständnis unserer Kunden. Die AGB kann jederzeit auch unter
-      <a href="https://www.schillerando.de/agb"
-        >https://www.schillerando.de/agb</a
-      >
+      <a :href="businessUrl + '/agb'">https://www.schillerando.de/agb</a>
       eingesehen werden.
     </p>
 
@@ -137,6 +135,12 @@
 <script>
 export default {
   name: 'AGB',
+  data() {
+    return {
+      mainUrl: process.env.VUE_APP_MAIN_URL,
+      businessUrl: process.env.VUE_APP_BUSINESS_URL,
+    };
+  },
 };
 </script>
 

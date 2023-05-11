@@ -148,7 +148,9 @@
           <div class="card action p-4" v-if="userData.hasCompany == false">
             <p>Du hast ein eigenes Unternehmen bei Schule als Staat?</p>
             <button
-              @click="$router.push('/companyRegistration')"
+              @click="
+                window.location.href = businessUrl + '/companyRegistration'
+              "
               class="btn bg-sec register"
               :disabled="userData.email_confirmed_at == null"
             >
@@ -159,7 +161,7 @@
           <div class="card action p-4" v-else>
             <p>Verawlte dein Unternehmen</p>
             <a
-              href="https://business.schillerando.de"
+              :href="businessUrl + '/einstellungen'"
               class="btn bg-sec register"
             >
               Schillerando Business
@@ -261,6 +263,7 @@ export default {
       successAlertInfo: 'Aktion wurde erfolgreich durchgeführt',
       failureAlertTitle: 'Fehler',
       failureAlertInfo: 'Es ist ein Fehler aufgetreten!',
+      businessUrl: process.env.VUE_APP_BUSINESS_URL,
     };
   },
   computed: {

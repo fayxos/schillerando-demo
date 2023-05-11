@@ -18,7 +18,7 @@
             zu profitieren
           </p>
           <button
-            onclick="window.location.href='https://business.schillerando.de/companyRegistration'"
+            @click="window.location.href = businessUrl + '/companyRegistration'"
             class="btn btn-primary"
           >
             Registrieren
@@ -32,6 +32,11 @@
 <script>
 export default {
   name: 'HeroSection',
+  data() {
+    return {
+      businessUrl: process.env.VUE_APP_BUSINESS_URL,
+    };
+  },
 };
 </script>
 
