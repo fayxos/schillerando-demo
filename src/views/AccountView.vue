@@ -148,9 +148,7 @@
           <div class="card action p-4" v-if="userData.hasCompany == false">
             <p>Du hast ein eigenes Unternehmen bei Schule als Staat?</p>
             <button
-              @click="
-                window.location.href = businessUrl + '/companyRegistration'
-              "
+              @click="companyRegistration()"
               class="btn bg-sec register"
               :disabled="userData.email_confirmed_at == null"
             >
@@ -355,6 +353,18 @@ export default {
       nameInput.disabled = false;
       mailInput.disabled = false;
     },
+    companyRegistration() {
+      if (this.userData.email.split('@')[1] == 'fsgmarbach.info') {
+        window.location.href = this.businessUrl + '/companyRegistration';
+      } else {
+        this.alertTitle = 'Ungültige Email';
+        this.alertInfo =
+          'Um ein Unternehmen zu Registrieren musst du mit deiner Schul-Email (@fsgmarbach.info) angemeldet sein. Ändere deine Email Addresse oder erstelle einen neuen Account um dein Unternehmen zu registrieren.';
+
+        var alertModal = new Modal(document.getElementById('alertModal'), {});
+        alertModal.show();
+      }
+    },
     validateAccountChange(pressed) {
       if (!pressed && !this.saveAccountPressed) return;
 
@@ -426,16 +436,20 @@ export default {
         }
 
         if (mailInput.value != this.userData.email) {
-          const { data, error } = await supabase.auth.updateUser({
+          const { error } = await supabase.auth.updateUser({
             email: mailInput.value,
+            emailRedirectTo: process.env.VUE_APP_MAIN_URL + '/account',
           });
 
           if (error) throw error;
 
-          this.store.commit('setUser', data.user);
+          this.successAlertTitle = 'Email Änderung bestätigen';
+          this.successAlertInfo =
+            'Es wurde eine Mail zum ändern deiner Email Addresse an deine neue Email Addresse gesendet.';
+        } else {
+          this.successAlertTitle = '';
         }
 
-        this.successAlertTitle = '';
         this.store.commit('setState', 'success');
 
         nameInput.classList.remove('is-valid');

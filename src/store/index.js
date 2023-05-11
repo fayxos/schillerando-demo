@@ -36,8 +36,19 @@ const store = createStore({
     },
   },
   actions: {
-    async reload() {
-      this.dispatch('getSharedLogin');
+    async reload({ commit }) {
+      const { data, error } = await supabase.auth.refreshSession();
+
+      if (error || data.session == null) {
+        commit('setUser', null);
+        this.dispatch('getSharedLogin');
+      } else {
+        commit('setUser', data.user);
+
+        this.dispatch('updateMissingMetadata');
+        this.dispatch('checkUserCompany');
+      }
+
       this.timer = setInterval(() => {
         this.dispatch('getSharedLogin');
       }, 1000);
@@ -108,7 +119,7 @@ const store = createStore({
 
         if (path == null) await router.replace('/account');
         else if (path.split('_')[0] == 'ext') {
-          location.replace(
+          window.location.replace(
             process.env.VUE_APP_BUSINESS_URL + path.split('_')[1] + '?ext=true'
           );
         } else await router.replace(path);
