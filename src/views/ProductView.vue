@@ -36,7 +36,7 @@ export default {
   async created() {
     const { data, error } = await supabase
       .from('products')
-      .select(`*, company:companies(name, abo)`)
+      .select(`*, company:companies(name, abo, alias)`)
       .eq('public', true);
 
     if (error != null) console.log(error);

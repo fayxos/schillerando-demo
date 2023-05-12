@@ -1,33 +1,29 @@
 <template>
-  <div class="card">
-    <div class="image">
-      <div v-if="this.data.image == null" class="no-image">
-        <i class="fa-solid fa-image fa-2xl"></i>
-        {{ this.data.image }}
+  <router-link :to="link">
+    <div class="card">
+      <div class="image">
+        <div v-if="this.data.image == null" class="no-image">
+          <i class="fa-solid fa-image fa-2xl"></i>
+          {{ this.data.image }}
+        </div>
+        <img v-else :src="this.image" alt="" />
       </div>
-      <img v-else :src="this.image" alt="" />
-    </div>
-    <div class="info">
-      <div>
-        <p class="name">{{ data.name }}</p>
-      </div>
-      <div>
-        <p class="company_name">{{ data.company.name }}</p>
-      </div>
+      <div class="info">
+        <div>
+          <p class="name">{{ data.name }}</p>
+        </div>
+        <div>
+          <p class="company_name">{{ data.company.name }}</p>
+        </div>
 
-      <p class="price">{{ data.price }} $</p>
+        <p class="price">{{ data.price }} $</p>
 
-      <button
-        v-if="data.delivery"
-        class="btn btn-primary"
-        @click="addProductToCart"
-        type="button"
-        disabled
-      >
-        <i class="fa-solid fa-cart-plus fa-lg"></i>
-      </button>
+        <button v-if="data.delivery" class="btn btn-primary" @click="addProductToCart" type="button" disabled>
+          <i class="fa-solid fa-cart-plus fa-lg"></i>
+        </button>
+      </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
@@ -51,6 +47,11 @@ export default {
       this.store.commit('addProductToCart', this.data);
     },
   },
+  computed: {
+    link () {
+      return `/${this.data.company.alias}/${this.data.id}`
+    }
+  }
 };
 </script>
 

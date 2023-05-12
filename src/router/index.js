@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView';
 import ProductView from '../views/ProductView';
+import ProductDetailView from '../views/ProductDetailView';
 import CompanyView from '../views/CompanyView';
 import CompanyDetailView from '../views/CompanyDetailView';
 import AccountView from '../views/AccountView';
@@ -65,7 +66,11 @@ const routes = [
   {
     path: '/:companyalias',
     component: CompanyDetailView
-  }
+  },
+  {
+    path: '/:company/:productid',
+    component: ProductDetailView
+  },
 ];
 
 

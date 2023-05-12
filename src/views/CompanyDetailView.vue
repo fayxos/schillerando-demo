@@ -10,7 +10,7 @@ import TitleDiv from '../components/TitleDiv';
 import { supabase } from '../supabase';
 
 export default {
-  name: 'CompanyView',
+  name: 'CompanyDetailView',
   props: ["companyuuid"],
   data() {
     return {
@@ -27,7 +27,7 @@ export default {
         .select()
         .eq('alias', this.$route.params.companyalias)
       if (error != null) console.log(error);
-      if (data.length === 0) { this.company = null; return; }
+      if (data === null || data.length === 0) { this.company = null; return; }
       this.company = data[0];
     }
   },
