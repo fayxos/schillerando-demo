@@ -9,7 +9,7 @@
         aria-label="Suchen..."
         on-
         @focus="focus = true"
-        @focusout="focus = false"
+        @focusout="removeFocus()"
         v-model="searchString"
       />
       <div
@@ -22,7 +22,10 @@
             :key="link.id"
             style="display: block"
           >
-            <button class="btn btn-light alias-link">
+            <button
+              @click="aliasRoute(link.alias)"
+              class="btn btn-light alias-link"
+            >
               {{ link.alias }}
               <i class="fa-solid fa-arrow-right"></i>
             </button>
@@ -116,6 +119,7 @@
 /* eslint-disable no-unused-vars */
 import ProductTile from './ProductTile.vue';
 import CompanyTile from './CompanyTile.vue';
+import router from '@/router';
 /* eslint-enable no-unused-vars */
 
 export default {
@@ -235,6 +239,19 @@ export default {
       const select = document.getElementById('productSort');
       const value = select.value;
       this.sortBy = value;
+    },
+    aliasRoute(alias) {
+      router.addRoute({ path: '/' + alias });
+      router.forward();
+      console.log('/' + alias);
+    },
+    removeFocus() {
+      setTimeout(
+        function () {
+          this.focus = false;
+        }.bind(this),
+        200
+      );
     },
   },
   mounted() {

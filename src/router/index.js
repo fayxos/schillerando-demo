@@ -65,14 +65,13 @@ const routes = [
   },
   {
     path: '/:companyalias',
-    component: CompanyDetailView
+    component: CompanyDetailView,
   },
   {
     path: '/:company/:productid',
-    component: ProductDetailView
+    component: ProductDetailView,
   },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -87,13 +86,22 @@ router.beforeEach((to, from, next) => {
   // get current user info
   const user = store.getters.getUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  
+
   if (requiresAuth && user == null)
     next({ path: 'auth', query: { redirect: to.fullPath } });
+  else if (
+    to.name == 'AuthView' &&
+    user != null &&
+    to.query.redirect.split('_')[0] == 'ext'
+  )
+    window.location.replace(
+      process.env.VUE_APP_BUSINESS_URL +
+        to.query.redirect.split('_')[1] +
+        '?ext=true'
+    );
   else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
   else if (!requiresAuth && user != null) next();
   else next();
 });
-
 
 export default router;

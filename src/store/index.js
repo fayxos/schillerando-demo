@@ -20,7 +20,7 @@ const store = createStore({
     addProductToCart(state, payload) {
       state.shoppingCart.push(payload);
     },
-    removeProductToCart(state, payload) {
+    removeProductFromCart(state, payload) {
       state.shoppingCart.filter((product) => product.id != payload.id);
     },
   },
