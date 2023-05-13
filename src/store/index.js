@@ -40,7 +40,6 @@ const store = createStore({
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error || data.session == null) {
-        commit('setUser', null);
         this.dispatch('getSharedLogin');
       } else {
         commit('setUser', data.user);
@@ -72,7 +71,6 @@ const store = createStore({
 
         if (error || data.session == null) {
           commit('setUser', null);
-          router.go(router.currentRoute);
         } else {
           commit('setUser', data.user);
 

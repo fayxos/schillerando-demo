@@ -90,6 +90,7 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && user == null)
     next({ path: 'auth', query: { redirect: to.fullPath } });
   else if (
+    to.query.redirect &&
     to.name == 'AuthView' &&
     user != null &&
     to.query.redirect.split('_')[0] == 'ext'
