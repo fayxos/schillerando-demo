@@ -1,6 +1,6 @@
 <template>
   <TitleDiv title="Unternehmen" />
-  <SortableList :items="companies" element="CompanyTile" />
+  <SortableList :items="companies" :loading="loading" element="CompanyTile" />
   <div
     v-if="loading"
     class="spinner-border"

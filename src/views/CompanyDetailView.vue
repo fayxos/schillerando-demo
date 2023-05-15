@@ -1,18 +1,68 @@
 <template>
   <div>
-    <div v-if="this.company === null">
-      Ups, dieses Unternehmen scheint nicht zu existieren
+    <div v-if="this.company === null" class="mt-4">
+      Ups, dieses Seite scheint nicht zu existieren
     </div>
-    <div v-else>
-      <div class="image">
-        <div v-if="this.company.image == null" class="no-image">
-          <i class="fa-solid fa-image fa-2xl"></i>
+    <div v-else class="row wrapper">
+      <div class="wrapper col-lg-6">
+        <div class="image">
+          <div v-if="this.image == null" class="no-image">
+            <i class="fa-solid fa-image fa-2xl"></i>
+          </div>
+          <img
+            v-else
+            :src="this.image"
+            alt="Unternehmen Bild"
+            id="companyImage"
+          />
         </div>
-        <img
-          v-else
-          :src="this.company.image"
-          alt="Unternehmen Bild"
-          id="companyImage"
+      </div>
+
+      <div class="wrapper col-lg-6">
+        <div class="detail-wrapper">
+          <div class="details">
+            <div class="row spacing">
+              <h1 class="col-9 title">
+                {{ this.company.name }}
+              </h1>
+              <div class="col-3">
+                <CompanyBadge
+                  :verified="this.company.verified"
+                  :premium="this.company.abo == 'Premium'"
+                  :self="this.company.alias == 'schillerando'"
+                  class="company-badge"
+                />
+              </div>
+            </div>
+
+            <div class="category spacing">
+              {{ company.categories[0] }}
+            </div>
+
+            <div class="row spacing">
+              <p class="info">
+                {{ this.company.info }}
+              </p>
+            </div>
+
+            <div class="row spacing location-pos">
+              <div class="col-9 location">
+                <i class="fa-solid fa-location-dot"></i>
+                <div class="location-text">{{ company.location }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="products">
+        <SortableList
+          v-if="products.length > 0"
+          :items="products"
+          :no-search="true"
+          element="ProductTile"
         />
       </div>
     </div>
@@ -21,13 +71,18 @@
 
 <script>
 import { supabase } from '../supabase';
+import CompanyBadge from '../components/CompanyBadge.vue';
+import SortableList from '@/components/SortableList.vue';
 
 export default {
   name: 'CompanyDetailView',
   props: ['companyuuid'],
+  components: { CompanyBadge, SortableList },
   data() {
     return {
-      company: undefined,
+      company: null,
+      image: null,
+      products: [],
     };
   },
   async mounted() {
@@ -47,8 +102,25 @@ export default {
         const response = await supabase.storage
           .from('public/sellers-headings')
           .download(this.company.header_picture);
-        if (response.data != null)
-          this.company.image = await response.data.text();
+        if (response.data != null) this.image = await response.data.text();
+        if (response.error) console.warn(response.error);
+      }
+
+      {
+        const response = await supabase
+          .from('products')
+          .select(`*, company:companies(name, abo, alias)`)
+          .eq('company_id', this.company.id)
+          .eq('public', true);
+
+        if (response.data != null) {
+          response.data.forEach((product) => {
+            this.products.push(product);
+          });
+        }
+
+        console.log(this.products);
+
         if (response.error) console.warn(response.error);
       }
     }
@@ -57,11 +129,19 @@ export default {
 </script>
 
 <style scoped>
+div {
+  text-align: left;
+}
+
+h1,
+p {
+  padding: 0;
+}
+
 .image {
   width: 100%;
   position: relative;
   padding-bottom: 56.25%;
-  margin-bottom: 10px;
 }
 
 .no-image {
@@ -69,7 +149,6 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 0.375rem;
 }
 
 img {
@@ -77,7 +156,6 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.375rem;
   left: 0;
 }
 
@@ -86,5 +164,89 @@ img {
   font-size: 6rem;
   top: 50%;
   left: calc(50% - 3rem);
+}
+
+.title {
+  color: #00a100;
+}
+
+.info {
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.details {
+  margin-top: 15px;
+}
+
+.company-badge {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  float: right;
+  right: 12px;
+}
+
+.spacing {
+  position: relative;
+  padding: 0;
+  margin: 7px 7px 0 15px;
+}
+
+.category {
+  margin-top: -10px;
+  font-weight: 300;
+}
+
+.location {
+  color: gray;
+  padding: 0;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.location-text {
+  margin-left: 5px;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.2rem;
+  max-height: 1.2rem;
+  overflow: hidden;
+}
+
+.products {
+  margin-top: 20px;
+}
+
+.wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 992px) {
+  .detail-wrapper {
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%;
+  }
+
+  .details {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+  }
+
+  .location-pos {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+  }
+
+  .products {
+    margin-top: 35px;
+  }
 }
 </style>

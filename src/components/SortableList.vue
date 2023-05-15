@@ -1,7 +1,8 @@
 <template>
-  <div class="row">
+  <div class="row" :class="{ noSearch: noSearch }">
     <div class="col-md-3 col-xl-4"></div>
-    <div class="search-comp col-12 col-md-6 col-xl-4">
+    <div v-if="noSearch" class="search-comp col-12 col-md-6 col-xl-4"></div>
+    <div v-else class="search-comp col-12 col-md-6 col-xl-4">
       <input
         class="search form-control form-control-lg me-2"
         type="search"
@@ -107,11 +108,11 @@
     <div v-for="index in 2" :key="index" class="item"></div>
   </div>
 
-  <div v-if="shownItems.length == 0" style="margin-bottom: 50px">
-    <h4 v-if="element == 'CompanyTile'">
+  <div v-if="shownItems.length == 0 && !loading" style="margin-bottom: 50px">
+    <h4 class="empty" v-if="element == 'CompanyTile'">
       Es wurden keine Unternehmen gefunden
     </h4>
-    <h4 v-else>Es wurden keine Produkte gefunden</h4>
+    <h4 class="empty" v-else>Es wurden keine Produkte gefunden</h4>
   </div>
 </template>
 
@@ -137,7 +138,7 @@ export default {
       focus: false,
     };
   },
-  props: ['items', 'element'],
+  props: ['items', 'element', 'loading', 'noSearch'],
   methods: {
     sort: function () {
       this.sortedShownItems = this.shownItems;
@@ -364,5 +365,14 @@ export default {
 
 .fa-arrow-right {
   margin-left: 5px;
+}
+
+.empty {
+  margin: 0 10px;
+}
+
+.noSearch {
+  margin-bottom: 0;
+  padding-bottom: 20px;
 }
 </style>

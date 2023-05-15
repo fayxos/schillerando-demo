@@ -1,6 +1,6 @@
 <template>
   <TitleDiv title="Produkte" />
-  <SortableList :items="products" element="ProductTile" />
+  <SortableList :items="products" :loading="loading" element="ProductTile" />
 
   <div
     v-if="loading"

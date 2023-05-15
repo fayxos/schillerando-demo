@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link">
+  <router-link :to="link" class="hover">
     <div class="sizing">
       <div class="card">
         <div class="image">
