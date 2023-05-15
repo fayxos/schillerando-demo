@@ -6,6 +6,7 @@ import { supabase } from '../supabase';
 const store = createStore({
   state: {
     user: null,
+    refresh: true,
     session: null,
     state: undefined,
     shoppingCart: [],
@@ -13,6 +14,9 @@ const store = createStore({
   mutations: {
     setUser(state, payload) {
       state.user = payload;
+    },
+    setRefresh(state, payload) {
+      state.refresh = payload;
     },
     setState(state, payload) {
       state.state = payload;
@@ -28,6 +32,9 @@ const store = createStore({
     getUser(state) {
       return state.user;
     },
+    getRefresh(state) {
+      return state.refresh;
+    },
     getState(state) {
       return state.state;
     },
@@ -37,6 +44,7 @@ const store = createStore({
   },
   actions: {
     async reload({ commit }) {
+      commit('setRefresh', true);
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error || data.session == null) {
@@ -64,6 +72,8 @@ const store = createStore({
       );
       if (accessTokenCookie && refreshTokenCookie) {
         if (this.getters.getUser != null) return;
+        if (!this.getters.getRefresh) return;
+
         const { data, error } = await supabase.auth.setSession({
           access_token: accessTokenCookie[1],
           refresh_token: refreshTokenCookie[1],
@@ -71,6 +81,7 @@ const store = createStore({
 
         if (error || data.session == null) {
           commit('setUser', null);
+          commit('setRefresh', false);
         } else {
           commit('setUser', data.user);
 

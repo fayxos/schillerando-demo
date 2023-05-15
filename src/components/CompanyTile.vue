@@ -13,7 +13,12 @@
             {{ data.name }}
           </h2>
           <div class="col-3">
-            <CompanyBadge :verified="data.verified" :premium="data.abo == 'Premium'" class="company-badge" />
+            <CompanyBadge
+              :verified="data.verified"
+              :premium="data.abo == 'Premium'"
+              :self="data.alias == 'schillerando'"
+              class="company-badge"
+            />
           </div>
         </div>
         <div class="category">
@@ -39,22 +44,24 @@ export default {
   props: ['data'],
   data() {
     return {
-      picture: null
-    }
+      picture: null,
+    };
   },
   components: { CompanyBadge },
   async mounted() {
     if (this.data.header_picture != null) {
-      const response = await supabase.storage.from('public/sellers-headings').download(this.data.header_picture)
-      if (response.data != null) this.picture = await response.data.text()
-      if (response.error) console.warn(response.error)
+      const response = await supabase.storage
+        .from('public/sellers-headings')
+        .download(this.data.header_picture);
+      if (response.data != null) this.picture = await response.data.text();
+      if (response.error) console.warn(response.error);
     }
   },
   computed: {
-    link () {
-      return `/${this.data.alias}`
-    }
-  }
+    link() {
+      return `/${this.data.alias}`;
+    },
+  },
 };
 </script>
 
