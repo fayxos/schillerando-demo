@@ -4,7 +4,8 @@
       Ups, dieses Seite scheint nicht zu existieren
     </div>
     <div v-else class="row wrapper">
-      <div class="wrapper col-lg-6">
+      <div class="col-lg-5 col-xl-4 spacer"></div>
+      <div class="wrapper col-lg-5 col-xl-4">
         <div class="image">
           <div v-if="this.image == null" class="no-image">
             <i class="fa-solid fa-image fa-2xl"></i>
@@ -16,9 +17,7 @@
             id="companyImage"
           />
         </div>
-      </div>
 
-      <div class="wrapper col-lg-6">
         <div class="detail-wrapper">
           <div class="details">
             <div class="row spacing">
@@ -53,11 +52,11 @@
             </div>
           </div>
         </div>
+
+        <hr />
       </div>
 
-      <hr />
-
-      <div class="products">
+      <div class="products col-lg-7 col-xl-8">
         <SortableList
           v-if="products.length > 0"
           :items="products"
@@ -218,6 +217,7 @@ img {
 
 .products {
   margin-top: 20px;
+  text-align: center;
 }
 
 .wrapper {
@@ -225,28 +225,23 @@ img {
   margin: 0;
 }
 
+.col-lg-7 {
+  margin: 10px 0;
+  padding: 0;
+}
+
 @media (min-width: 992px) {
-  .detail-wrapper {
-    width: 100%;
+  .col-lg-5 {
+    border-right: 1px solid;
+    border-color: #ebebeb;
+    border-radius: 0 0 0.375rem 0;
+    overflow: hidden;
+    position: fixed;
+    height: max-content;
+  }
+
+  .spacer {
     position: relative;
-    padding-bottom: 56.25%;
-  }
-
-  .details {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-  }
-
-  .location-pos {
-    position: absolute;
-    bottom: 5px;
-    width: 100%;
-  }
-
-  .products {
-    margin-top: 35px;
   }
 }
 </style>

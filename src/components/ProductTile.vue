@@ -18,7 +18,13 @@
 
         <p class="price">{{ data.price }} $</p>
 
-        <button v-if="data.delivery" class="btn btn-primary" @click="addProductToCart" type="button" disabled>
+        <button
+          v-if="data.delivery"
+          class="btn btn-primary"
+          @click="addProductToCart"
+          type="button"
+          disabled
+        >
           <i class="fa-solid fa-cart-plus fa-lg"></i>
         </button>
       </div>
@@ -48,10 +54,10 @@ export default {
     },
   },
   computed: {
-    link () {
-      return `/${this.data.company.alias}/${this.data.id}`
-    }
-  }
+    link() {
+      return `/${this.data.company.alias}/${this.data.id}`;
+    },
+  },
 };
 </script>
 
@@ -112,6 +118,7 @@ export default {
 .card {
   flex-direction: row;
   overflow: hidden;
+  margin: 2.5%;
 }
 
 .image {

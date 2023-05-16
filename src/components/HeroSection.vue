@@ -50,6 +50,19 @@ section {
   position: relative;
 }
 
+@media (min-width: 1400px) {
+  .col-md-6 {
+    zoom: 120%;
+  }
+}
+
+@media (min-width: 2000px) {
+  .col-md-6 {
+    margin-top: 3%;
+    zoom: 150%;
+  }
+}
+
 .title {
   font-size: 4.5rem;
   color: #00a100;

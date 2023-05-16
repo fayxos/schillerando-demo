@@ -159,7 +159,7 @@
           <div class="card action p-4" v-else>
             <p>Verawlte dein Unternehmen</p>
             <a
-              :href="businessUrl + '/einstellungen'"
+              :href="businessUrl + '/einstellungen?ext=true'"
               class="btn bg-sec register"
             >
               Schillerando Business

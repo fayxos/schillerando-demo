@@ -309,10 +309,6 @@ export default {
   margin: 0 20px;
 }
 
-.item {
-  margin: 0 10px 20px 10px;
-}
-
 .direction {
   border-color: #cfd4da;
   position: absolute;
@@ -333,10 +329,7 @@ export default {
 .settings {
   position: relative;
   margin-bottom: 30px;
-}
-
-.search {
-  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .alias-suggestions {

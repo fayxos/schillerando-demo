@@ -44,6 +44,7 @@ export default {
 .feature {
   padding: 10px 30px;
   margin: 0 auto 50px auto;
+  max-width: 500px;
 }
 
 p {
