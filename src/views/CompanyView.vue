@@ -37,15 +37,16 @@ export default {
     if (error != null) console.log(error);
     this.companies = data;
 
-    this.companies.forEach(async (company) => {
+    //does not work, do this in th tile as it used to be
+    /*this.companies.forEach(async (company) => {
       if (company.header_picture != null) {
         const { data } = await supabase.storage
-          .from('sellers-headings')
+          .from('public/sellers-headings')
           .download(company.header_picture);
 
         company.image = data;
       } else company.image = null;
-    });
+    });*/
 
     this.loading = false;
   },
