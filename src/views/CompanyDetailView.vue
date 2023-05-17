@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="outer">
     <div v-if="this.company === null" class="mt-4">
-      Ups, dieses Seite scheint nicht zu existieren
+      <h3 class="margin">Ups, dieses Seite scheint nicht zu existieren</h3>
     </div>
     <div v-else class="row wrapper">
       <div class="col-lg-5 col-xl-4 spacer"></div>
@@ -63,6 +63,9 @@
           :no-search="true"
           element="ProductTile"
         />
+        <h4 v-else class="margin">
+          Dieses Unternehmen bietet keine Produkte an
+        </h4>
       </div>
     </div>
   </div>
@@ -228,6 +231,15 @@ img {
 .col-lg-7 {
   margin: 10px 0;
   padding: 0;
+}
+
+.outer {
+  margin-bottom: 100px;
+}
+
+.margin {
+  margin: 20px 10px;
+  text-align: center;
 }
 
 @media (min-width: 992px) {

@@ -66,10 +66,16 @@ const routes = [
   {
     path: '/:companyalias',
     component: CompanyDetailView,
+    meta: {
+      footer: false,
+    },
   },
   {
     path: '/:company/:productid',
     component: ProductDetailView,
+    meta: {
+      footer: false,
+    },
   },
 ];
 

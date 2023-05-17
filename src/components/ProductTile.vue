@@ -93,6 +93,7 @@ export default {
   text-align: left;
   bottom: 8px;
   left: 15px;
+  color: black;
 }
 
 .row {
@@ -148,9 +149,14 @@ img {
   object-fit: scale-down;
 }
 
-.btn:disabled {
+.btn-primary {
   background-color: #00a100;
   border-color: #00a100;
+}
+
+.btn-primary:hover {
+  background-color: #007400;
+  border-color: #007400;
 }
 
 .fa-image {
@@ -158,6 +164,7 @@ img {
   font-size: 4rem;
   top: 50%;
   left: calc(50% - 2rem);
+  color: black;
 }
 
 /*   border-radius: 0.375rem 0 0 0.375rem; */

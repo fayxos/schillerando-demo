@@ -9,7 +9,7 @@
           <img v-else :src="picture" alt="" />
         </div>
         <div class="row">
-          <h2 class="col-9 name">
+          <h2 class="col-9 name highlight">
             {{ data.name }}
           </h2>
           <div class="col-3">
@@ -21,7 +21,7 @@
             />
           </div>
         </div>
-        <div class="category">
+        <div class="category highlight">
           {{ data.categories[0] }}
         </div>
         <div class="row">
@@ -151,5 +151,6 @@ img {
   font-size: 6rem;
   top: 50%;
   left: calc(50% - 3rem);
+  color: black;
 }
 </style>

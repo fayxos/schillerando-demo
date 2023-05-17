@@ -23,13 +23,12 @@
             :key="link.id"
             style="display: block"
           >
-            <button
-              @click="aliasRoute(link.alias)"
-              class="btn btn-light alias-link"
-            >
-              {{ link.alias }}
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <router-link :to="link.alias">
+              <button class="btn btn-light alias-link">
+                {{ link.alias }}
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </router-link>
           </div>
         </div>
       </div>
