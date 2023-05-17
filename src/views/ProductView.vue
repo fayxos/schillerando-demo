@@ -12,7 +12,7 @@
   </div>
 
   <p v-else>
-    $ <span style="font-size: 1.3rem">&#8793;</span> Staatswährung (1$ = 0.1€)
+    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ = 0.1€)
   </p>
 </template>
 
@@ -31,6 +31,7 @@ export default {
     return {
       products: [],
       loading: true,
+      currency_name: process.env.VUE_APP_CURRENCY_NAME
     };
   },
   async created() {
