@@ -66,6 +66,9 @@ export default {
 </script>
 
 <style scoped>
+a {
+  color: black;
+}
 .row {
   padding: 10px 0 0 10px;
   margin: 5px 0 0 5px;
