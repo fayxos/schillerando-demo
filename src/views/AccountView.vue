@@ -158,12 +158,9 @@
 
           <div class="card action p-4" v-else>
             <p>Verawlte dein Unternehmen</p>
-            <a
-              :href="businessUrl + '/einstellungen?ext=true'"
-              class="btn bg-sec register"
-            >
+            <button @click="businessLink()" class="btn bg-sec register">
               Schillerando Business
-            </a>
+            </button>
           </div>
         </div>
 
@@ -364,6 +361,9 @@ export default {
         var alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
       }
+    },
+    businessLink() {
+      window.location.href = this.businessUrl + '/einstellungen?ext=true';
     },
     validateAccountChange(pressed) {
       if (!pressed && !this.saveAccountPressed) return;
