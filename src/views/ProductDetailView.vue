@@ -1,6 +1,9 @@
 <template>
   <div class="outer">
-    <div v-if="this.product === null" class="mt-4">
+    <div v-if="this.product === undefined" class="spinner-border" style="width: 4rem; height: 4rem; border-width: 7px" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div v-else-if="this.product === null" class="mt-4">
       <h3 class="m-4" style="text-align: center">
         Ups, dieses Seite scheint nicht zu existieren
       </h3>
@@ -22,7 +25,7 @@
                 {{ this.product.name }}
               </h1>
               <div class="col-4">
-                <p class="price">{{ product.price }}00 $</p>
+                <p class="price">{{ product.price }} $</p>
               </div>
             </div>
 
@@ -44,13 +47,7 @@
           </div>
 
           <div class="spacing">
-            <button
-              v-if="product.delivery"
-              class="btn btn-primary"
-              @click="addProductToCart"
-              type="button"
-              disabled
-            >
+            <button v-if="product.delivery" class="btn btn-primary" @click="addProductToCart" type="button" disabled>
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
             </button>
@@ -75,7 +72,7 @@ export default {
   props: ['companyuuid'],
   data() {
     return {
-      product: null,
+      product: undefined,
       image: null,
     };
   },
@@ -261,5 +258,12 @@ img {
   .spacer {
     position: relative;
   }
+}
+
+.spinner-border {
+  color: #00a100;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
