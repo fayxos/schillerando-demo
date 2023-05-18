@@ -1,6 +1,11 @@
 <template>
   <div class="outer">
-    <div v-if="this.product === undefined" class="spinner-border" style="width: 4rem; height: 4rem; border-width: 7px" role="status">
+    <div
+      v-if="this.product === undefined"
+      class="spinner-border"
+      style="width: 4rem; height: 4rem; border-width: 7px; margin-top: 50px"
+      role="status"
+    >
       <span class="visually-hidden">Loading...</span>
     </div>
     <div v-else-if="this.product === null" class="mt-4">
@@ -47,7 +52,13 @@
           </div>
 
           <div class="spacing">
-            <button v-if="product.delivery" class="btn btn-primary" @click="addProductToCart" type="button" disabled>
+            <button
+              v-if="product.delivery"
+              class="btn btn-primary"
+              @click="addProductToCart"
+              type="button"
+              disabled
+            >
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
             </button>

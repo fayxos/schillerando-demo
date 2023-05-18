@@ -157,7 +157,7 @@
           </div>
 
           <div class="card action p-4" v-else>
-            <p>Verawlte dein Unternehmen</p>
+            <p>Verwalte dein Unternehmen</p>
             <button @click="businessLink()" class="btn bg-sec register">
               Schillerando Business
             </button>

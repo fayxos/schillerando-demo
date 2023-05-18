@@ -1,7 +1,23 @@
 <template>
   <div class="outer">
-    <div v-if="this.company === null" class="mt-4">
-      <h3 class="margin">Ups, dieses Seite scheint nicht zu existieren</h3>
+    <div
+      v-if="this.company === undefined"
+      class="spinner-border"
+      style="
+        width: 4rem;
+        height: 4rem;
+        border-width: 7px;
+        position: relative;
+        margin-top: 50px;
+      "
+      role="status"
+    >
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div v-else-if="this.company === null" class="mt-4">
+      <h3 class="m-4" style="text-align: center">
+        Ups, dieses Seite scheint nicht zu existieren
+      </h3>
     </div>
     <div v-else class="row wrapper">
       <div class="col-lg-5 col-xl-4 spacer"></div>
@@ -82,7 +98,7 @@ export default {
   components: { CompanyBadge, SortableList },
   data() {
     return {
-      company: null,
+      company: undefined,
       image: null,
       products: [],
     };
@@ -240,6 +256,13 @@ img {
 .margin {
   margin: 20px 10px;
   text-align: center;
+}
+
+.spinner-border {
+  color: #00a100;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (min-width: 992px) {

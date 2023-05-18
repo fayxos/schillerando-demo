@@ -62,9 +62,6 @@ export default {
 </script>
 
 <style scoped>
-a {
-  color: black;
-}
 .price,
 .name {
   font-size: 1.25rem;
