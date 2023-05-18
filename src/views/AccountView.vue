@@ -15,7 +15,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-lg-4">
           <!--
           <div class="card">
             <div class="row py-3">
@@ -164,7 +164,7 @@
           </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-lg-8">
           <div class="card">
             <div class="card-header">Bestellungen</div>
             <div class="card-body">
