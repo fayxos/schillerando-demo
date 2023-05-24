@@ -72,6 +72,9 @@ const store = createStore({
 
         if (error || data.session == null) {
           commit('setUser', null);
+
+          document.cookie = `supabase-access-token=false;`;
+          document.cookie = `supabase-refresh-token=false;`;
         } else {
           if (this.getters.getUser != null) {
             commit('setUser', data.user);
@@ -88,12 +91,8 @@ const store = createStore({
           }
         }
       } else if (this.getters.getUser != null) {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (data.session == null || error) {
-          commit('setUser', null);
-          router.go(router.currentRoute);
-        }
+        commit('setUser', null);
+        router.go(router.currentRoute);
       } else {
         commit('setUser', null);
       }
