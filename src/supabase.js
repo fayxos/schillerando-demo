@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import store from './store';
 
 const supabaseUrl = 'https://jwfyrkfpqfkzovzdpkqt.supabase.co';
 const supabaseKey =
@@ -13,6 +14,8 @@ supabase.auth.onAuthStateChange((event, session) => {
     document.cookie = `supabase-refresh-token=; Domain=${domain}; path=/; expires=${expires}; SameSite=Lax; secure`
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
     const maxAge = 100 * 365 * 24 * 60 * 60
+    store.state.access_token = session.access_token
+    store.state.refresh_token = session.refresh_token
     document.cookie = `supabase-access-token=${session.access_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
     document.cookie = `supabase-refresh-token=${session.refresh_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
   }

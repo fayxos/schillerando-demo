@@ -9,6 +9,8 @@ const store = createStore({
     session: null,
     state: undefined,
     shoppingCart: [],
+    access_token: null,
+    refresh_token: null,
   },
   mutations: {
     setUser(state, payload) {
@@ -111,6 +113,12 @@ const store = createStore({
         commit('setUser', data.user);
       }
     },
+    // eslint-disable-next-line no-empty-pattern
+    async externLoginCallback({}, path) {
+      window.location.replace(
+        process.env.VUE_APP_BUSINESS_URL + path + '?ext=true&access_token=' + store.state.access_token + '&refresh_token=' + store.state.refresh_token
+      );
+    },
     async signInAction({ commit }, { form, path }) {
       try {
         commit('setState', 'loading');
@@ -127,11 +135,8 @@ const store = createStore({
         commit('setState', 'success');
 
         if (path == null) await router.replace('/account');
-        else if (path.split('_')[0] == 'ext') {
-          window.location.replace(
-            process.env.VUE_APP_BUSINESS_URL + path.split('_')[1] + '?ext=true'
-          );
-        } else await router.replace(path);
+        else if (path.split('_')[0] == 'ext') { this.dispatch('externLoginCallback', path.split('_')[1]); }
+        else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
@@ -240,11 +245,11 @@ const store = createStore({
           .select()
           .or(
             'user_uid.eq.' +
-              this.getters.getUser.id +
-              ',employees.cs.' +
-              '{"' +
-              this.getters.getUser.email +
-              '"}'
+            this.getters.getUser.id +
+            ',employees.cs.' +
+            '{"' +
+            this.getters.getUser.email +
+            '"}'
           );
 
         if (error) throw error;

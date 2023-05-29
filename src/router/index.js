@@ -100,12 +100,9 @@ router.beforeEach((to, from, next) => {
     to.name == 'AuthView' &&
     user != null &&
     to.query.redirect.split('_')[0] == 'ext'
-  )
-    window.location.replace(
-      process.env.VUE_APP_BUSINESS_URL +
-        to.query.redirect.split('_')[1] +
-        '?ext=true'
-    );
+  ) {
+    store.dispatch('externLoginCallback', to.query.redirect.split('_')[1])
+  }
   else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
   else if (!requiresAuth && user != null) next();
   else next();
