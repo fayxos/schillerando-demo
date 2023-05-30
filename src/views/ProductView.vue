@@ -11,8 +11,9 @@
     <span class="visually-hidden">Loading...</span>
   </div>
 
-  <p v-else>
-    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ = 0.1€)
+  <p v-else class="mt-4">
+    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ =
+    0.1€)
   </p>
 </template>
 
@@ -31,20 +32,21 @@ export default {
     return {
       products: [],
       loading: true,
-      currency_name: process.env.VUE_APP_CURRENCY_NAME
+      currency_name: process.env.VUE_APP_CURRENCY_NAME,
     };
   },
   async created() {
     const { data, error } = await supabase
       .from('products')
-      .select(`*, company:companies(name, abo, alias)`)
+      .select(`*, company:companies(name, abo, alias, verified)`)
       .eq('public', true);
 
     if (error != null) console.log(error);
 
     var filtered = [];
     data.forEach((product) => {
-      if (product.company.abo != null) filtered.push(product);
+      if (product.company.abo != null && product.company.verified)
+        filtered.push(product);
     });
 
     this.products = filtered;

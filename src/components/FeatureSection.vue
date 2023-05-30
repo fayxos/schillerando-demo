@@ -64,7 +64,7 @@
         image="service.png"
         title="Services"
         text="Lasse dir vor und während Schule als Staat Ware für dein Unternehmen aus dem Ausland liefern, deinen Müll entsorgen und vieles mehr."
-        :link="businessUrl + '/service'"
+        :link="businessUrl + '/services'"
         linkTitle="Services"
       ></FeatureTile>
     </div>

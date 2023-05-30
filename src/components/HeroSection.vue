@@ -17,12 +17,7 @@
             um von zahlreichen Services <br />
             zu profitieren
           </p>
-          <button
-            @click="window.location.href = businessUrl + '/companyRegistration'"
-            class="btn btn-primary"
-          >
-            Registrieren
-          </button>
+          <button @click="link()" class="btn btn-primary">Registrieren</button>
         </div>
       </div>
     </div>
@@ -36,6 +31,11 @@ export default {
     return {
       businessUrl: process.env.VUE_APP_BUSINESS_URL,
     };
+  },
+  methods: {
+    link() {
+      window.location.href = this.businessUrl + '/companyRegistration';
+    },
   },
 };
 </script>

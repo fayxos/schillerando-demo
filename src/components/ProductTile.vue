@@ -1,12 +1,11 @@
 <template>
-  <router-link :to="link">
+  <router-link :to="link" class="link">
     <div class="card">
       <div class="image">
-        <div v-if="this.data.image == null" class="no-image">
+        <div v-if="this.image == null" class="no-image">
           <i class="fa-solid fa-image fa-2xl"></i>
-          {{ this.data.image }}
         </div>
-        <img v-else :src="this.image" alt="" />
+        <img v-else :src="this.image" alt="Produkt Bild" />
       </div>
       <div class="info">
         <div>
@@ -35,6 +34,7 @@
 <script>
 import router from '@/router';
 import { useStore } from 'vuex';
+import { supabase } from '../supabase';
 
 export default {
   name: 'ProductTile',
@@ -45,6 +45,20 @@ export default {
     return {
       store,
     };
+  },
+  data() {
+    return {
+      image: null,
+    };
+  },
+  async mounted() {
+    if (this.data.product_picture != null) {
+      const response = await supabase.storage
+        .from('public/products-pictures')
+        .download(this.data.product_picture);
+      if (response.data != null) this.image = await response.data.text();
+      if (response.error) console.warn(response.error);
+    }
   },
   methods: {
     addProductToCart() {

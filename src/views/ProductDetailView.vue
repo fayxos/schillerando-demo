@@ -14,7 +14,7 @@
       </h3>
     </div>
     <div v-else class="row wrapper">
-      <div class="col-lg-5 col-xl-4 spacer"></div>
+      <div class="col-lg-5 col-xl-4 spacer no-border"></div>
       <div class="wrapper col-lg-5 col-xl-4">
         <div class="image">
           <div v-if="this.image == null" class="no-image">
@@ -259,11 +259,19 @@ img {
 @media (min-width: 992px) {
   .col-lg-5 {
     border-right: 1px solid;
+    border-bottom: 1px solid;
     border-color: #ebebeb;
     border-radius: 0 0 0.375rem 0;
-    overflow: hidden;
-    position: fixed;
-    height: max-content;
+    position: absolute;
+  }
+
+  hr {
+    width: 0;
+  }
+
+  .no-border {
+    border-bottom: 0px solid;
+    border-right: 0px solid;
   }
 
   .spacer {
