@@ -41,8 +41,13 @@ const store = createStore({
     async reload({ commit }) {
       const { data, error } = await supabase.auth.refreshSession();
 
+      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
       if (error || data.session == null) {
-        this.dispatch('getSharedLogin');
+        if (isSafari) {
+          commit('setUser', null);
+          commit('setUserCompany', null);
+        } else this.dispatch('getSharedLogin');
       } else {
         commit('setUser', data.user);
 
@@ -50,9 +55,11 @@ const store = createStore({
         this.dispatch('checkUserCompany');
       }
 
-      this.timer = setInterval(() => {
-        this.dispatch('getSharedLogin');
-      }, 1000);
+      if (!isSafari) {
+        this.timer = setInterval(() => {
+          this.dispatch('getSharedLogin');
+        }, 1000);
+      }
     },
     async getSharedLogin({ commit }) {
       const cookies = document.cookie
