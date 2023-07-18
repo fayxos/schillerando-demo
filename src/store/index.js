@@ -7,20 +7,14 @@ const store = createStore({
   state: {
     user: null,
     session: null,
-    userCompany: null,
-    isCompanyMode: false,
     state: undefined,
     shoppingCart: [],
+    access_token: null,
+    refresh_token: null,
   },
   mutations: {
     setUser(state, payload) {
       state.user = payload;
-    },
-    setUserCompany(state, payload) {
-      state.userCompany = payload;
-    },
-    setCompanyMode(state, payload) {
-      state.isCompanyMode = payload;
     },
     setState(state, payload) {
       state.state = payload;
@@ -28,19 +22,13 @@ const store = createStore({
     addProductToCart(state, payload) {
       state.shoppingCart.push(payload);
     },
-    removeProductToCart(state, payload) {
+    removeProductFromCart(state, payload) {
       state.shoppingCart.filter((product) => product.id != payload.id);
     },
   },
   getters: {
     getUser(state) {
       return state.user;
-    },
-    getUserCompany(state) {
-      return state.userCompany;
-    },
-    getCompanyMode(state) {
-      return state.isCompanyMode;
     },
     getState(state) {
       return state.state;
@@ -53,16 +41,69 @@ const store = createStore({
     async reload({ commit }) {
       const { data, error } = await supabase.auth.refreshSession();
 
+      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
       if (error || data.session == null) {
-        console.log('no session');
-        commit('setUser', null);
+        if (isSafari) {
+          commit('setUser', null);
+          commit('setUserCompany', null);
+        } else this.dispatch('getSharedLogin');
       } else {
-        console.log(data.user);
         commit('setUser', data.user);
 
         this.dispatch('updateMissingMetadata');
+        this.dispatch('checkUserCompany');
+      }
 
-        this.dispatch('startUserCompanySubscription');
+      if (!isSafari) {
+        this.timer = setInterval(() => {
+          this.dispatch('getSharedLogin');
+        }, 1000);
+      }
+    },
+    async getSharedLogin({ commit }) {
+      const cookies = document.cookie
+        .split(/\s*;\s*/)
+        .map((cookie) => cookie.split('='));
+      const accessTokenCookie = cookies.find(
+        (x) => x[0] == 'supabase-access-token'
+      );
+      const refreshTokenCookie = cookies.find(
+        (x) => x[0] == 'supabase-refresh-token'
+      );
+      if (accessTokenCookie && refreshTokenCookie) {
+        if (this.getters.getUser != null) return;
+
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessTokenCookie[1],
+          refresh_token: refreshTokenCookie[1],
+        });
+
+        if (error || data.session == null) {
+          commit('setUser', null);
+
+          document.cookie = `supabase-access-token=false;`;
+          document.cookie = `supabase-refresh-token=false;`;
+        } else {
+          if (this.getters.getUser != null) {
+            commit('setUser', data.user);
+
+            this.dispatch('updateMissingMetadata');
+            this.dispatch('checkUserCompany');
+          } else {
+            commit('setUser', data.user);
+
+            this.dispatch('updateMissingMetadata');
+            this.dispatch('checkUserCompany');
+
+            router.go(router.currentRoute);
+          }
+        }
+      } else if (this.getters.getUser != null) {
+        commit('setUser', null);
+        router.go(router.currentRoute);
+      } else {
+        commit('setUser', null);
       }
     },
     async updateMissingMetadata({ commit }) {
@@ -79,6 +120,17 @@ const store = createStore({
         commit('setUser', data.user);
       }
     },
+    // eslint-disable-next-line no-empty-pattern
+    async externLoginCallback({}, path) {
+      window.location.replace(
+        process.env.VUE_APP_BUSINESS_URL +
+          path +
+          '?ext=true&access_token=' +
+          store.state.access_token +
+          '&refresh_token=' +
+          store.state.refresh_token
+      );
+    },
     async signInAction({ commit }, { form, path }) {
       try {
         commit('setState', 'loading');
@@ -90,12 +142,14 @@ const store = createStore({
         if (error) throw error;
         console.log('Successfully signed in');
         commit('setUser', data.user);
-        this.dispatch('startUserCompanySubscription');
+        this.dispatch('checkUserCompany');
 
         commit('setState', 'success');
 
         if (path == null) await router.replace('/account');
-        else await router.replace(path);
+        else if (path.split('_')[0] == 'ext') {
+          this.dispatch('externLoginCallback', path.split('_')[1]);
+        } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
@@ -133,6 +187,8 @@ const store = createStore({
 
         commit('setState', 'success');
 
+        this.dispatch('checkUserCompany');
+
         if (path == null) await router.replace('/account');
         else await router.replace(path);
       } catch (error) {
@@ -149,7 +205,6 @@ const store = createStore({
         if (error) throw error;
         commit('setUser', null);
         console.log('Logged Out successfully');
-        this.dispatch('stopUserCompanySubscription');
 
         commit('setState', 'success');
 
@@ -167,7 +222,7 @@ const store = createStore({
         const { error } = await supabase.auth.resetPasswordForEmail(
           form.email,
           {
-            redirectTo: 'http://localhost:8080/update-password', // https://schillerando.de/reset-password
+            redirectTo: process.env.VUE_APP_MAIN_URL + '/update-password',
           }
         );
         if (error) throw error;
@@ -196,7 +251,7 @@ const store = createStore({
       }
     },
 
-    async startUserCompanySubscription({ commit }) {
+    async checkUserCompany({ commit }) {
       try {
         const { data, error } = await supabase
           .from('companies')
@@ -212,100 +267,14 @@ const store = createStore({
 
         if (error) throw error;
 
-        commit('setUserCompany', null);
+        let user = this.getters.getUser;
+        user.hasCompany = false;
+        commit('setUser', user);
         if (data[0] == null) return;
 
-        console.log(data);
-        commit('setUserCompany', data[0]);
-
-        const companySubscription = supabase.channel('any').on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'companies',
-            filter: 'id=eq.' + this.getters.getUserCompany.id,
-          },
-          (payload) => {
-            console.log('Database change received!', payload.new);
-            commit('setUserCompany', payload.new);
-          }
-        );
-
-        companySubscription.subscribe();
+        user.hasCompany = true;
+        commit('setUser', user);
       } catch (error) {
-        console.log(error.error_description || error.message);
-      }
-    },
-
-    async stopUserCompanySubscription({ commit }) {
-      try {
-        await supabase.removeAllChannels();
-        commit('setUserCompanySubscription', null);
-      } catch (error) {
-        console.log(error.error_description || error.message);
-      }
-    },
-
-    async createCompany({ commit }, form) {
-      try {
-        commit('setState', 'loading');
-
-        const { error } = await supabase.from('companies').insert({
-          id: form.name.replace(/\s/g, '').toLowerCase(),
-          name: form.name,
-          categories: [form.category],
-          location: form.location,
-          info: form.description,
-          user_uid: this.getters.getUser.id,
-          employees: form.employees,
-          abo: form.abo,
-        });
-
-        const { data, error3 } = await supabase.auth.updateUser({
-          data: { isCompanyLeader: true },
-        });
-        commit('setUser', data.user);
-
-        if (error3) throw error3;
-        if (error) throw error;
-
-        const productIDs = [];
-
-        for (var i = 0; i < form.products.length; i++) {
-          const product = form.products[i];
-
-          const { data, error } = await supabase
-            .from('products')
-            .insert({
-              name: product.name,
-              info: product.description,
-              price: product.price,
-              categories: product.categories,
-              company_id: form.name.replace(/\s/g, '').toLowerCase(),
-              auth_uid: this.getters.getUser.id,
-            })
-            .select();
-
-          if (error) throw error;
-
-          productIDs.push(data[0].id);
-        }
-
-        const { error2 } = await supabase
-          .from('companies')
-          .update({ products: productIDs })
-          .eq('id', form.name.replace(/\s/g, '').toLowerCase());
-
-        if (error2) throw error2;
-
-        console.log('Successfully registered');
-
-        commit('setState', 'success');
-
-        this.dispatch('startUserCompanySubscription');
-      } catch (error) {
-        commit('setState', 'failure');
         console.log(error.error_description || error.message);
       }
     },

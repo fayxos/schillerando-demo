@@ -1,29 +1,40 @@
 <template>
-  <div class="card">
-    <div class="image">
-      <div v-if="data.product_picture == null" class="no-image"></div>
-      <img v-else src="@/assets/cola.png" alt="" />
-    </div>
-    <div class="info">
-      <div>
-        <p class="name">{{ data.name }}</p>
+  <router-link :to="link" class="link">
+    <div class="card">
+      <div class="image">
+        <div v-if="this.image == null" class="no-image">
+          <i class="fa-solid fa-image fa-2xl"></i>
+        </div>
+        <img v-else :src="this.image" alt="Produkt Bild" />
       </div>
-      <div>
-        <p class="company_name">{{ data.company_name }}</p>
+      <div class="info">
+        <div>
+          <p class="name">{{ data.name }}</p>
+        </div>
+        <div>
+          <p class="company_name">{{ data.company.name }}</p>
+        </div>
+
+        <p class="price">{{ data.price }} $</p>
+
+        <button
+          v-if="data.delivery"
+          class="btn btn-primary"
+          @click="addProductToCart"
+          type="button"
+          disabled
+        >
+          <i class="fa-solid fa-cart-plus fa-lg"></i>
+        </button>
       </div>
-
-      <p class="price">{{ data.price }} $</p>
-
-      <button class="btn btn-primary" @click="addProductToCart">
-        <i class="fa-solid fa-cart-plus fa-lg"></i>
-      </button>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
 import router from '@/router';
 import { useStore } from 'vuex';
+import { supabase } from '../supabase';
 
 export default {
   name: 'ProductTile',
@@ -35,11 +46,30 @@ export default {
       store,
     };
   },
+  data() {
+    return {
+      image: null,
+    };
+  },
+  async mounted() {
+    if (this.data.product_picture != null) {
+      const response = await supabase.storage
+        .from('public/products-pictures')
+        .download(this.data.product_picture);
+      if (response.data != null) this.image = await response.data.text();
+      if (response.error) console.warn(response.error);
+    }
+  },
   methods: {
     addProductToCart() {
       if (this.store.getters.getUser == null)
         router.push({ path: 'auth', query: { redirect: 'produkte' } });
       this.store.commit('addProductToCart', this.data);
+    },
+  },
+  computed: {
+    link() {
+      return `/${this.data.company.alias}/${this.data.id}`;
     },
   },
 };
@@ -77,6 +107,7 @@ export default {
   text-align: left;
   bottom: 8px;
   left: 15px;
+  color: black;
 }
 
 .row {
@@ -102,6 +133,7 @@ export default {
 .card {
   flex-direction: row;
   overflow: hidden;
+  margin: 2.5%;
 }
 
 .image {
@@ -129,6 +161,24 @@ img {
   top: 0;
   left: 0;
   object-fit: scale-down;
+}
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.btn-primary:hover {
+  background-color: #007400;
+  border-color: #007400;
+}
+
+.fa-image {
+  position: absolute;
+  font-size: 4rem;
+  top: 50%;
+  left: calc(50% - 2rem);
+  color: black;
 }
 
 /*   border-radius: 0.375rem 0 0 0.375rem; */

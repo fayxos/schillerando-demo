@@ -1,20 +1,14 @@
 <template>
   <div class="outer">
     <div
-      v-if="this.company === undefined"
+      v-if="this.product === undefined"
       class="spinner-border"
-      style="
-        width: 4rem;
-        height: 4rem;
-        border-width: 7px;
-        position: relative;
-        margin-top: 50px;
-      "
+      style="width: 4rem; height: 4rem; border-width: 7px; margin-top: 50px"
       role="status"
     >
       <span class="visually-hidden">Loading...</span>
     </div>
-    <div v-else-if="this.company === null" class="mt-4">
+    <div v-else-if="this.product === null" class="mt-4">
       <h3 class="m-4" style="text-align: center">
         Ups, dieses Seite scheint nicht zu existieren
       </h3>
@@ -26,62 +20,56 @@
           <div v-if="this.image == null" class="no-image">
             <i class="fa-solid fa-image fa-2xl"></i>
           </div>
-          <img
-            v-else
-            :src="this.image"
-            alt="Unternehmen Bild"
-            id="companyImage"
-          />
+          <img v-else :src="this.image" alt="Produkt Bild" id="companyImage" />
         </div>
 
         <div class="detail-wrapper">
           <div class="details">
             <div class="row spacing">
-              <h1 class="col-9 title">
-                {{ this.company.name }}
+              <h1 class="col-8 title">
+                {{ this.product.name }}
               </h1>
-              <div class="col-3">
-                <CompanyBadge
-                  :verified="this.company.verified"
-                  :premium="this.company.abo == 'Premium'"
-                  :self="this.company.alias == 'schillerando'"
-                  class="company-badge"
-                />
+              <div class="col-4">
+                <p class="price">{{ product.price }} $</p>
               </div>
             </div>
 
-            <div class="category spacing">
-              {{ company.categories[0] }}
+            <div v-if="product.categories != null" class="category spacing">
+              {{ product.categories[0] }}
+            </div>
+
+            <div class="spacing link">
+              <router-link :to="`/${this.product.company.alias}`">
+                {{ product.company.name }}
+              </router-link>
             </div>
 
             <div class="row spacing">
               <p class="info">
-                {{ this.company.info }}
+                {{ this.product.info }}
               </p>
             </div>
+          </div>
 
-            <div class="row spacing location-pos">
-              <div class="col-9 location">
-                <i class="fa-solid fa-location-dot"></i>
-                <div class="location-text">{{ company.location }}</div>
-              </div>
-            </div>
+          <div class="spacing">
+            <button
+              v-if="product.delivery"
+              class="btn btn-primary"
+              @click="addProductToCart"
+              type="button"
+              disabled
+            >
+              <div class="cart">Warenkorb</div>
+              <i class="fa-solid fa-cart-plus fa-lg"></i>
+            </button>
           </div>
         </div>
 
         <hr />
       </div>
 
-      <div class="products col-lg-7 col-xl-8">
-        <SortableList
-          v-if="products.length > 0"
-          :items="products"
-          :no-search="true"
-          element="ProductTile"
-        />
-        <h4 v-else class="margin">
-          Dieses Unternehmen bietet keine Produkte an
-        </h4>
+      <div class="col-lg-7 col-xl-8">
+        <h4 class="review">Dieses Produkt hat noch keine Bewertungen</h4>
       </div>
     </div>
   </div>
@@ -89,56 +77,34 @@
 
 <script>
 import { supabase } from '../supabase';
-import CompanyBadge from '../components/CompanyBadge.vue';
-import SortableList from '@/components/SortableList.vue';
 
 export default {
-  name: 'CompanyDetailView',
+  name: 'ProductDetailView',
   props: ['companyuuid'],
-  components: { CompanyBadge, SortableList },
   data() {
     return {
-      company: undefined,
+      product: undefined,
       image: null,
-      products: [],
     };
   },
   async mounted() {
-    if (this.$route.params.companyalias) {
+    if (this.$route.params.productid) {
       const { data, error } = await supabase
-        .from('companies')
-        .select()
-        .eq('alias', this.$route.params.companyalias);
+        .from('products')
+        .select(`*, company:companies(name, alias)`)
+        .eq('id', this.$route.params.productid);
       if (error != null) console.log(error);
       if (data === null || data.length === 0) {
-        this.company = null;
+        this.product = null;
         return;
       }
-      this.company = data[0];
+      this.product = data[0];
 
-      if (this.company.header_picture != null) {
+      if (this.product.product_picture != null) {
         const response = await supabase.storage
-          .from('public/sellers-headings')
-          .download(this.company.header_picture);
+          .from('public/products-pictures')
+          .download(this.product.product_picture);
         if (response.data != null) this.image = await response.data.text();
-        if (response.error) console.warn(response.error);
-      }
-
-      {
-        const response = await supabase
-          .from('products')
-          .select(`*, company:companies(name, abo, alias)`)
-          .eq('company_id', this.company.id)
-          .eq('public', true);
-
-        if (response.data != null) {
-          response.data.forEach((product) => {
-            this.products.push(product);
-          });
-        }
-
-        console.log(this.products);
-
         if (response.error) console.warn(response.error);
       }
     }
@@ -154,12 +120,13 @@ div {
 h1,
 p {
   padding: 0;
+  margin: 0;
 }
 
 .image {
   width: 100%;
   position: relative;
-  padding-bottom: 56.25%;
+  padding-bottom: 100%;
 }
 
 .no-image {
@@ -185,6 +152,7 @@ img {
 }
 
 .title {
+  font-size: 2.2rem;
   color: #00a100;
 }
 
@@ -249,20 +217,43 @@ img {
   padding: 0;
 }
 
+.price {
+  color: black;
+  font-size: 1.6rem;
+  text-align: right;
+}
+
 .outer {
   margin-bottom: 100px;
 }
 
-.margin {
-  margin: 20px 10px;
+.review {
   text-align: center;
+  margin: 20px 10px;
 }
 
-.spinner-border {
-  color: #00a100;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.cart {
+  display: inline;
+  margin-right: 10px;
+  font-size: 1.2rem;
+  position: relative;
+  top: 1px;
+}
+
+.link {
+  font-size: 1.25rem;
+}
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+.btn-primary:hover {
+  background-color: #007400;
+  border-color: #007400;
 }
 
 @media (min-width: 992px) {
@@ -286,5 +277,12 @@ img {
   .spacer {
     position: relative;
   }
+}
+
+.spinner-border {
+  color: #00a100;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

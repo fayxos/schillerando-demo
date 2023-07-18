@@ -17,6 +17,9 @@
     <div class="collapse navbar-collapse" id="navbarToggler">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
+          <router-link class="nav-link" to="/">Startseite</router-link>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/produkte">Produkte</router-link>
         </li>
         <li class="nav-item">

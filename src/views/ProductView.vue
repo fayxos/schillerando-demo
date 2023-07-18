@@ -1,6 +1,20 @@
 <template>
   <TitleDiv title="Produkte" />
-  <SortableList :items="products" element="ProductTile" />
+  <SortableList :items="products" :loading="loading" element="ProductTile" />
+
+  <div
+    v-if="loading"
+    class="spinner-border"
+    style="width: 4rem; height: 4rem; border-width: 7px"
+    role="status"
+  >
+    <span class="visually-hidden">Loading...</span>
+  </div>
+
+  <p v-else class="mt-4">
+    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ =
+    0.1€)
+  </p>
 </template>
 
 <script>
@@ -17,22 +31,33 @@ export default {
   data() {
     return {
       products: [],
+      loading: true,
+      currency_name: process.env.VUE_APP_CURRENCY_NAME,
     };
   },
   async created() {
-    const { data, error } = await supabase.from('products').select();
+    const { data, error } = await supabase
+      .from('products')
+      .select(`*, company:companies(name, abo, alias, verified)`)
+      .eq('public', true);
+
     if (error != null) console.log(error);
-    this.products = data;
 
-    this.products.forEach(async (product) => {
-      const { data, error } = await supabase
-        .from('companies')
-        .select('name')
-        .eq('id', product.company_id);
-
-      if (error != null) console.log(error);
-      if (data[0] != null) product.company_name = data[0].name;
+    var filtered = [];
+    data.forEach((product) => {
+      if (product.company.abo != null && product.company.verified)
+        filtered.push(product);
     });
+
+    this.products = filtered;
+
+    this.loading = false;
   },
 };
 </script>
+
+<style>
+.spinner-border {
+  color: #00a100;
+}
+</style>

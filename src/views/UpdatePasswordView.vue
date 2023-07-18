@@ -105,11 +105,11 @@ export default {
       }
 
       if (valInput.value != passwInput.value || !passwValid) {
-        passwInput.classList.remove('is-valid');
-        passwInput.classList.add('is-invalid');
+        valInput.classList.remove('is-valid');
+        valInput.classList.add('is-invalid');
       } else {
-        passwInput.classList.remove('is-invalid');
-        passwInput.classList.add('is-valid');
+        valInput.classList.remove('is-invalid');
+        valInput.classList.add('is-valid');
         valValid = true;
       }
 
@@ -132,6 +132,13 @@ export default {
 <style scoped>
 .position {
   height: 500px;
+}
+
+.card {
+  position: relative;
+  margin-bottom: 0.75rem;
+  max-width: 500px;
+  margin: auto;
 }
 
 .container {
@@ -169,11 +176,6 @@ export default {
   .container {
     max-width: 1140px;
   }
-}
-
-.card {
-  margin-bottom: 0.75rem;
-  max-width: 500px;
 }
 
 .text-muted {

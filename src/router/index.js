@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView';
 import ProductView from '../views/ProductView';
+import ProductDetailView from '../views/ProductDetailView';
 import CompanyView from '../views/CompanyView';
+import CompanyDetailView from '../views/CompanyDetailView';
 import AccountView from '../views/AccountView';
 import AuthView from '../views/AuthView';
-import CompanyRegistrationView from '../views/CompanyRegistrationView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
+import AGBView from '../views/AGBView';
 import store from '../store/index';
 
 const routes = [
@@ -41,16 +43,6 @@ const routes = [
     },
   },
   {
-    path: '/companyRegistration',
-    name: 'CompanyRegistrationView',
-    component: CompanyRegistrationView,
-    meta: {
-      requiresAuth: true,
-      footer: false,
-      ShoppingCart: false,
-    },
-  },
-  {
     path: '/update-password',
     name: 'UpdatePasswordView',
     component: UpdatePasswordView,
@@ -59,12 +51,31 @@ const routes = [
     },
   },
   {
+    path: '/agb',
+    name: 'AGBView',
+    component: AGBView,
+  },
+  {
     path: '/qr1',
     redirect: '/',
   },
   {
     path: '/qr2',
     redirect: '/account',
+  },
+  {
+    path: '/:companyalias',
+    component: CompanyDetailView,
+    meta: {
+      footer: false,
+    },
+  },
+  {
+    path: '/:company/:productid',
+    component: ProductDetailView,
+    meta: {
+      footer: false,
+    },
   },
 ];
 
@@ -80,14 +91,19 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // get current user info
   const user = store.getters.getUser;
-  const userCompany = store.getters.getUserCompany;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (requiresAuth && user == null)
     next({ path: 'auth', query: { redirect: to.fullPath } });
+  else if (
+    to.query.redirect &&
+    to.name == 'AuthView' &&
+    user != null &&
+    to.query.redirect.split('_')[0] == 'ext'
+  ) {
+    store.dispatch('externLoginCallback', to.query.redirect.split('_')[1])
+  }
   else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
-  else if (to.name == 'CompanyRegistrationView' && userCompany != null)
-    next({ path: 'account' });
   else if (!requiresAuth && user != null) next();
   else next();
 });
