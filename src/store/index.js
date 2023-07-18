@@ -279,6 +279,34 @@ const store = createStore({
         console.log(error.error_description || error.message);
       }
     },
+
+    async addQRCodeCount() {
+      try {
+        const { data, error } = await supabase
+          .from('stats')
+          .select()
+          .eq('id', '1');
+
+        if (error) throw error;
+        if (data[0] == null) throw error;
+
+        var count = data[0].count;
+        console.log(data);
+
+        {
+          const { error } = await supabase
+            .from('stats')
+            .update({
+              count: count + 1,
+            })
+            .eq('name', 'QR Code 1');
+
+          if (error) throw error;
+        }
+      } catch (error) {
+        console.log(error.error_description || error.message);
+      }
+    },
   },
 
   modules: {},

@@ -57,7 +57,7 @@ const routes = [
   },
   {
     path: '/qr1',
-    redirect: '/',
+    //redirect: '/',
   },
   {
     path: '/qr2',
@@ -93,7 +93,11 @@ router.beforeEach((to, from, next) => {
   const user = store.getters.getUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  if (requiresAuth && user == null)
+  if (to.path == '/qr1') {
+    store.dispatch('addQRCodeCount');
+
+    next({ path: '/' });
+  } else if (requiresAuth && user == null)
     next({ path: 'auth', query: { redirect: to.fullPath } });
   else if (
     to.query.redirect &&
