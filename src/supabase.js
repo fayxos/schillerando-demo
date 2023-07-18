@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
-import store from './store';
+//import store from './store';
 
 const supabaseUrl = 'https://jwfyrkfpqfkzovzdpkqt.supabase.co';
 const supabaseKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Znlya2ZwcWZrem92emRwa3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzkyNDg4MjcsImV4cCI6MTk5NDgyNDgyN30.ECsAuWRN08LWBqJZqa4v3Qmnx03N8wkGrTRgVMotCS8';
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+/*
 supabase.auth.onAuthStateChange((event, session) => {
   const domain = window.location.hostname
   if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
@@ -20,3 +21,4 @@ supabase.auth.onAuthStateChange((event, session) => {
     document.cookie = `supabase-refresh-token=${session.refresh_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
   }
 })
+*/
