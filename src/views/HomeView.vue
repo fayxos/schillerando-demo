@@ -1,26 +1,25 @@
 <template>
-  <AlertBanner title="Coming Soon"/>
-  <TitleDiv title="Der Lieferservice für Schule Als Staat"/>
-  <InfoCards/>
-  <QuestionsCarousel/>
+  <HeroSection />
+
+  <FeatureSection />
+
+  <QuestionsCarousel />
 </template>
 
 <script>
-import AlertBanner from '../components/AlertBanner'
-import TitleDiv from '../components/TitleDiv'
-import InfoCards from '../components/InfoCards'
-import QuestionsCarousel from '../components/QuestionsCarousel'
+import HeroSection from '../components/HeroSection';
+import QuestionsCarousel from '../components/QuestionsCarousel';
+import FeatureSection from '../components/FeatureSection';
 
 export default {
   name: 'HomeView',
   components: {
-    AlertBanner,
-    TitleDiv,
-    InfoCards,
-    QuestionsCarousel
+    HeroSection,
+    QuestionsCarousel,
+    FeatureSection,
   },
   data() {
-    return {}
-  }
-}
+    return {};
+  },
+};
 </script>

@@ -1,36 +1,45 @@
 <template>
-  <div>
-    <NavBar/>
+  <div translate="no">
+    <NavBar />
     <router-view></router-view>
-    <SocialsFooter/>
+    <SocialsFooter v-if="$route.meta.footer == null" />
+    <ShoppingCart v-if="$route.meta.ShoppingCart == null && false" />
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar'
-import SocialsFooter from './components/SocialsFooter'
+import NavBar from './components/NavBar';
+import SocialsFooter from './components/SocialsFooter';
+import ShoppingCart from './components/ShoppingCart';
+import { useStore } from 'vuex';
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    SocialsFooter
-  }
-}
+    SocialsFooter,
+    ShoppingCart,
+  },
+  mounted() {
+    console.log('reload');
+
+    const store = useStore();
+    store.dispatch('reload');
+  },
+};
 </script>
 
 <style>
-
-::-webkit-scrollbar {
-  position: absolute;
-  z-index: 9999;
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
-  font-family: "Merriweather Sans",Arial,sans-serif;
-  text-align: center; 
+  font-family: 'Merriweather Sans', Arial, sans-serif;
+  text-align: center;
   font-weight: 500;
-  scrollbar-gutter: stable;
 }
 
 h1 {
@@ -64,4 +73,42 @@ hr {
   padding: 50px 0;
 }
 
+/* Primary Styles */
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.bg-primary {
+  background-color: #00a100;
+  color: #00a100;
+}
+
+.btn-primary {
+  background-color: #00a100;
+  border-color: #00a100;
+}
+
+.btn-primary:hover {
+  background-color: #007400;
+  border-color: #007400;
+}
+
+.btn-link {
+  color: #00a100;
+}
+
+.btn-link:hover {
+  color: #007400;
+}
+
+.bg {
+  background-color: #00a100;
+}
+
+.bg-sec {
+  background-color: white;
+  color: #00a100;
+}
 </style>

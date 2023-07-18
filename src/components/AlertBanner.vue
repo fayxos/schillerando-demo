@@ -11,8 +11,8 @@ export default {
   name: 'AlertBanner',
   props: {
     title: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

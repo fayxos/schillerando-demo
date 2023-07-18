@@ -9,8 +9,8 @@ export default {
   name: 'InfoDiv',
   props: {
     info: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -25,10 +25,8 @@ p {
 }
 
 @media (max-device-width: 480px) {
-
   p {
     font-size: 1.5rem;
   }
 }
-
 </style>

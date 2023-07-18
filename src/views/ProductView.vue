@@ -1,23 +1,63 @@
 <template>
-  <AlertBanner title="Coming Soon"/>
-  <TitleDiv title="Vergleiche Preise und bestelle Produkte"/>
-  <InfoDiv info="Hier wirst du in Zukunft die Produkte aller Unternehmen im Staat sehen. Du kannst nach bestimmten Kategorien oder Produkten suchen und Preise vergleichen. Außerdem kannst du dir Produkte bestellen und direkt zu dir liefern lassen."/>
+  <TitleDiv title="Produkte" />
+  <SortableList :items="products" :loading="loading" element="ProductTile" />
+
+  <div
+    v-if="loading"
+    class="spinner-border"
+    style="width: 4rem; height: 4rem; border-width: 7px"
+    role="status"
+  >
+    <span class="visually-hidden">Loading...</span>
+  </div>
+
+  <p v-else class="mt-4">
+    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ =
+    0.1€)
+  </p>
 </template>
 
 <script>
-import AlertBanner from '../components/AlertBanner'
-import TitleDiv from '../components/TitleDiv'
-import InfoDiv from '../components/InfoDiv'
+import SortableList from '@/components/SortableList.vue';
+import { supabase } from '@/supabase';
+import TitleDiv from '../components/TitleDiv';
 
 export default {
   name: 'ProductView',
   components: {
-    AlertBanner,
     TitleDiv,
-    InfoDiv
+    SortableList,
   },
   data() {
-    return {}
-  }
-}
+    return {
+      products: [],
+      loading: true,
+      currency_name: process.env.VUE_APP_CURRENCY_NAME,
+    };
+  },
+  async created() {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`*, company:companies(name, abo, alias, verified)`)
+      .eq('public', true);
+
+    if (error != null) console.log(error);
+
+    var filtered = [];
+    data.forEach((product) => {
+      if (product.company.abo != null && product.company.verified)
+        filtered.push(product);
+    });
+
+    this.products = filtered;
+
+    this.loading = false;
+  },
+};
 </script>
+
+<style>
+.spinner-border {
+  color: #00a100;
+}
+</style>
