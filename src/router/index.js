@@ -101,9 +101,8 @@ router.beforeEach((to, from, next) => {
     user != null &&
     to.query.redirect.split('_')[0] == 'ext'
   ) {
-    store.dispatch('externLoginCallback', to.query.redirect.split('_')[1])
-  }
-  else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
+    store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
+  } else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
   else if (!requiresAuth && user != null) next();
   else next();
 });
