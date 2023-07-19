@@ -205,7 +205,16 @@ const store = createStore({
         this.dispatch('checkUserCompany');
 
         if (path == null) await router.replace('/account');
-        else await router.replace(path);
+        else {
+          if (this.$route.query.redirect.split('_').length > 1) {
+            this.dispatch(
+              'externLoginCallback',
+              this.$route.query.redirect.split('_')[1]
+            );
+          } else {
+            await router.replace(path);
+          }
+        }
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
