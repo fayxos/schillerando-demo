@@ -39,21 +39,33 @@ const store = createStore({
   },
   actions: {
     async reload({ commit }) {
-      const { data, error } = await supabase.auth.refreshSession();
-
       var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       isSafari = true;
 
-      if (error || data.session == null) {
-        if (isSafari) {
-          commit('setUser', null);
-          commit('setUserCompany', null);
-        } else this.dispatch('getSharedLogin');
-      } else {
-        commit('setUser', data.user);
+      try {
+        const { data, error } = await supabase.auth.refreshSession();
 
-        this.dispatch('updateMissingMetadata');
-        this.dispatch('checkUserCompany');
+        if (error || data.session == null) {
+          if (isSafari) {
+            commit('setUser', null);
+          } else this.dispatch('getSharedLogin');
+
+          this.state.access_token = null;
+          this.state.refresh_token = null;
+        } else {
+          this.state.access_token = data.session.access_token;
+          this.state.refresh_token = data.session.refresh_token;
+
+          commit('setUser', data.user);
+
+          this.dispatch('updateMissingMetadata');
+          this.dispatch('checkUserCompany');
+        }
+      } catch (e) {
+        commit('setUser', null);
+
+        this.state.access_token = null;
+        this.state.refresh_token = null;
       }
 
       if (!isSafari) {
@@ -149,6 +161,8 @@ const store = createStore({
 
         if (path == null) await router.replace('/account');
         else if (path.split('_')[0] == 'ext') {
+          this.state.access_token = data.session.access_token;
+          this.state.refresh_token = data.session.refresh_token;
           this.dispatch('externLoginCallback', path.split('_')[1]);
         } else await router.replace(path);
       } catch (error) {
@@ -208,6 +222,9 @@ const store = createStore({
         console.log('Logged Out successfully');
 
         commit('setState', 'success');
+
+        this.state.access_token = null;
+        this.state.refresh_token = null;
 
         await router.replace('/auth');
       } catch (error) {

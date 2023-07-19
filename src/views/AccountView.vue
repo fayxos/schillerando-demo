@@ -352,7 +352,8 @@ export default {
     },
     companyRegistration() {
       if (this.userData.email.split('@')[1] == 'fsgmarbach.info') {
-        window.location.href = this.businessUrl + '/companyRegistration';
+        window.location.href =
+          this.businessUrl + '/companyRegistration?ext=true';
       } else {
         this.alertTitle = 'Ungültige Email';
         this.alertInfo =

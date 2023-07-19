@@ -46,7 +46,7 @@
         image="boosting.png"
         title="Werbung"
         text="Mache dein Unternehmen bekannt und erreiche mehr Kunden."
-        :link="businessUrl + '/companyRegistration'"
+        :link="businessUrl + '/companyRegistration?ext=true'"
         linkTitle="Business"
       ></FeatureTile>
       <FeatureTile
@@ -55,7 +55,7 @@
         image="accounting.png"
         title="Buchhaltung*"
         text="Habe immer alle Einnahmen und Ausgaben deines Unternehmens im Blick."
-        :link="businessUrl + '/buchhaltung'"
+        :link="businessUrl + '/buchhaltung?ext=true'"
         linkTitle="Buchhaltung"
       ></FeatureTile>
       <FeatureTile
@@ -64,7 +64,7 @@
         image="service.png"
         title="Services"
         text="Lasse dir vor und während Schule als Staat Ware für dein Unternehmen aus dem Ausland liefern, deinen Müll entsorgen und vieles mehr."
-        :link="businessUrl + '/services'"
+        :link="businessUrl + '/services?ext=true'"
         linkTitle="Services"
       ></FeatureTile>
     </div>

@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { useStore } from 'vuex';
+
 export default {
   name: 'HeroSection',
   data() {
@@ -32,9 +34,16 @@ export default {
       businessUrl: process.env.VUE_APP_BUSINESS_URL,
     };
   },
+  setup() {
+    const store = useStore();
+
+    return {
+      store,
+    };
+  },
   methods: {
     link() {
-      window.location.href = this.businessUrl + '/companyRegistration';
+      window.location.href = this.businessUrl + '/companyRegistration?ext=true';
     },
   },
 };
