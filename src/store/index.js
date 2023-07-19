@@ -191,6 +191,7 @@ const store = createStore({
           email: form.email,
           password: form.password,
           options: {
+            emailRedirectTo: 'https://schillerando.de/account',
             data: {
               name: capitalizedName,
               credit: 0,
