@@ -159,11 +159,16 @@ const store = createStore({
 
         commit('setState', 'success');
 
+        this.state.access_token = data.session.access_token;
+        this.state.refresh_token = data.session.refresh_token;
+
         if (path == null) await router.replace('/account');
-        else if (path.split('_')[0] == 'ext') {
-          this.state.access_token = data.session.access_token;
-          this.state.refresh_token = data.session.refresh_token;
-          this.dispatch('externLoginCallback', path.split('_')[1]);
+        else if (path.contains('redirect')) {
+          if (path.contains('ext')) {
+            this.dispatch('externLoginCallback', path.split('_')[1]);
+          } else {
+            router.replace(path.split('=')[1]);
+          }
         } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
@@ -204,17 +209,16 @@ const store = createStore({
 
         this.dispatch('checkUserCompany');
 
+        console.log(path);
+
         if (path == null) await router.replace('/account');
-        else {
-          if (this.$route.query.redirect.split('_').length > 1) {
-            this.dispatch(
-              'externLoginCallback',
-              this.$route.query.redirect.split('_')[1]
-            );
+        else if (path.contains('redirect')) {
+          if (path.contains('ext')) {
+            this.dispatch('externLoginCallback', path.split('_')[1]);
           } else {
-            await router.replace(path);
+            router.replace(path.split('=')[1]);
           }
-        }
+        } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
