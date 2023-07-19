@@ -72,9 +72,9 @@
       <div class="container">
         <div class="row justify-content-center">
           <div id="flipper" class="flipper col-md-8">
-            <div class="card-flipper">
+            <div class="card-flipper" id="card-flipper">
               <!-- Front -->
-              <div class="front">
+              <div class="front" id="front">
                 <div class="card-group mb-0">
                   <div class="card p-4 pb-0" id="top-card">
                     <div class="card-body">
@@ -172,7 +172,7 @@
               </div>
 
               <!-- Back -->
-              <div class="back">
+              <div class="back" id="back">
                 <div class="card-group mb-0">
                   <div class="card p-4 pb-0">
                     <div class="card-body">
@@ -295,6 +295,7 @@ export default {
   },
   data() {
     return {
+      registerSite: false,
       logInPressed: false,
       signUpPressed: false,
       resetPressed: false,
@@ -401,6 +402,7 @@ export default {
   },
   methods: {
     flipCard() {
+      this.registerSite = !this.registerSite;
       var element = document.getElementById('flipper');
       element.classList.toggle('flip');
       if (window.innerWidth < 576) {
@@ -718,10 +720,6 @@ p {
   transform: rotateY(180deg);
 }
 
-.flipper.flip .back {
-  z-index: 3;
-}
-
 .card-flipper {
   text-align: center;
   width: 100%;
@@ -731,6 +729,7 @@ p {
   transform-style: preserve-3d;
   top: 0;
   left: 0;
+  pointer-events: none;
 }
 
 .front,
@@ -739,6 +738,7 @@ p {
   padding: 5px;
   position: absolute;
   backface-visibility: hidden;
+  pointer-events: all;
 }
 
 .front {
