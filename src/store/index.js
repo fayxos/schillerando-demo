@@ -8,6 +8,7 @@ const store = createStore({
     user: null,
     session: null,
     state: undefined,
+    error: null,
     shoppingCart: [],
     access_token: null,
     refresh_token: null,
@@ -163,12 +164,8 @@ const store = createStore({
         this.state.refresh_token = data.session.refresh_token;
 
         if (path == null) await router.replace('/account');
-        else if (path.includes('redirect')) {
-          if (path.includes('ext')) {
-            this.dispatch('externLoginCallback', path.split('_')[1]);
-          } else {
-            router.replace(path.split('=')[1]);
-          }
+        else if (path.includes('ext')) {
+          this.dispatch('externLoginCallback', path.split('_')[1]);
         } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
@@ -201,6 +198,7 @@ const store = createStore({
             },
           },
         });
+
         if (error) throw error;
         console.log('Successfully registered');
         commit('setUser', data.user);
@@ -212,14 +210,11 @@ const store = createStore({
         console.log(path);
 
         if (path == null) await router.replace('/account');
-        else if (path.includes('redirect')) {
-          if (path.includes('ext')) {
-            this.dispatch('externLoginCallback', path.split('_')[1]);
-          } else {
-            router.replace(path.split('=')[1]);
-          }
+        else if (path.includes('ext')) {
+          this.dispatch('externLoginCallback', path.split('_')[1]);
         } else await router.replace(path);
       } catch (error) {
+        this.state.error = error;
         commit('setState', 'failure');
         console.log(error.error_description || error.message);
       }

@@ -353,6 +353,22 @@ export default {
           button.style.position = 'relative';
         });
 
+        if (this.store.state.error.status == 429) {
+          this.failureAlertTitle = 'Server überlastet';
+          this.failureAlertInfo =
+            'Wir erfahren im Moment eine erhöhte Anzahl an Anmeldungen, weshalb unser Server keine Kapazität übrig hat. Versuche es später erneut.';
+          this.successAlertTitle = '';
+        } else {
+          var mailInput = document.getElementById('signup-mail');
+          mailInput.classList.remove('is-valid');
+          mailInput.classList.add('is-invalid');
+
+          this.failureAlertTitle = 'Registrierung fehlgeschlagen';
+          this.failureAlertInfo =
+            'Es existiert bereits ein Account mit dieser Email!';
+          this.successAlertTitle = '';
+        }
+
         this.alertTitle = this.failureAlertTitle;
         this.alertInfo = this.failureAlertInfo;
 
@@ -544,18 +560,9 @@ export default {
         path: this.$route.query.redirect,
       });
 
-      this.failureAlertTitle = 'Registrierung fehlgeschlagen';
-      this.failureAlertInfo =
-        'Es existiert bereits ein Account mit dieser Email!';
-      this.successAlertTitle = '';
-
       this.action = 'register';
     },
     signUpFailure() {
-      var mailInput = document.getElementById('signup-mail');
-      mailInput.classList.remove('is-valid');
-      mailInput.classList.add('is-invalid');
-
       var feedbacks = document.getElementsByClassName('invalid-feedback');
       Array.from(feedbacks).forEach((feedback) => {
         feedback.style.visibility = 'hidden';
