@@ -163,8 +163,8 @@ const store = createStore({
         this.state.refresh_token = data.session.refresh_token;
 
         if (path == null) await router.replace('/account');
-        else if (path.contains('redirect')) {
-          if (path.contains('ext')) {
+        else if (path.includes('redirect')) {
+          if (path.includes('ext')) {
             this.dispatch('externLoginCallback', path.split('_')[1]);
           } else {
             router.replace(path.split('=')[1]);
@@ -212,8 +212,8 @@ const store = createStore({
         console.log(path);
 
         if (path == null) await router.replace('/account');
-        else if (path.contains('redirect')) {
-          if (path.contains('ext')) {
+        else if (path.includes('redirect')) {
+          if (path.includes('ext')) {
             this.dispatch('externLoginCallback', path.split('_')[1]);
           } else {
             router.replace(path.split('=')[1]);
