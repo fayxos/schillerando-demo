@@ -14,7 +14,7 @@
   ],
   "icons": [
     {
-      "src": "images/touch/homescreen48.png",
+      "src": "./img/logo_reversed_background.ed99d671.png",
       "sizes": "any",
       "purpose": "maskable any",
       "type": "image/png"
