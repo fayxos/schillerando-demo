@@ -1,0 +1,23 @@
+{
+  "name": "Schillerando Lieferservice",
+  "short_name": "Schillerando",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Ein Lieferservice für Schule als Staat 2023 am FSG.",
+  "shortcuts": [
+    {
+       "name": "Produkt suchen",
+       "url": "./produkte",
+       "description": "Suche nach Produkten, vergleiche sie und bestelle dann über Schillerando."
+    }
+  ],
+  "icons": [
+    {
+      "src": "images/touch/homescreen48.png",
+      "sizes": "any",
+      "purpose": "maskable any",
+      "type": "image/png"
+    }
+  ]
+}
