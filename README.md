@@ -31,4 +31,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Depolyment
 - CNAME file is needed
-- copy the contents of index.html to 404.html for vuex-router
+- add ```<link rel="manifest" href="manifest.json" />``` to ```index.html```
+- copy the contents of ```index.html``` to ```404.html```, ```produkte.html``` and ```unternehmen.html``` for vuex-router
+- copy ```manifest.json``` into the docs directory
