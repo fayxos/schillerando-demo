@@ -13,8 +13,9 @@
             <span>Lieferservice</span>
           </div>
           <p class="text">
-            Registriere dein Unternehmen <br />
-            um von zahlreichen Services <br />
+            Erstelle einen Account <br />
+            um dein Unternehmen zu registrieren <br />
+            und von zahlreichen Services <br />
             zu profitieren
           </p>
           <button @click="link()" class="btn btn-primary">Registrieren</button>
@@ -29,11 +30,11 @@ import { useStore } from 'vuex';
 
 export default {
   name: 'HeroSection',
-  data() {
+  /*data() {
     return {
       businessUrl: process.env.VUE_APP_BUSINESS_URL,
     };
-  },
+  },*/
   setup() {
     const store = useStore();
 
@@ -43,7 +44,7 @@ export default {
   },
   methods: {
     link() {
-      window.location.href = this.businessUrl + '/companyRegistration?ext=true';
+      window.location.href = '/auth?action=register';
     },
   },
 };
