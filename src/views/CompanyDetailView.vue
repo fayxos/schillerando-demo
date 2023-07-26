@@ -70,6 +70,7 @@
         </div>
 
         <hr />
+        <MapProvider :positions="company.coordinates" style="height: 50vh; width: 50vw"/>
       </div>
 
       <div class="products col-lg-7 col-xl-8">
@@ -91,11 +92,12 @@
 import { supabase } from '../supabase';
 import CompanyBadge from '../components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
+import MapProvider from '@/components/MapProvider.vue';
 
 export default {
   name: 'CompanyDetailView',
   props: ['companyuuid'],
-  components: { CompanyBadge, SortableList },
+  components: { CompanyBadge, SortableList, MapProvider },
   data() {
     return {
       company: undefined,
@@ -137,7 +139,7 @@ export default {
           });
         }
 
-        console.log(this.products);
+        console.log("Products array of /" + this.company.alias, this.products);
 
         if (response.error) console.warn(response.error);
       }
