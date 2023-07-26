@@ -13,6 +13,7 @@ import store from '../store/index';
 const routes = [
   {
     path: '/',
+    alias: ['/start'],
     name: 'HomeView',
     component: HomeView,
   },
@@ -56,12 +57,7 @@ const routes = [
     component: AGBView,
   },
   {
-    path: '/qr1',
-    //redirect: '/',
-  },
-  {
-    path: '/qr2',
-    redirect: '/account',
+    path: '/qr:id',
   },
   {
     path: '/:companyalias',
@@ -93,21 +89,22 @@ router.beforeEach((to, from, next) => {
   const user = store.getters.getUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  if (to.path == '/qr1') {
-    store.dispatch('addQRCodeCount');
-
-    next({ path: '/' });
-  } else if (requiresAuth && user == null)
+  if (to.path.startsWith('/qr')) {
+    const paths = ['/', '/account']
+    let id = parseInt(to.path.slice(3));
+    store.dispatch('addQRCodeCount', id);
+    next({ path: paths[id - 1] });
+  } else if (to.path === '/' && user !== null) {
+    next({ path: 'produkte' })
+  } else if (requiresAuth && user === null) {
     next({ path: 'auth', query: { redirect: to.fullPath } });
-  else if (
-    to.query.redirect &&
-    to.name == 'AuthView' &&
-    user != null &&
-    to.query.redirect.split('_')[0] == 'ext'
-  ) {
+  } else if (to.query.redirect && to.name === 'AuthView' && user !== null && to.query.redirect.split('_')[0] === 'ext') {
     store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
-  } else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
-  else if (!requiresAuth && user != null) next();
+  } else if (to.name === 'AuthView' && user !== null) {
+    next({ path: 'account' });
+  } else if (!requiresAuth && user !== null) {
+    next();
+  }
   else next();
 });
 

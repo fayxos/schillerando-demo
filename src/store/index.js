@@ -306,31 +306,31 @@ const store = createStore({
       }
     },
 
-    async addQRCodeCount() {
+    // eslint-disable-next-line no-empty-pattern
+    async addQRCodeCount({}, id) {
       try {
         const { data, error } = await supabase
           .from('stats')
           .select()
-          .eq('id', '1');
+          .eq('id', id);
 
         if (error) throw error;
         if (data[0] == null) throw error;
 
         var count = data[0].count;
-        console.log(data);
-
         {
           const { error } = await supabase
             .from('stats')
             .update({
               count: count + 1,
             })
-            .eq('name', 'QR Code 1');
+            .eq('id', id);
 
           if (error) throw error;
         }
+        console.debug("Updated stats: ID is: " + id + "; count before was: " + count);
       } catch (error) {
-        console.log(error.error_description || error.message);
+        console.error("Error updating QR code stat", error.error_description || error.message);
       }
     },
   },
