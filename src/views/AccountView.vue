@@ -357,7 +357,7 @@ export default {
       } else {
         this.alertTitle = 'Ungültige Email';
         this.alertInfo =
-          'Um ein Unternehmen zu Registrieren musst du mit deiner Schul-Email (@fsgmarbach.info) angemeldet sein. Ändere deine Email Addresse oder erstelle einen neuen Account um dein Unternehmen zu registrieren.';
+          'Um ein Unternehmen zu registrieren, musst du mit deiner Schul-Email (@fsgmarbach.info) angemeldet sein. Ändere deine Email-Adresse oder erstelle einen neuen Account, um dein Unternehmen zu registrieren.';
 
         var alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
@@ -446,7 +446,7 @@ export default {
 
           this.successAlertTitle = 'Email Änderung bestätigen';
           this.successAlertInfo =
-            'Es wurde eine Mail zum ändern deiner Email Addresse an deine neue Email Addresse gesendet.';
+            'Es wurde eine Mail zum Ändern deiner Email-Adresse an deine neue Email-Adresse gesendet.';
         } else {
           this.successAlertTitle = '';
         }
