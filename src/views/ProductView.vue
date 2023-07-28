@@ -1,6 +1,13 @@
 <template>
   <TitleDiv title="Produkte" />
 
+  <p style="margin-bottom: 50px; margin-top: -20px">
+    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ =
+    0.1€)
+  </p>
+
+  <SortableList :items="products" :loading="loading" element="ProductTile" />
+
   <div
     v-if="loading"
     class="spinner-border"
@@ -9,13 +16,6 @@
   >
     <span class="visually-hidden">Loading...</span>
   </div>
-
-  <p v-else style="margin-bottom: 50px; margin-top: -20px">
-    $ <span style="font-size: 1.3rem">&#8793;</span> {{ currency_name }} (1$ =
-    0.1€)
-  </p>
-
-  <SortableList :items="products" :loading="loading" element="ProductTile" />
 </template>
 
 <script>
