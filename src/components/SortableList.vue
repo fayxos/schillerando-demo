@@ -70,8 +70,11 @@
           <option value="" selected>Kategorie</option>
           <option value="Essen">Essen</option>
           <option value="Trinken">Trinken</option>
-          <option value="Gegenstand">Gegenstand</option>
           <option value="Dienstleistung">Dienstleistung</option>
+          <option value="Gegenstand">Gegenstand</option>
+          <option value="Aktivität">Aktivität</option>
+          <option value="Event">Event</option>
+          <option value="Sonstiges">Sonstiges</option>
         </select>
         <select
           v-if="element == 'CompanyTile'"
@@ -95,6 +98,7 @@
           <option value="relevance" selected>Sortieren</option>
           <option value="price">Preis</option>
           <option value="review">Bewertung</option>
+          <option value="category">Kategorie</option>
           <option value="name">Name</option>
         </select>
       </div>
@@ -102,7 +106,12 @@
   </div>
   <div class="sortable-list" ref="sortableList">
     <div v-for="ssItem in sortedShownItems" v-bind:key="ssItem.id">
-      <component :is="element" :data="ssItem" class="item"></component>
+      <component
+        :is="element"
+        :data="ssItem"
+        :show-category="this.showCategory"
+        class="item"
+      ></component>
     </div>
     <div v-for="index in 2" :key="index" class="item"></div>
   </div>
@@ -137,11 +146,39 @@ export default {
       focus: false,
     };
   },
-  props: ['items', 'element', 'loading', 'noSearch'],
+  props: [
+    'items',
+    'element',
+    'loading',
+    'noSearch',
+    'sortByCategories',
+    'showCategory',
+  ],
   methods: {
     sort: function () {
       this.sortedShownItems = this.shownItems;
-      if (this.sortBy == '') return;
+      if (this.sortBy == '') {
+        this.shuffleArray(this.sortedShownItems);
+        return;
+      } else if (this.sortBy == 'category') {
+        const categoryOrder = [
+          'Essen',
+          'Trinken',
+          'Gegenstand',
+          'Dienstleistung',
+          'Aktivität',
+          'Event',
+          'Sonstiges',
+        ];
+
+        for (var i = 0; i < this.sortedShownItems.length; i++) {
+          console.log(this.sortedShownItems[i].categories[0]);
+          this.sortedShownItems[i].category = categoryOrder.indexOf(
+            this.sortedShownItems[i].categories[0]
+          );
+        }
+      }
+
       this.sortedShownItems.sort((a, b) => {
         if (
           typeof a[this.sortBy] == 'string' &&
@@ -253,8 +290,16 @@ export default {
         200
       );
     },
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    },
   },
   mounted() {
+    if (this.sortByCategories) this.sortBy = 'category';
+
     this.generateCategories();
     this.generateShownItems();
   },

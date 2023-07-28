@@ -152,7 +152,7 @@ img {
 }
 
 .title {
-  font-size: 2.2rem;
+  font-size: 1.9rem;
   color: #00a100;
 }
 
@@ -182,7 +182,7 @@ img {
 }
 
 .category {
-  margin-top: -10px;
+  margin-top: -5px;
   font-weight: 300;
 }
 
