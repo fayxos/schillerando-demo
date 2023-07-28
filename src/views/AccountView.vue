@@ -10,8 +10,7 @@
             class="alert alert-warning"
             role="alert"
           >
-            Bestätige deine Email um Bestellungen zu tätigen oder dein
-            Unternehmen zu Registrieren!
+          Bestätige deine Email, um Bestellungen zu tätigen oder dein Unternehmen zu registrieren!
           </div>
         </div>
 
@@ -152,7 +151,7 @@
               class="btn bg-sec register"
               :disabled="userData.email_confirmed_at == null"
             >
-              Unternehmen Registrieren
+            Unternehmen registrieren
             </button>
           </div>
 
