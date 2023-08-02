@@ -154,6 +154,8 @@ img {
 .title {
   font-size: 1.9rem;
   color: #00a100;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .info {
@@ -182,7 +184,7 @@ img {
 }
 
 .category {
-  margin-top: -5px;
+  margin-top: 0px;
   font-weight: 300;
 }
 
