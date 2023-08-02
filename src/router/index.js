@@ -97,22 +97,26 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (to.path.startsWith('/qr')) {
-    const paths = ['/', '/account']
+    const paths = ['/', '/account'];
     let id = parseInt(to.path.slice(3));
     store.dispatch('addQRCodeCount', id);
     next({ path: paths[id - 1] });
   } else if (to.path === '/' && user !== null) {
     //Logged in users get 'products' page as start-page
-    next({ path: 'produkte' })
+    next({ path: 'produkte' });
   } else if (requiresAuth && user === null) {
     //If a page requires the user to be logged in, he will be get the auth page
-    next({ path: 'auth', query: { redirect: to.fullPath } });
-  } else if (to.query.redirect && to.name === 'AuthView' && user !== null && to.query.redirect.split('_')[0] === 'ext') {
+    next({ name: 'AuthView', query: { redirect: to.fullPath } });
+  } else if (
+    to.query.redirect &&
+    to.name === 'AuthView' &&
+    user !== null &&
+    to.query.redirect.split('_')[0] === 'ext'
+  ) {
     store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
   } else if (to.name === 'AuthView' && user !== null) {
     next({ path: 'account' });
-  }
-  else next();
+  } else next();
 });
 
 export default router;
