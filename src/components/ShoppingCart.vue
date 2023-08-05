@@ -18,7 +18,7 @@
           v-if="this.products.length > 0"
           class="product-count translate-middle badge rounded-pill bg-danger"
         >
-          {{ products.length }}
+          {{ productCount }}
           <span class="visually-hidden">produkte</span>
         </span>
         <i class="fa-solid fa-cart-shopping fa-2xl"></i>
@@ -40,31 +40,12 @@
             </div>
           </div>
           <div class="card-body scroll">
-            <div v-for="product in products" v-bind:key="product.id">
-              <div class="card product-card">
-                <div class="image">
-                  <div
-                    v-if="product.product_picture == null"
-                    class="no-image"
-                  ></div>
-                  <img v-else src="@/assets/cola.png" alt="" />
-                </div>
-                <div class="info">
-                  <div>
-                    <p class="name">{{ product.name }}</p>
-                  </div>
-                  <div>
-                    <p class="company_name">{{ product.company_name }}</p>
-                  </div>
-
-                  <p class="price">{{ product.price }} $</p>
-
-                  <button class="btn btn-primary" @click="addProductToCart">
-                    <i class="fa-solid fa-cart-plus fa-lg"></i>
-                  </button>
-                </div>
+            <div class="list">
+              <div v-for="product in products" v-bind:key="product.id">
+                <ShoppingCartTile :data="product" />
               </div>
             </div>
+
           </div>
           <div class="card-footer">
             <button class="btn btn-primary order-button">Bestellen</button>
@@ -78,9 +59,13 @@
 <script>
 import { useStore } from 'vuex';
 import { computed } from 'vue';
+import ShoppingCartTile from './ShoppingCartTile.vue';
 
 export default {
   name: 'ShoppingCart',
+  components: {
+    ShoppingCartTile
+  },
   data() {
     return {
       showCard: false,
@@ -89,44 +74,35 @@ export default {
   setup() {
     const store = useStore();
     const userData = computed(() => store.state.user);
-    const products = computed(() => store.state.shoppingCart);
+    const products = computed(() => {
+      const stackedProducts = []
+      const cartProducts = store.state.shoppingCart
+
+      cartProducts.forEach(product => {
+        const index = stackedProducts.findIndex(p => p.id == product.id)
+        if(index == -1) {
+          product.count = 1
+          stackedProducts.push(product)
+        } else {
+          stackedProducts[index].count += 1
+        }
+      });
+
+      return stackedProducts
+    });
+
+    const productCount = computed(() => store.state.shoppingCart.length)
 
     return {
       userData,
       products,
+      productCount
     };
   },
 };
 </script>
 
 <style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-
-.bounce-enter-active {
-  animation: bounce-in 0.5s;
-}
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
 .card-header {
   display: flex;
@@ -174,14 +150,6 @@ i {
   color: #fff;
 }
 
-.modal {
-  height: 80%;
-}
-
-.modal-body {
-  height: 100vh;
-}
-
 .outer-card {
   position: relative;
   width: 90%;
@@ -208,7 +176,6 @@ i {
 */
 
 .scroll {
-  max-height: 80%;
   overflow-y: auto;
 }
 
@@ -228,100 +195,15 @@ i {
   z-index: 9999;
 }
 
-.fa-x {
-  color: grey;
-}
-
-.close {
-  display: inline-block;
+.list {
+  margin: 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
 }
 
 .order-button {
-  font-size: 1.1rem;
-}
-
-.price,
-.name {
   font-size: 1.25rem;
-  padding: 0;
-  margin: 0;
-  font-weight: 600;
+  height: 45px;
 }
 
-.btn {
-  position: absolute;
-  bottom: 8px;
-  right: 10px;
-  padding: 3px 11px 3px 9px;
-}
-
-.name {
-  text-align: left;
-  margin: 10px 0 0 15px;
-}
-
-.company_name {
-  text-align: left;
-  margin-left: 15px;
-  font-weight: 300;
-}
-
-.price {
-  position: absolute;
-  text-align: left;
-  bottom: 8px;
-  left: 15px;
-}
-
-.row {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-}
-
-.row,
-.col {
-  margin: 0;
-  padding: 0;
-}
-
-.info {
-  position: absolute;
-  width: 80%;
-  height: 20%;
-  top: 0;
-  left: 20%;
-}
-
-.product-card {
-  flex-direction: row;
-  overflow: hidden;
-}
-
-.image {
-  width: 40%;
-  position: relative;
-  padding-bottom: 40%;
-  margin-right: 10px;
-  border-right: 1px solid;
-  border-color: #cfd4da;
-}
-
-.no-image {
-  background-color: gray;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-img {
-  position: absolute;
-  width: 20%;
-  height: 20%;
-  top: 0;
-  left: 0;
-  object-fit: scale-down;
-}
 </style>
