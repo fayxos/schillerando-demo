@@ -16,12 +16,16 @@
 
       <p class="price">{{ data.price }} $</p>
 
-      <div v-if="product != null" class="input-group input-group-sm count">
+      <div v-if="product != null && editable == true" class="input-group input-group-sm count">
         <button v-if="product.count == 1" @click="countDown(true)" class="input-group-text"><i color="red" class="fa-solid fa-trash-can"></i></button>
         <button v-else @click="countDown" class="input-group-text">-</button>
         <input disabled id="countInput" style="background-color: white;" :value="product.count" type="number" class="form-control" aria-label="Anzahl an Produkten" min="1" max="9">
         <button v-if="product.count == 9" class="input-group-text">&nbsp;&nbsp;&nbsp;</button>
         <button v-else :disabled="product.count >= 9" @click="countUp" class="input-group-text">+</button>
+      </div>
+
+      <div v-else-if="product != null">
+        <p class="checkout-count">{{ product.count }}x</p>
       </div>
     </div>
   </div>
@@ -34,7 +38,7 @@ import { supabase } from '../supabase';
 
 export default {
   name: 'ShoppingCartTile',
-  props: ['data'],
+  props: ['data', 'editable'],
   setup() {
     const store = useStore();
 
@@ -211,6 +215,16 @@ img {
   width: 78px;
 }
 
+.checkout-count {
+  font-size: 1.25rem;
+  padding: 0;
+  margin: 0;
+  font-weight: 600;
+  position: absolute;
+  right: 15px;
+  bottom: 8px;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -219,6 +233,7 @@ input::-webkit-inner-spin-button {
 
 /* Firefox */
 input[type=number] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 

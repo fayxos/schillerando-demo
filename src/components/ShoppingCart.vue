@@ -42,13 +42,15 @@
           <div class="card-body scroll">
             <div class="list">
               <div v-for="product in products" v-bind:key="product.id">
-                <ShoppingCartTile :data="product" />
+                <ShoppingCartTile :data="product" :editable="true" />
               </div>
             </div>
 
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary order-button">Bestellen</button>
+            <p class="total-price">{{ totalPrice }} $</p>
+
+            <button :disabled="productCount == 0" @click="$router.push('order')"  class="btn btn-primary order-button">Bestellen</button>
           </div>
         </div>
       </div>
@@ -92,11 +94,21 @@ export default {
     });
 
     const productCount = computed(() => store.state.shoppingCart.length)
+    const totalPrice = computed(() => {
+      var price = 0
+
+      store.state.shoppingCart.forEach(product => {
+        price += product.price
+      })
+
+      return price
+    })
 
     return {
       userData,
       products,
-      productCount
+      productCount,
+      totalPrice
     };
   },
 };
@@ -119,6 +131,7 @@ export default {
 .card-footer {
   display: flex;
   justify-content: flex-end;
+  position: relative;
 }
 
 .btn-close {
@@ -204,6 +217,20 @@ i {
 .order-button {
   font-size: 1.25rem;
   height: 45px;
+}
+
+.total-price {
+  position: absolute;
+  left: 30px;
+  font-size: 1.25rem;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.btn:disabled {
+  background-color: grey;
+  border-color: grey;
 }
 
 </style>

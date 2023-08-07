@@ -2,7 +2,7 @@
   <div>
     <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
 
-    <div class="container">
+    <div v-if="userData != null" class="container">
       <div class="row mb-0">
         <div class="col-12">
           <div

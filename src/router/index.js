@@ -8,6 +8,7 @@ import AccountView from '../views/AccountView';
 import AuthView from '../views/AuthView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
 import AGBView from '../views/AGBView';
+import OrderView from '../views/OrderView';
 import store from '../store/index';
 
 const routes = [
@@ -40,6 +41,16 @@ const routes = [
     component: AuthView,
     meta: {
       footer: false,
+    },
+  },
+  {
+    path: '/order',
+    name: 'OrderView',
+    component: OrderView,
+    meta: {
+      requiresAuth: true,
+      footer: false,
+      shoppingCart: false
     },
   },
   {
@@ -107,6 +118,7 @@ router.beforeEach((to, from, next) => {
   ) {
     store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
   } else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
+  else if(to.name == 'OrderView' && store.getters.getProductsInCart.length == 0) next({ path: 'produkte' })
   else if (!requiresAuth && user != null) next();
   else next();
 });
