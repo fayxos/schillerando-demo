@@ -1,8 +1,10 @@
 <template>
+  <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
+
   <div class="container">
     <h1>Bestellung</h1>
 
-    <div v-if="products != null" class="list">
+    <div v-if="products.length > 0" class="list">
       <div v-for="product in products" v-bind:key="product.id">
         <ShoppingCartTile :data="product" :editable="false" />
       </div>
@@ -17,7 +19,7 @@
         ></span>
         <textarea
           type="text"
-          id="signup-info"
+          id="order-location"
           class="form-control"
           @input="validateOrder(false)"
           placeholder="Genaue Beschreibung des Lieferortes"
@@ -35,7 +37,7 @@
           ><i class="fa-solid fa-circle-info"></i></span>
         <textarea
           type="text"
-          id="signup-info"
+          id="order-note"
           class="form-control"
           @input="validateOrder(false)"
           placeholder="Anmerkungen zur Lieferung (Sonderwünsche etc.)"
@@ -48,31 +50,134 @@
         ></textarea>
       </div>
 
-      <div class="form-check mt-4 mb-4">
+      <div class="form-check mt-4">
         <input
           class="form-check-input"
           type="checkbox"
           value=""
-          id="acceptCheck"
+          id="order-check1"
           @change="validateOrder(false)"
         />
         <label class="form-check-label" for="acceptCheck">
-          <a href="/agb" class="text-primary">Allgemeine Geschäftsbedingungen</a> akzeptieren
+          Ich akzeptiere die <a href="/agb" class="text-primary">Allgemeinen Geschäftsbedingungen</a>
+        </label>
+      </div>
+      <div class="form-check mt-2 mb-4">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          id="order-check2"
+          @change="validateOrder(false)"
+        />
+        <label class="form-check-label" for="acceptCheck">
+          Ich verpflichte mich die Bestellung entgegen zu nehmen und den vollen Betrag der Bestellung zu bezahlen
         </label>
       </div>
     </form>
+
+    <button
+      type="button"
+      @click="validateOrder(true)"
+      class="btn btn-primary order-button"
+    >
+      <div class="loading-button">Bestellen</div>
+      <div class="spinner">
+        <span
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        <span class="sr-only">Loading...</span>
+      </div>
+    </button>
+
   </div>
 </template>
 
 <script>
-import { useStore } from 'vuex';
+import { useStore, mapGetters } from 'vuex';
 import { reactive } from 'vue';
 import ShoppingCartTile from '../components/ShoppingCartTile.vue';
+import AlertPopup from '../components/AlertPopup.vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+
 
 export default {
   name: 'OrderView',
   components: {
-    ShoppingCartTile
+    ShoppingCartTile,
+    AlertPopup,
+  },
+  data() {
+    return {
+      products: [],
+      orderPressed: false,
+      action: '',
+      alertTitle: '',
+      alertInfo: '',
+      successAlertTitle: 'Bestellung Erfolgreich',
+      successAlertInfo: 'Eine Bestellbestätigung wurde an deine Email geschickt.',
+      failureAlertTitle: 'Bestellung fehlgeschlagen',
+      failureAlertInfo: 'Bei der Bestellung ist ein Fehler aufgetreten. Versuche es später erneut!',
+    }
+  },
+  computed: {
+    ...mapGetters(['getState']),
+  },
+  watch: {
+    getState(newValue) {
+      var spinners = document.getElementsByClassName('spinner');
+      var loadingButtons = document.getElementsByClassName('loading-button');
+
+      if (newValue == 'loading') {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'visible';
+          spinner.style.position = 'relative';
+        });
+
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'hidden';
+          button.style.position = 'absolute';
+        });
+      } else if (newValue == 'success') {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'hidden';
+          spinner.style.position = 'absolute';
+        });
+
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'visible';
+          button.style.position = 'relative';
+        });
+
+        this.alertTitle = this.successAlertTitle;
+        this.alertInfo = this.successAlertInfo;
+
+        if (this.alertTitle == '') return;
+        alertModal = new Modal(document.getElementById('alertModal'), {});
+        alertModal.show();
+
+        this.$router.replace('/account');
+      } else {
+        Array.from(spinners).forEach((spinner) => {
+          spinner.style.visibility = 'hidden';
+          spinner.style.position = 'absolute';
+        });
+
+        Array.from(loadingButtons).forEach((button) => {
+          button.style.visibility = 'visible';
+          button.style.position = 'relative';
+        });
+
+        this.alertTitle = this.failureAlertTitle;
+        this.alertInfo = this.failureAlertInfo;
+
+        if (this.alertTitle == '') return;
+        var alertModal = new Modal(document.getElementById('alertModal'), {});
+        alertModal.show();
+      }
+    },
   },
   setup() {
     const store = useStore();
@@ -90,10 +195,6 @@ export default {
       }
     });
 
-    const products = stackedProducts
-
-    console.log(products)
-
     const productCount = store.state.shoppingCart.length
 
     var price = 0
@@ -105,7 +206,6 @@ export default {
     const totalPrice = price
 
     const order = reactive({
-      buyer: null,
       deliver_to: '',
       products: [],
       orderPrice: 0,
@@ -116,20 +216,67 @@ export default {
 
     return {
       store,
-      products,
+      stackedProducts,
       productCount,
       totalPrice,
       order
     };
   },
   mounted() {
-    this.order.buyer = this.store.state.user.id
     this.order.products = this.store.state.shoppingCart
     this.order.totalPrice = this.totalPrice
+
+    this.stackedProducts.forEach(product => this.products.push(product))
   },
   methods: {
     validateOrder(pressed) {
-      console.log(pressed)
+      var locationInput = document.getElementById('order-location')
+      var noteInput = document.getElementById('order-note')
+      var checkInput1 = document.getElementById('order-check1')
+      var checkInput2 = document.getElementById('order-check2')
+
+      if (!pressed && !this.orderPressed) return; 
+
+      if (pressed) locationInput.value = locationInput.value.trim();
+      if (pressed) noteInput.value = noteInput.value.trim();
+      var valid = true;
+
+      this.order.deliver_to = locationInput.value
+      this.order.note = noteInput.value
+
+      if (locationInput.value.trim().length < 3) {
+        locationInput.classList.remove('is-valid');
+        locationInput.classList.add('is-invalid');
+        valid = false;
+      } else {
+        locationInput.classList.remove('is-invalid');
+        locationInput.classList.add('is-valid');
+      }
+
+      if (!checkInput1.checked) {
+        checkInput1.classList.add('is-invalid');
+        checkInput1.classList.remove('is-valid');
+        valid = false;
+      } else {
+        checkInput1.classList.remove('is-invalid');
+        checkInput1.classList.add('is-valid');
+      }
+
+      if (!checkInput2.checked) {
+        checkInput2.classList.add('is-invalid');
+        checkInput2.classList.remove('is-valid');
+        valid = false;
+      } else {
+        checkInput2.classList.remove('is-invalid');
+        checkInput2.classList.add('is-valid');
+      }
+
+      this.orderPressed = true;
+
+      if (valid && pressed) {
+          this.continuePressed = false;
+          this.store.dispatch('order', this.order)
+        }
     }
   }
 };
@@ -168,5 +315,15 @@ h1 {
 .fa-location-dot {
   position: relative;
   left: 2px;
+}
+
+.order-button {
+  font-size: 1.25rem;
+  margin-bottom: 100px;
+}
+
+.spinner {
+  visibility: hidden;
+  position: absolute;
 }
 </style>

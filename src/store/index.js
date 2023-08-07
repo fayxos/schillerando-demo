@@ -314,7 +314,37 @@ const store = createStore({
         console.log(error.error_description || error.message);
       }
     },
+    async order({ commit }, order) {
+      try {
+        commit('setState', 'loading');
 
+        const productIds = []
+        order.products.forEach(product => {
+          productIds.push(product.id)
+        })
+
+        const { error } = await supabase.from('orders').insert({
+          buyer: this.state.user.id,
+          deliver_to: order.deliver_to,
+          products: productIds,
+          order_price: order.totalPrice,
+          note: order.note,
+          payed: false,
+          delivered: false
+        })
+
+        if (error) throw error;
+
+        // Send confirmation Email
+
+        store.state.shoppingCart = []
+        commit('setState', 'success');
+
+      } catch (error) {
+        commit('setState', 'failure');
+        console.log(error.error_description || error.message);
+      }
+    },
     async addQRCodeCount() {
       try {
         const { data, error } = await supabase

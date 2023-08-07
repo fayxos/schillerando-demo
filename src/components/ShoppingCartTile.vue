@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div v-if="this.data != null" class="card">
     <div class="image">
       <div v-if="this.image == null" class="no-image">
         <i class="fa-solid fa-image fa-2xl"></i>
@@ -16,23 +16,22 @@
 
       <p class="price">{{ data.price }} $</p>
 
-      <div v-if="product != null && editable == true" class="input-group input-group-sm count">
-        <button v-if="product.count == 1" @click="countDown(true)" class="input-group-text"><i color="red" class="fa-solid fa-trash-can"></i></button>
+      <div v-if="editable == true" class="input-group input-group-sm count">
+        <button v-if="count == 1" @click="countDown(true)" class="input-group-text"><i color="red" class="fa-solid fa-trash-can"></i></button>
         <button v-else @click="countDown" class="input-group-text">-</button>
-        <input disabled id="countInput" style="background-color: white;" :value="product.count" type="number" class="form-control" aria-label="Anzahl an Produkten" min="1" max="9">
-        <button v-if="product.count == 9" class="input-group-text">&nbsp;&nbsp;&nbsp;</button>
-        <button v-else :disabled="product.count >= 9" @click="countUp" class="input-group-text">+</button>
+        <input disabled id="countInput" style="background-color: white;" :value="count" type="number" class="form-control" aria-label="Anzahl an Produkten" min="1" max="9">
+        <button v-if="count == 9" class="input-group-text">&nbsp;&nbsp;&nbsp;</button>
+        <button v-else :disabled="count >= 9" @click="countUp" class="input-group-text">+</button>
       </div>
 
-      <div v-else-if="product != null">
-        <p class="checkout-count">{{ product.count }}x</p>
+      <div v-else>
+        <p class="checkout-count">{{ count }}x</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import router from '@/router';
 import { useStore } from 'vuex';
 import { supabase } from '../supabase';
 
@@ -49,11 +48,11 @@ export default {
   data() {
     return {
       image: null,
-      product: null
+      count: null
     };
   },
   async mounted() {
-    this.product = this.data
+    this.count = this.data.count
 
     if (this.data.product_picture != null) {
       const response = await supabase.storage
@@ -62,31 +61,21 @@ export default {
       if (response.data != null) this.image = await response.data.text();
       if (response.error) console.warn(response.error);
     }
+
   },
   methods: {
-    addProductToCart(event) {
-      event.stopPropagation()
-
-      if (this.store.getters.getUser == null)
-        router.push({ path: 'auth', query: { redirect: 'produkte' } });
-      this.store.commit('addProductToCart', this.data);
-    },
     countUp() {
-      this.product.count++
+      this.count++
 
-      console.log(this.product.count)
-
-      if(this.product.count > 9) this.product.count = 9
+      if(this.count > 9) this.count = 9
       else this.store.commit('addProductToCart', this.data)
-
-
     },
     countDown(remove) {
-      this.product.count--
+      this.count--
 
-      console.log(this.product.count)
+      console.log(this.count)
 
-      if(this.product.count < 1 && !remove) this.product.count = 1
+      if(this.count < 1 && !remove) this.count = 1
       else this.store.commit('removeOneProductFromCart', this.data)
     }
   },
@@ -188,16 +177,6 @@ img {
   top: 0;
   left: 0;
   object-fit: cover;
-}
-
-.btn-primary {
-  background-color: #00a100;
-  border-color: #00a100;
-}
-
-.btn-primary:hover {
-  background-color: #007400;
-  border-color: #007400;
 }
 
 .fa-image {
