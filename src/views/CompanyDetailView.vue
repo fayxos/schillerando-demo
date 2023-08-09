@@ -37,13 +37,13 @@
         <div class="detail-wrapper">
           <div class="details">
             <div class="row spacing">
-              <h1 class="col-9 title">
+              <h1 class="col-10 title">
                 {{ this.company.name }}
               </h1>
-              <div class="col-3">
+              <div class="col-2">
                 <CompanyBadge
                   :verified="this.company.verified"
-                  :premium="this.company.abo == 'Premium'"
+                  :premium="this.company.abo == 'Business'"
                   :self="this.company.alias == 'schillerando'"
                   class="company-badge"
                 />
@@ -78,6 +78,8 @@
           v-if="products.length > 0"
           :items="products"
           :no-search="true"
+          sort-by-categories="true"
+          show-category="true"
           element="ProductTile"
         />
         <h4 v-else class="margin">

@@ -1,20 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '../store/index';
+
 import HomeView from '../views/HomeView';
+import AppView from '../views/AppView';
 import ProductView from '../views/ProductView';
-import ProductDetailView from '../views/ProductDetailView';
 import CompanyView from '../views/CompanyView';
-import CompanyDetailView from '../views/CompanyDetailView';
 import AccountView from '../views/AccountView';
 import AuthView from '../views/AuthView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
 import AGBView from '../views/AGBView';
-import store from '../store/index';
+import CompanyDetailView from '../views/CompanyDetailView';
+import ProductDetailView from '../views/ProductDetailView';
 
 const routes = [
   {
     path: '/',
+    alias: ['/start'],
     name: 'HomeView',
     component: HomeView,
+  },
+  {
+    path: '/app',
+    name: 'AppView',
+    component: AppView,
   },
   {
     path: '/produkte',
@@ -56,12 +64,7 @@ const routes = [
     component: AGBView,
   },
   {
-    path: '/qr1',
-    //redirect: '/',
-  },
-  {
-    path: '/qr2',
-    redirect: '/account',
+    path: '/qr:id',
   },
   {
     path: '/:companyalias',
@@ -93,22 +96,35 @@ router.beforeEach((to, from, next) => {
   const user = store.getters.getUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  if (to.path == '/qr1') {
-    store.dispatch('addQRCodeCount');
-
-    next({ path: '/' });
-  } else if (requiresAuth && user == null)
-    next({ path: 'auth', query: { redirect: to.fullPath } });
-  else if (
+  if (to.path.startsWith('/qr')) {
+    const paths = ['/', '/account'];
+    let id = parseInt(to.path.slice(3));
+    store.dispatch('addQRCodeCount', id);
+    next({ path: paths[id - 1] });
+  } else if (to.path === '/' && user !== null) {
+    //Logged in users get 'products' page as start-page
+    next({ path: 'produkte' });
+  } else if (requiresAuth && user === null) {
+    //If a page requires the user to be logged in, he will be get the auth page
+    next({ name: 'AuthView', query: { redirect: to.fullPath } });
+  } else if (
     to.query.redirect &&
-    to.name == 'AuthView' &&
-    user != null &&
-    to.query.redirect.split('_')[0] == 'ext'
+    to.name === 'AuthView' &&
+    user !== null &&
+    to.query.redirect.split('_')[0] === 'ext'
   ) {
     store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
-  } else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
-  else if (!requiresAuth && user != null) next();
-  else next();
+  } else if (
+    to.query.redirect &&
+    to.name === 'AuthView' &&
+    user !== null &&
+    to.query.redirect.split('_')[0] === 'int'
+  ) {
+    store.dispatch('internLoginCallback', to.query.redirect.split('_')[1]);
+  }
+  else if (to.name === 'AuthView' && user !== null) {
+    next({ path: 'account' });
+  } else next();
 });
 
 export default router;

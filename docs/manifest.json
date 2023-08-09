@@ -7,9 +7,9 @@
   "description": "Ein Lieferservice für Schule als Staat 2023 am FSG.",
   "shortcuts": [
     {
-       "name": "Produkt suchen",
-       "url": "./produkte",
-       "description": "Suche nach Produkten, vergleiche sie und bestelle dann über Schillerando."
+      "name": "Produkt suchen",
+      "url": "./produkte",
+      "description": "Suche nach Produkten, vergleiche sie und bestelle dann über Schillerando."
     }
   ],
   "icons": [

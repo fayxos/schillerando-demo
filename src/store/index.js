@@ -154,6 +154,22 @@ const store = createStore({
           store.state.refresh_token
       );
     },
+    // eslint-disable-next-line no-empty-pattern
+    async internLoginCallback({}, path) {
+  
+      var p = ''
+      if(path != undefined && path != null && path != '/') p = path
+
+      window.location.replace(
+        process.env.VUE_APP_INTERN_URL +
+         p +
+        '?int=true&access_token=' +
+        store.state.access_token +
+        '&refresh_token=' +
+        store.state.refresh_token
+      );
+    
+    },
     async signInAction({ commit }, { form, path }) {
       try {
         commit('setState', 'loading');
@@ -175,6 +191,8 @@ const store = createStore({
         if (path == null) await router.replace('/account');
         else if (path.includes('ext')) {
           this.dispatch('externLoginCallback', path.split('_')[1]);
+        } else if (path.includes('int')) {
+          this.dispatch('internLoginCallback', path.split('_')[1]);
         } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
@@ -315,31 +333,31 @@ const store = createStore({
       }
     },
 
-    async addQRCodeCount() {
+    // eslint-disable-next-line no-empty-pattern
+    async addQRCodeCount({}, id) {
       try {
         const { data, error } = await supabase
           .from('stats')
           .select()
-          .eq('id', '1');
+          .eq('id', id);
 
         if (error) throw error;
         if (data[0] == null) throw error;
 
         var count = data[0].count;
-        console.log(data);
-
         {
           const { error } = await supabase
             .from('stats')
             .update({
               count: count + 1,
             })
-            .eq('name', 'QR Code 1');
+            .eq('id', id);
 
           if (error) throw error;
         }
+        console.debug("Updated stats: ID is: " + id + "; count before was: " + count);
       } catch (error) {
-        console.log(error.error_description || error.message);
+        console.error("Error updating QR code stat", error.error_description || error.message);
       }
     },
   },

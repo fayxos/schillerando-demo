@@ -12,7 +12,10 @@
           <p class="name">{{ data.name }}</p>
         </div>
         <div>
-          <p class="company_name">{{ data.company.name }}</p>
+          <p v-if="showCategory" class="company_name">
+            {{ data.categories[0] }}
+          </p>
+          <p v-else class="company_name">{{ data.company.name }}</p>
         </div>
 
         <p class="price">{{ data.price }} $</p>
@@ -38,7 +41,7 @@ import { supabase } from '../supabase';
 
 export default {
   name: 'ProductTile',
-  props: ['data'],
+  props: ['data', 'showCategory'],
   setup() {
     const store = useStore();
 
@@ -86,6 +89,14 @@ export default {
   font-weight: 600;
 }
 
+.name {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 .btn {
   position: absolute;
   bottom: 8px;
@@ -102,6 +113,7 @@ export default {
   text-align: left;
   margin-left: 15px;
   font-weight: 300;
+  margin-top: -3px;
 }
 
 .price {
@@ -126,7 +138,7 @@ export default {
 
 .info {
   position: absolute;
-  width: 60%;
+  width: 58%;
   height: 100%;
   top: 0;
   left: 40%;

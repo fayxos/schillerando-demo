@@ -189,7 +189,7 @@
                             id="signup-name"
                             class="form-control"
                             @input="validateSignUp(false)"
-                            placeholder="Name"
+                            placeholder="Vor- und Nachname"
                             required
                           />
 
@@ -207,7 +207,7 @@
                             class="form-control"
                             data-regex="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                             @input="validateSignUp(false)"
-                            placeholder="Email"
+                            placeholder="Email (möglichst @fsgmarbach.info)"
                             required
                           />
 
@@ -399,6 +399,12 @@ export default {
       store,
       form,
     };
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const actionQuery = urlParams.get('action');
+    console.log(actionQuery)
+    if (actionQuery === "register") this.flipCard()
   },
   methods: {
     flipCard() {
