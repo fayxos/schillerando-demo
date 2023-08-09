@@ -1,17 +1,12 @@
 <template>
   <div class="outer">
-    <div
-      v-if="this.company === undefined"
-      class="spinner-border"
-      style="
+    <div v-if="this.company === undefined" class="spinner-border" style="
         width: 4rem;
         height: 4rem;
         border-width: 7px;
         position: relative;
         margin-top: 50px;
-      "
-      role="status"
-    >
+      " role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
     <div v-else-if="this.company === null" class="mt-4">
@@ -26,12 +21,7 @@
           <div v-if="this.image == null" class="no-image">
             <i class="fa-solid fa-image fa-2xl"></i>
           </div>
-          <img
-            v-else
-            :src="this.image"
-            alt="Unternehmen Bild"
-            id="companyImage"
-          />
+          <img v-else :src="this.image" alt="Unternehmen Bild" id="companyImage" />
         </div>
 
         <div class="detail-wrapper">
@@ -41,12 +31,8 @@
                 {{ this.company.name }}
               </h1>
               <div class="col-2">
-                <CompanyBadge
-                  :verified="this.company.verified"
-                  :premium="this.company.abo == 'Business'"
-                  :self="this.company.alias == 'schillerando'"
-                  class="company-badge"
-                />
+                <CompanyBadge :verified="this.company.verified" :premium="this.company.abo == 'Business'"
+                  :self="this.company.alias == 'schillerando'" class="company-badge" />
               </div>
             </div>
 
@@ -63,25 +49,21 @@
             <div class="row spacing location-pos">
               <div class="col-9 location">
                 <i class="fa-solid fa-location-dot"></i>
-                <div class="location-text">{{ company.location }}</div>
+                <div class="location-text">{{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;<a v-if="company.socials.instagram !== undefined"
+                    :href="company.socials.instagram"><img src="@/assets/instagram.svg"
+                      style="opacity: 0.7; height: 1em; width: 1em; position: relative;" alt="Instagram" /></a></div>
               </div>
             </div>
           </div>
         </div>
 
         <hr />
-        <MapProvider :positions="company.coordinates" style="height: 50vh; width: 50vw"/>
+        <MapProvider :positions="company.coordinates" style="height: 50vh; width: 50vw" />
       </div>
 
       <div class="products col-lg-7 col-xl-8">
-        <SortableList
-          v-if="products.length > 0"
-          :items="products"
-          :no-search="true"
-          sort-by-categories="true"
-          show-category="true"
-          element="ProductTile"
-        />
+        <SortableList v-if="products.length > 0" :items="products" :no-search="true" sort-by-categories="true"
+          show-category="true" element="ProductTile" />
         <h4 v-else class="margin">
           Dieses Unternehmen bietet keine Produkte an
         </h4>
@@ -146,6 +128,7 @@ export default {
         if (response.error) console.warn(response.error);
       }
     }
+    if (this.company.socials.instagram !== undefined) this.company.socials.instagram = "https://instagram.com/" + this.company.socials.instagram
   },
 };
 </script>
