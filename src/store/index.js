@@ -330,7 +330,8 @@ const store = createStore({
           order_price: order.totalPrice,
           note: order.note,
           payed: false,
-          delivered: false
+          delivered: false,
+          buyer_name: this.state.user.user_metadata.name
         })
 
         if (error) throw error;
