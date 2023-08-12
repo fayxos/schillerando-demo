@@ -431,6 +431,15 @@ export default {
 
           if (error) throw error;
 
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('name', capitalizedName)
+              .eq('id', data.user.id)
+
+            if(error) throw error
+          }
+
           console.log(data.user);
           this.store.commit('setUser', data.user);
         }
@@ -442,6 +451,15 @@ export default {
           });
 
           if (error) throw error;
+
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('email', mailInput.value)
+              .eq('id', this.store.state.user.id)
+
+            if(error) throw error
+          }
 
           this.successAlertTitle = 'Email Änderung bestätigen';
           this.successAlertInfo =

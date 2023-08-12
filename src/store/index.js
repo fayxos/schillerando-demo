@@ -59,7 +59,7 @@ const store = createStore({
 
           commit('setUser', data.user);
 
-          this.dispatch('updateMissingMetadata');
+          if(data.user.user_metadata.isInDatabase == null || data.user.user_metadata.isInDatabase == false) this.dispatch('addToDatabase');
           this.dispatch('checkUserCompany');
         }
       } catch (e) {
@@ -102,12 +102,10 @@ const store = createStore({
           if (this.getters.getUser != null) {
             commit('setUser', data.user);
 
-            this.dispatch('updateMissingMetadata');
             this.dispatch('checkUserCompany');
           } else {
             commit('setUser', data.user);
 
-            this.dispatch('updateMissingMetadata');
             this.dispatch('checkUserCompany');
 
             router.go(router.currentRoute);
@@ -120,18 +118,29 @@ const store = createStore({
         commit('setUser', null);
       }
     },
-    async updateMissingMetadata({ commit }) {
-      if (this.getters.getUser.user_metadata.credit == null) {
-        const { data } = await supabase.auth.updateUser({
-          data: { credit: 0 },
-        });
-        commit('setUser', data.user);
-      }
-      if (this.getters.getUser.user_metadata.credit == null) {
-        const { data } = await supabase.auth.updateUser({
-          data: { isCompanyLeader: false },
-        });
-        commit('setUser', data.user);
+    async addToDatabase() {
+      try {
+
+        const { error } = await supabase
+          .from('users')
+          .insert({
+            id: this.state.user.id,
+            email: this.state.user.email,
+            name: this.state.user.user_metadata.name
+          })
+
+        if(error) throw error
+
+        {
+          const { error } = await supabase.auth.updateUser({
+            data: { isInDatabase: true },
+          });
+
+          if(error) throw error
+        }
+
+      } catch(e) {
+        console.log(e)
       }
     },
     // eslint-disable-next-line no-empty-pattern
@@ -212,13 +221,26 @@ const store = createStore({
             emailRedirectTo: 'https://schillerando.de/account',
             data: {
               name: capitalizedName,
-              credit: 0,
+              isInDatabase: true,
               isCompanyLeader: false,
             },
           },
         });
 
         if (error) throw error;
+
+        { 
+          const { error } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email: data.user.email,
+              name: capitalizedName
+            })
+
+          if(error) throw error
+        }
+
         console.log('Successfully registered');
         commit('setUser', data.user);
 
