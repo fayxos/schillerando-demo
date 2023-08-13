@@ -302,6 +302,13 @@ export default {
         this.alertTitle = this.successAlertTitle;
         this.alertInfo = this.successAlertInfo;
 
+        if(this.store.state.registered) {
+          this.alertTitle = "Registrierung erfolgreich"
+          this.alertInfo = "Es wurde eine Email zur Bestätigung deiner Email-Addresse verschickt."
+
+          this.store.commit('setRegistered', false)
+        }
+
         if (this.alertTitle == '') return;
         alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();

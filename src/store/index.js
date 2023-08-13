@@ -12,6 +12,7 @@ const store = createStore({
     shoppingCart: [],
     access_token: null,
     refresh_token: null,
+    registered: false
   },
   mutations: {
     setUser(state, payload) {
@@ -26,6 +27,9 @@ const store = createStore({
     removeProductFromCart(state, payload) {
       state.shoppingCart.filter((product) => product.id != payload.id);
     },
+    setRegistered(state, payload) {
+      state.registered = payload
+    }
   },
   getters: {
     getUser(state) {
@@ -240,9 +244,11 @@ const store = createStore({
 
           if(error) throw error
         }
+        
 
         console.log('Successfully registered');
         commit('setUser', data.user);
+        commit('setRegistered', true)
 
         commit('setState', 'success');
 
