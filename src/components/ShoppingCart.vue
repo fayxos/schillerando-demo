@@ -19,7 +19,7 @@
           class="product-count translate-middle badge rounded-pill bg-danger"
         >
           {{ products.length }}
-          <span class="visually-hidden">produkte</span>
+          <span class="visually-hidden">Angebote</span>
         </span>
         <i class="fa-solid fa-cart-shopping fa-2xl"></i>
       </button>

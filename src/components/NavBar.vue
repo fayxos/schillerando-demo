@@ -23,7 +23,7 @@
           <router-link class="nav-link" to="/start">Startseite</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/produkte">Produkte</router-link>
+          <router-link class="nav-link" to="/angebote">Angebote</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/unternehmen"
@@ -61,7 +61,7 @@ export default {
         case 'start':
           links[0].style.color = '#00a100';
           break;
-        case 'produkte':
+        case 'angebote':
           links[1].style.color = '#00a100';
           break;
         case 'unternehmen':

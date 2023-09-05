@@ -25,7 +25,7 @@ const routes = [
     component: AppView,
   },
   {
-    path: '/produkte',
+    path: '/angebote',
     name: 'ProductView',
     component: ProductView,
   },
@@ -103,7 +103,7 @@ router.beforeEach((to, from, next) => {
     next({ path: paths[id - 1] });
   } else if (to.path === '/' && user !== null) {
     //Logged in users get 'products' page as start-page
-    next({ path: 'produkte' });
+    next({ path: 'angebote' });
   } else if (requiresAuth && user === null) {
     //If a page requires the user to be logged in, he will be get the auth page
     next({ name: 'AuthView', query: { redirect: to.fullPath } });

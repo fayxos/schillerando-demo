@@ -82,7 +82,7 @@
           element="ProductTile"
         />
         <h4 v-else class="margin">
-          Dieses Unternehmen bietet keine Produkte an
+          Dieses Unternehmen bietet keine Produkte, Aktivitäten oder Dienstleistungen auf Schillerando an.
         </h4>
       </div>
     </div>
