@@ -12,7 +12,7 @@ const store = createStore({
     shoppingCart: [],
     access_token: null,
     refresh_token: null,
-    registered: false
+    registered: false,
   },
   mutations: {
     setUser(state, payload) {
@@ -28,8 +28,8 @@ const store = createStore({
       state.shoppingCart.filter((product) => product.id != payload.id);
     },
     setRegistered(state, payload) {
-      state.registered = payload
-    }
+      state.registered = payload;
+    },
   },
   getters: {
     getUser(state) {
@@ -63,7 +63,11 @@ const store = createStore({
 
           commit('setUser', data.user);
 
-          if(data.user.user_metadata.isInDatabase == null || data.user.user_metadata.isInDatabase == false) this.dispatch('addToDatabase');
+          if (
+            data.user.user_metadata.isInDatabase == null ||
+            data.user.user_metadata.isInDatabase == false
+          )
+            this.dispatch('addToDatabase');
           this.dispatch('checkUserCompany');
         }
       } catch (e) {
@@ -124,27 +128,23 @@ const store = createStore({
     },
     async addToDatabase() {
       try {
+        const { error } = await supabase.from('users').insert({
+          id: this.state.user.id,
+          email: this.state.user.email,
+          name: this.state.user.user_metadata.name,
+        });
 
-        const { error } = await supabase
-          .from('users')
-          .insert({
-            id: this.state.user.id,
-            email: this.state.user.email,
-            name: this.state.user.user_metadata.name
-          })
-
-        if(error) throw error
+        if (error) throw error;
 
         {
           const { error } = await supabase.auth.updateUser({
             data: { isInDatabase: true },
           });
 
-          if(error) throw error
+          if (error) throw error;
         }
-
-      } catch(e) {
-        console.log(e)
+      } catch (e) {
+        console.log(e);
       }
     },
     // eslint-disable-next-line no-empty-pattern
@@ -160,19 +160,17 @@ const store = createStore({
     },
     // eslint-disable-next-line no-empty-pattern
     async internLoginCallback({}, path) {
-  
-      var p = ''
-      if(path != undefined && path != null && path != '/') p = path
+      var p = '';
+      if (path != undefined && path != null && path != '/') p = path;
 
       window.location.replace(
         process.env.VUE_APP_INTERN_URL +
-         p +
-        '?int=true&access_token=' +
-        store.state.access_token +
-        '&refresh_token=' +
-        store.state.refresh_token
+          p +
+          '?int=true&access_token=' +
+          store.state.access_token +
+          '&refresh_token=' +
+          store.state.refresh_token
       );
-    
     },
     async signInAction({ commit }, { form, path }) {
       try {
@@ -233,22 +231,19 @@ const store = createStore({
 
         if (error) throw error;
 
-        { 
-          const { error } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              email: data.user.email,
-              name: capitalizedName
-            })
+        {
+          const { error } = await supabase.from('users').insert({
+            id: data.user.id,
+            email: data.user.email,
+            name: capitalizedName,
+          });
 
-          if(error) throw error
+          if (error) throw error;
         }
-        
 
         console.log('Successfully registered');
         commit('setUser', data.user);
-        commit('setRegistered', true)
+        commit('setRegistered', true);
 
         commit('setState', 'success');
 
@@ -374,9 +369,14 @@ const store = createStore({
 
           if (error) throw error;
         }
-        console.debug("Updated stats: ID is: " + id + "; count before was: " + count);
+        console.debug(
+          'Updated stats: ID is: ' + id + '; count before was: ' + count
+        );
       } catch (error) {
-        console.error("Error updating QR code stat", error.error_description || error.message);
+        console.error(
+          'Error updating QR code stat',
+          error.error_description || error.message
+        );
       }
     },
   },
