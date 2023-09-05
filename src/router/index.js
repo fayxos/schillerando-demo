@@ -97,7 +97,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (to.path.startsWith('/qr')) {
-    const paths = ['/', '/account'];
+    const paths = ['/', '/account', '/'];
     let id = parseInt(to.path.slice(3));
     store.dispatch('addQRCodeCount', id);
     next({ path: paths[id - 1] });
