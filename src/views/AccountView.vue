@@ -3,8 +3,8 @@
     <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
 
     <div class="container">
-      <div class="row mb-0">
-        <div v-if="userData != null" class="col-12">
+      <div v-if="userData != null" class="row mb-0">
+        <div class="col-12">
           <div
             v-if="userData.email_confirmed_at == null"
             class="alert alert-warning"
