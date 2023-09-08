@@ -101,6 +101,11 @@ router.beforeEach((to, from, next) => {
     let id = parseInt(to.path.slice(3));
     store.dispatch('addQRCodeCount', id);
     next({ path: paths[id - 1] });
+  } else if (to.query.source !== undefined) {
+    let query = to.query
+    store.dispatch('addQRCodeCount', to.query.source);
+    delete query.source
+    next({query: query});
   } else if (to.path === '/' && user !== null) {
     //Logged in users get 'products' page as start-page
     next({ path: 'angebote' });
