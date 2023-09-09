@@ -9,6 +9,8 @@ import AuthView from '../views/AuthView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
 import AGBView from '../views/AGBView';
 import OrderView from '../views/OrderView';
+import OrderDetailView from '../views/OrderDetailView';
+import OrderQRView from '../views/OrderQRView';
 import store from '../store/index';
 
 const routes = [
@@ -50,7 +52,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       footer: false,
-      shoppingCart: false
+      shoppingCart: false,
     },
   },
   {
@@ -88,6 +90,22 @@ const routes = [
       footer: false,
     },
   },
+  {
+    path: '/orders/:orderid',
+    component: OrderDetailView,
+    meta: {
+      requiresAuth: true,
+      footer: false,
+    },
+  },
+  {
+    path: '/orders/:orderid/qr',
+    component: OrderQRView,
+    meta: {
+      requiresAuth: true,
+      footer: false,
+    },
+  },
 ];
 
 const router = createRouter({
@@ -118,7 +136,11 @@ router.beforeEach((to, from, next) => {
   ) {
     store.dispatch('externLoginCallback', to.query.redirect.split('_')[1]);
   } else if (to.name == 'AuthView' && user != null) next({ path: 'account' });
-  else if(to.name == 'OrderView' && store.getters.getProductsInCart.length == 0) next({ path: 'produkte' })
+  else if (
+    to.name == 'OrderView' &&
+    store.getters.getProductsInCart.length == 0
+  )
+    next({ path: 'produkte' });
   else if (!requiresAuth && user != null) next();
   else next();
 });

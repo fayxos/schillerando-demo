@@ -12,6 +12,7 @@ const store = createStore({
     shoppingCart: [],
     access_token: null,
     refresh_token: null,
+    orders: [],
   },
   mutations: {
     setUser(state, payload) {
@@ -23,17 +24,22 @@ const store = createStore({
     addProductToCart(state, payload) {
       state.shoppingCart.push(payload);
 
-      state.shoppingCart.sort((a, b) => a.name.localeCompare(b.name))
+      state.shoppingCart.sort((a, b) => a.name.localeCompare(b.name));
     },
     removeProductFromCart(state, payload) {
-      state.shoppingCart = state.shoppingCart.filter((product) => product.id != payload.id);
+      state.shoppingCart = state.shoppingCart.filter(
+        (product) => product.id != payload.id
+      );
     },
     removeOneProductFromCart(state, payload) {
       const index = state.shoppingCart.findIndex((product) => {
-        return product.id == payload.id
-      })
+        return product.id == payload.id;
+      });
 
-      state.shoppingCart.splice(index, 1)
+      state.shoppingCart.splice(index, 1);
+    },
+    setOrders(state, payload) {
+      state.orders = payload;
     },
   },
   getters: {
@@ -45,6 +51,9 @@ const store = createStore({
     },
     getProductsInCart(state) {
       return state.shoppingCart;
+    },
+    getOrders(state) {
+      return state.orders;
     },
   },
   actions: {
@@ -70,6 +79,7 @@ const store = createStore({
 
           this.dispatch('updateMissingMetadata');
           this.dispatch('checkUserCompany');
+          this.dispatch('startOrderSubscription');
         }
       } catch (e) {
         commit('setUser', null);
@@ -318,10 +328,10 @@ const store = createStore({
       try {
         commit('setState', 'loading');
 
-        const productIds = []
-        order.products.forEach(product => {
-          productIds.push(product.id)
-        })
+        const productIds = [];
+        order.products.forEach((product) => {
+          productIds.push(product.id);
+        });
 
         const { error } = await supabase.from('orders').insert({
           buyer: this.state.user.id,
@@ -331,18 +341,79 @@ const store = createStore({
           note: order.note,
           payed: false,
           delivered: false,
-          buyer_name: this.state.user.user_metadata.name
-        })
+          buyer_name: this.state.user.user_metadata.name,
+        });
 
         if (error) throw error;
 
         // Send confirmation Email
 
-        store.state.shoppingCart = []
+        store.state.shoppingCart = [];
         commit('setState', 'success');
-
       } catch (error) {
         commit('setState', 'failure');
+        console.log(error.error_description || error.message);
+      }
+    },
+    async startOrderSubscription({ commit }) {
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select()
+          .eq('buyer', this.state.user.id);
+
+        if (error != null) throw error;
+
+        commit('setOrders', data);
+
+        this.state.orders.sort((a, b) => {
+          var longA = a.day + a.order_time;
+          var longB = b.day + b.order_time;
+
+          return longA.localeCompare(longB);
+        });
+
+        const orderSubscription = supabase.channel('any').on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'orders',
+            filter: 'buyer=eq.' + this.state.user.id,
+          },
+          async (payload) => {
+            var orders = this.state.orders;
+
+            var index = orders.findIndex((order) => order.id == payload.new.id);
+
+            if (index != -1) orders[index] = payload.new;
+            else orders.push(payload.new);
+
+            if (error != null) throw error;
+
+            console.log('Database change received!', payload.new);
+            commit('setOrders', orders);
+
+            this.state.orders.sort((a, b) => {
+              var longA = a.day + a.order_time;
+              var longB = b.day + b.order_time;
+
+              return longA.localeCompare(longB);
+            });
+          }
+        );
+
+        orderSubscription.subscribe();
+      } catch (error) {
+        commit('setOrders', []);
+        console.log(error.error_description || error.message);
+      }
+    },
+
+    async stopOrderSubscription() {
+      try {
+        await supabase.removeAllChannels();
+      } catch (error) {
         console.log(error.error_description || error.message);
       }
     },

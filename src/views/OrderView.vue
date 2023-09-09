@@ -10,9 +10,11 @@
       </div>
     </div>
 
-    <p class="total">Gesamtbetrag: <span class="price">{{ totalPrice }} $</span></p>
+    <p class="total">
+      Gesamtbetrag: <span class="price">{{ totalPrice }} $</span>
+    </p>
 
-    <form>
+    <form class="mx-3">
       <div class="input-group mb-3">
         <span class="input-group-text"
           ><i class="fa-solid fa-location-dot"></i
@@ -34,7 +36,8 @@
 
       <div class="input-group mb-4">
         <span class="input-group-text"
-          ><i class="fa-solid fa-circle-info"></i></span>
+          ><i class="fa-solid fa-circle-info"></i
+        ></span>
         <textarea
           type="text"
           id="order-note"
@@ -59,7 +62,10 @@
           @change="validateOrder(false)"
         />
         <label class="form-check-label" for="acceptCheck">
-          Ich akzeptiere die <a href="/agb" class="text-primary">Allgemeinen Geschäftsbedingungen</a>
+          Ich akzeptiere die
+          <a href="/agb" class="text-primary"
+            >Allgemeinen Geschäftsbedingungen</a
+          >
         </label>
       </div>
       <div class="form-check mt-2 mb-4">
@@ -71,7 +77,8 @@
           @change="validateOrder(false)"
         />
         <label class="form-check-label" for="acceptCheck">
-          Ich verpflichte mich die Bestellung entgegen zu nehmen und den vollen Betrag der Bestellung zu bezahlen
+          Ich verpflichte mich die Bestellung entgegen zu nehmen und den vollen
+          Betrag der Bestellung zu bezahlen
         </label>
       </div>
     </form>
@@ -79,7 +86,7 @@
     <button
       type="button"
       @click="validateOrder(true)"
-      class="btn btn-primary order-button"
+      class="btn btn-primary order-button mx-3"
     >
       <div class="loading-button">Bestellen</div>
       <div class="spinner">
@@ -91,7 +98,6 @@
         <span class="sr-only">Loading...</span>
       </div>
     </button>
-
   </div>
 </template>
 
@@ -101,7 +107,6 @@ import { reactive } from 'vue';
 import ShoppingCartTile from '../components/ShoppingCartTile.vue';
 import AlertPopup from '../components/AlertPopup.vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-
 
 export default {
   name: 'OrderView',
@@ -117,10 +122,12 @@ export default {
       alertTitle: '',
       alertInfo: '',
       successAlertTitle: 'Bestellung Erfolgreich',
-      successAlertInfo: 'Eine Bestellbestätigung wurde an deine Email geschickt.',
+      successAlertInfo:
+        'Eine Bestellbestätigung wurde an deine Email geschickt.',
       failureAlertTitle: 'Bestellung fehlgeschlagen',
-      failureAlertInfo: 'Bei der Bestellung ist ein Fehler aufgetreten. Versuche es später erneut!',
-    }
+      failureAlertInfo:
+        'Bei der Bestellung ist ein Fehler aufgetreten. Versuche es später erneut!',
+    };
   },
   computed: {
     ...mapGetters(['getState']),
@@ -182,28 +189,28 @@ export default {
   setup() {
     const store = useStore();
 
-    const stackedProducts = []
-    const cartProducts = store.state.shoppingCart
+    const stackedProducts = [];
+    const cartProducts = store.state.shoppingCart;
 
-    cartProducts.forEach(product => {
-      const index = stackedProducts.findIndex(p => p.id == product.id)
-      if(index == -1) {
-        product.count = 1
-        stackedProducts.push(product)
+    cartProducts.forEach((product) => {
+      const index = stackedProducts.findIndex((p) => p.id == product.id);
+      if (index == -1) {
+        product.count = 1;
+        stackedProducts.push(product);
       } else {
-        stackedProducts[index].count += 1
+        stackedProducts[index].count += 1;
       }
     });
 
-    const productCount = store.state.shoppingCart.length
+    const productCount = store.state.shoppingCart.length;
 
-    var price = 0
+    var price = 0;
 
-    store.state.shoppingCart.forEach(product => {
-      price += product.price
-    })
+    store.state.shoppingCart.forEach((product) => {
+      price += product.price;
+    });
 
-    const totalPrice = price
+    const totalPrice = price;
 
     const order = reactive({
       deliver_to: '',
@@ -219,30 +226,30 @@ export default {
       stackedProducts,
       productCount,
       totalPrice,
-      order
+      order,
     };
   },
   mounted() {
-    this.order.products = this.store.state.shoppingCart
-    this.order.totalPrice = this.totalPrice
+    this.order.products = this.store.state.shoppingCart;
+    this.order.totalPrice = this.totalPrice;
 
-    this.stackedProducts.forEach(product => this.products.push(product))
+    this.stackedProducts.forEach((product) => this.products.push(product));
   },
   methods: {
     validateOrder(pressed) {
-      var locationInput = document.getElementById('order-location')
-      var noteInput = document.getElementById('order-note')
-      var checkInput1 = document.getElementById('order-check1')
-      var checkInput2 = document.getElementById('order-check2')
+      var locationInput = document.getElementById('order-location');
+      var noteInput = document.getElementById('order-note');
+      var checkInput1 = document.getElementById('order-check1');
+      var checkInput2 = document.getElementById('order-check2');
 
-      if (!pressed && !this.orderPressed) return; 
+      if (!pressed && !this.orderPressed) return;
 
       if (pressed) locationInput.value = locationInput.value.trim();
       if (pressed) noteInput.value = noteInput.value.trim();
       var valid = true;
 
-      this.order.deliver_to = locationInput.value
-      this.order.note = noteInput.value
+      this.order.deliver_to = locationInput.value;
+      this.order.note = noteInput.value;
 
       if (locationInput.value.trim().length < 3) {
         locationInput.classList.remove('is-valid');
@@ -274,16 +281,15 @@ export default {
       this.orderPressed = true;
 
       if (valid && pressed) {
-          this.continuePressed = false;
-          this.store.dispatch('order', this.order)
-        }
-    }
-  }
+        this.continuePressed = false;
+        this.store.dispatch('order', this.order);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-
 h1 {
   margin: 30px 0 30px 20px;
 }

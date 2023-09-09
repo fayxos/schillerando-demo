@@ -1,5 +1,5 @@
 <template>
-  <div v-if="this.data != null" class="card">
+  <div v-if="this.data != null && this.data != undefined" class="card">
     <div class="image">
       <div v-if="this.image == null" class="no-image">
         <i class="fa-solid fa-image fa-2xl"></i>
@@ -11,17 +11,44 @@
         <p class="name">{{ data.name }}</p>
       </div>
       <div>
-        <p class="company_name">{{ data.company.name }}</p>
+        <p v-if="data.company != undefined" class="company_name">
+          {{ data.company.name }}
+        </p>
       </div>
 
       <p class="price">{{ data.price }} $</p>
 
       <div v-if="editable == true" class="input-group input-group-sm count">
-        <button v-if="count == 1" @click="countDown(true)" class="input-group-text"><i color="red" class="fa-solid fa-trash-can"></i></button>
+        <button
+          v-if="count == 1"
+          @click="countDown(true)"
+          class="input-group-text"
+        >
+          <i color="red" class="fa-solid fa-trash-can"></i>
+        </button>
         <button v-else @click="countDown" class="input-group-text">-</button>
-        <input disabled id="countInput" style="background-color: white;" :value="count" type="number" class="form-control" aria-label="Anzahl an Produkten" min="1" max="9">
-        <button v-if="count == 9" class="input-group-text">&nbsp;&nbsp;&nbsp;</button>
-        <button v-else :disabled="count >= 9" @click="countUp" class="input-group-text">+</button>
+        <input
+          disabled
+          id="countInput"
+          style="background-color: white"
+          :value="count"
+          type="number"
+          class="form-control"
+          aria-label="Anzahl an Produkten"
+          min="1"
+          max="9"
+        />
+        <button v-if="count == 9" class="input-group-text">
+          &nbsp;&nbsp;&nbsp;
+        </button>
+        <button
+          v-else
+          :disabled="count >= 9"
+          @click="countUp"
+          class="input-group-text"
+        >
+          +
+        </button>
       </div>
 
       <div v-else>
@@ -48,11 +75,11 @@ export default {
   data() {
     return {
       image: null,
-      count: null
+      count: null,
     };
   },
   async mounted() {
-    this.count = this.data.count
+    this.count = this.data.count;
 
     if (this.data.product_picture != null) {
       const response = await supabase.storage
@@ -61,23 +88,22 @@ export default {
       if (response.data != null) this.image = await response.data.text();
       if (response.error) console.warn(response.error);
     }
-
   },
   methods: {
     countUp() {
-      this.count++
+      this.count++;
 
-      if(this.count > 9) this.count = 9
-      else this.store.commit('addProductToCart', this.data)
+      if (this.count > 9) this.count = 9;
+      else this.store.commit('addProductToCart', this.data);
     },
     countDown(remove) {
-      this.count--
+      this.count--;
 
-      console.log(this.count)
+      console.log(this.count);
 
-      if(this.count < 1 && !remove) this.count = 1
-      else this.store.commit('removeOneProductFromCart', this.data)
-    }
+      if (this.count < 1 && !remove) this.count = 1;
+      else this.store.commit('removeOneProductFromCart', this.data);
+    },
   },
 };
 </script>
@@ -211,7 +237,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type='number'] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
