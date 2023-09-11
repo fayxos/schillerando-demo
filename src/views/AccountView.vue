@@ -2,16 +2,16 @@
   <div>
     <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
 
-    <div v-if="userData != null" class="container">
-      <div class="row mb-0">
+    <div class="container">
+      <div v-if="userData != null" class="row mb-0">
         <div class="col-12">
           <div
             v-if="userData.email_confirmed_at == null"
             class="alert alert-warning"
             role="alert"
           >
-            Bestätige deine Email um Bestellungen zu tätigen oder dein
-            Unternehmen zu Registrieren!
+            Bestätige deine Email, um Bestellungen zu tätigen oder dein
+            Unternehmen zu registrieren!
           </div>
         </div>
 
@@ -152,7 +152,7 @@
               class="btn bg-sec register"
               :disabled="userData.email_confirmed_at == null"
             >
-              Unternehmen Registrieren
+              Unternehmen registrieren
             </button>
           </div>
 
@@ -289,6 +289,14 @@ export default {
         this.alertTitle = this.successAlertTitle;
         this.alertInfo = this.successAlertInfo;
 
+        if (this.store.state.registered) {
+          this.alertTitle = 'Registrierung erfolgreich';
+          this.alertInfo =
+            'Es wurde eine Email zur Bestätigung deiner Email-Addresse verschickt.';
+
+          this.store.commit('setRegistered', false);
+        }
+
         if (this.alertTitle == '') return;
         alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
@@ -333,7 +341,7 @@ export default {
       } else {
         this.alertTitle = 'Ungültige Email';
         this.alertInfo =
-          'Um ein Unternehmen zu Registrieren musst du mit deiner Schul-Email (@fsgmarbach.info) angemeldet sein. Ändere deine Email Addresse oder erstelle einen neuen Account um dein Unternehmen zu registrieren.';
+          'Um ein Unternehmen zu registrieren, musst du mit deiner Schul-Email (@fsgmarbach.info) angemeldet sein. Ändere deine Email-Adresse oder erstelle einen neuen Account, um dein Unternehmen zu registrieren.';
 
         var alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
@@ -408,6 +416,15 @@ export default {
 
           if (error) throw error;
 
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('name', capitalizedName)
+              .eq('id', data.user.id);
+
+            if (error) throw error;
+          }
+
           console.log(data.user);
           this.store.commit('setUser', data.user);
         }
@@ -420,9 +437,18 @@ export default {
 
           if (error) throw error;
 
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('email', mailInput.value)
+              .eq('id', this.store.state.user.id);
+
+            if (error) throw error;
+          }
+
           this.successAlertTitle = 'Email Änderung bestätigen';
           this.successAlertInfo =
-            'Es wurde eine Mail zum ändern deiner Email Addresse an deine neue Email Addresse gesendet.';
+            'Es wurde eine Mail zum Ändern deiner Email-Adresse an deine neue Email-Adresse gesendet.';
         } else {
           this.successAlertTitle = '';
         }

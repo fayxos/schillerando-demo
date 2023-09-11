@@ -13,6 +13,7 @@ const store = createStore({
     access_token: null,
     refresh_token: null,
     orders: [],
+    registered: false,
   },
   mutations: {
     setUser(state, payload) {
@@ -40,6 +41,9 @@ const store = createStore({
     },
     setOrders(state, payload) {
       state.orders = payload;
+    },
+    setRegistered(state, payload) {
+      state.registered = payload;
     },
   },
   getters: {
@@ -77,7 +81,11 @@ const store = createStore({
 
           commit('setUser', data.user);
 
-          this.dispatch('updateMissingMetadata');
+          if (
+            data.user.user_metadata.isInDatabase == null ||
+            data.user.user_metadata.isInDatabase == false
+          )
+            this.dispatch('addToDatabase');
           this.dispatch('checkUserCompany');
           this.dispatch('startOrderSubscription');
         }
@@ -121,12 +129,10 @@ const store = createStore({
           if (this.getters.getUser != null) {
             commit('setUser', data.user);
 
-            this.dispatch('updateMissingMetadata');
             this.dispatch('checkUserCompany');
           } else {
             commit('setUser', data.user);
 
-            this.dispatch('updateMissingMetadata');
             this.dispatch('checkUserCompany');
 
             router.go(router.currentRoute);
@@ -139,18 +145,25 @@ const store = createStore({
         commit('setUser', null);
       }
     },
-    async updateMissingMetadata({ commit }) {
-      if (this.getters.getUser.user_metadata.credit == null) {
-        const { data } = await supabase.auth.updateUser({
-          data: { credit: 0 },
+    async addToDatabase() {
+      try {
+        const { error } = await supabase.from('users').insert({
+          id: this.state.user.id,
+          email: this.state.user.email,
+          name: this.state.user.user_metadata.name,
         });
-        commit('setUser', data.user);
-      }
-      if (this.getters.getUser.user_metadata.credit == null) {
-        const { data } = await supabase.auth.updateUser({
-          data: { isCompanyLeader: false },
-        });
-        commit('setUser', data.user);
+
+        if (error) throw error;
+
+        {
+          const { error } = await supabase.auth.updateUser({
+            data: { isInDatabase: true },
+          });
+
+          if (error) throw error;
+        }
+      } catch (e) {
+        console.log(e);
       }
     },
     // eslint-disable-next-line no-empty-pattern
@@ -159,6 +172,20 @@ const store = createStore({
         process.env.VUE_APP_BUSINESS_URL +
           path +
           '?ext=true&access_token=' +
+          store.state.access_token +
+          '&refresh_token=' +
+          store.state.refresh_token
+      );
+    },
+    // eslint-disable-next-line no-empty-pattern
+    async internLoginCallback({}, path) {
+      var p = '';
+      if (path != undefined && path != null && path != '/') p = path;
+
+      window.location.replace(
+        process.env.VUE_APP_INTERN_URL +
+          p +
+          '?int=true&access_token=' +
           store.state.access_token +
           '&refresh_token=' +
           store.state.refresh_token
@@ -185,6 +212,8 @@ const store = createStore({
         if (path == null) await router.replace('/account');
         else if (path.includes('ext')) {
           this.dispatch('externLoginCallback', path.split('_')[1]);
+        } else if (path.includes('int')) {
+          this.dispatch('internLoginCallback', path.split('_')[1]);
         } else await router.replace(path);
       } catch (error) {
         commit('setState', 'failure');
@@ -213,15 +242,27 @@ const store = createStore({
             emailRedirectTo: 'https://schillerando.de/account',
             data: {
               name: capitalizedName,
-              credit: 0,
+              isInDatabase: true,
               isCompanyLeader: false,
             },
           },
         });
 
         if (error) throw error;
+
+        {
+          const { error } = await supabase.from('users').insert({
+            id: data.user.id,
+            email: data.user.email,
+            name: capitalizedName,
+          });
+
+          if (error) throw error;
+        }
+
         console.log('Successfully registered');
         commit('setUser', data.user);
+        commit('setRegistered', true);
 
         commit('setState', 'success');
 
@@ -417,31 +458,36 @@ const store = createStore({
         console.log(error.error_description || error.message);
       }
     },
-    async addQRCodeCount() {
+    // eslint-disable-next-line no-empty-pattern
+    async addQRCodeCount({}, id) {
       try {
         const { data, error } = await supabase
           .from('stats')
           .select()
-          .eq('id', '1');
+          .eq('id', id);
 
         if (error) throw error;
         if (data[0] == null) throw error;
 
         var count = data[0].count;
-        console.log(data);
-
         {
           const { error } = await supabase
             .from('stats')
             .update({
               count: count + 1,
             })
-            .eq('name', 'QR Code 1');
+            .eq('id', id);
 
           if (error) throw error;
         }
+        console.debug(
+          'Updated stats: ID is: ' + id + '; count before was: ' + count
+        );
       } catch (error) {
-        console.log(error.error_description || error.message);
+        console.error(
+          'Error updating QR code stat',
+          error.error_description || error.message
+        );
       }
     },
   },

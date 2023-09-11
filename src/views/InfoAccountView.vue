@@ -2,7 +2,7 @@
   <AlertBanner title="Coming Soon" />
   <TitleDiv title="Alle Infos über dein Kundenkonto oder dein Unternehmen" />
   <InfoDiv
-    info="Hier kannst du in Zukunft dein Konto verwalten. Du siehst dein aktuelles Guthaben, deine Bestellungen und kannst Abonements abschließen. Falls du ein Unternehmen hast, kannst du hier dein Unternehmensprofil bearbeiten und Produkte und Preise einstellen."
+    info="Hier kannst du in Zukunft dein Konto verwalten. Du siehst dein aktuelles Guthaben, deine Bestellungen und kannst Abonnements abschließen. Falls du ein Unternehmen hast, kannst du hier dein Unternehmensprofil bearbeiten und Produkte und Preise einstellen."
   />
 </template>
 
