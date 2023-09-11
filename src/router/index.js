@@ -25,7 +25,7 @@ const routes = [
     component: AppView,
   },
   {
-    path: '/produkte',
+    path: '/angebote',
     name: 'ProductView',
     component: ProductView,
   },
@@ -97,13 +97,18 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   if (to.path.startsWith('/qr')) {
-    const paths = ['/', '/account'];
+    const paths = ['/', '/account', '/'];
     let id = parseInt(to.path.slice(3));
     store.dispatch('addQRCodeCount', id);
     next({ path: paths[id - 1] });
+  } else if (to.query.source !== undefined) {
+    let query = to.query;
+    store.dispatch('addQRCodeCount', to.query.source);
+    delete query.source;
+    next({ query: query });
   } else if (to.path === '/' && user !== null) {
     //Logged in users get 'products' page as start-page
-    next({ path: 'produkte' });
+    next({ path: 'angebote' });
   } else if (requiresAuth && user === null) {
     //If a page requires the user to be logged in, he will be get the auth page
     next({ name: 'AuthView', query: { redirect: to.fullPath } });
@@ -121,8 +126,7 @@ router.beforeEach((to, from, next) => {
     to.query.redirect.split('_')[0] === 'int'
   ) {
     store.dispatch('internLoginCallback', to.query.redirect.split('_')[1]);
-  }
-  else if (to.name === 'AuthView' && user !== null) {
+  } else if (to.name === 'AuthView' && user !== null) {
     next({ path: 'account' });
   } else next();
 });

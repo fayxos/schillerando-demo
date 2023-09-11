@@ -18,8 +18,8 @@
           v-if="this.products.length > 0"
           class="product-count translate-middle badge rounded-pill bg-danger"
         >
-          {{ productCount }}
-          <span class="visually-hidden">produkte</span>
+          {{ products.length }}
+          <span class="visually-hidden">Angebote</span>
         </span>
         <i class="fa-solid fa-cart-shopping fa-2xl"></i>
       </button>
@@ -45,7 +45,6 @@
                 <ShoppingCartTile :data="product" />
               </div>
             </div>
-
           </div>
           <div class="card-footer">
             <button class="btn btn-primary order-button">Bestellen</button>
@@ -64,7 +63,7 @@ import ShoppingCartTile from './ShoppingCartTile.vue';
 export default {
   name: 'ShoppingCart',
   components: {
-    ShoppingCartTile
+    ShoppingCartTile,
   },
   data() {
     return {
@@ -75,35 +74,34 @@ export default {
     const store = useStore();
     const userData = computed(() => store.state.user);
     const products = computed(() => {
-      const stackedProducts = []
-      const cartProducts = store.state.shoppingCart
+      const stackedProducts = [];
+      const cartProducts = store.state.shoppingCart;
 
-      cartProducts.forEach(product => {
-        const index = stackedProducts.findIndex(p => p.id == product.id)
-        if(index == -1) {
-          product.count = 1
-          stackedProducts.push(product)
+      cartProducts.forEach((product) => {
+        const index = stackedProducts.findIndex((p) => p.id == product.id);
+        if (index == -1) {
+          product.count = 1;
+          stackedProducts.push(product);
         } else {
-          stackedProducts[index].count += 1
+          stackedProducts[index].count += 1;
         }
       });
 
-      return stackedProducts
+      return stackedProducts;
     });
 
-    const productCount = computed(() => store.state.shoppingCart.length)
+    const productCount = computed(() => store.state.shoppingCart.length);
 
     return {
       userData,
       products,
-      productCount
+      productCount,
     };
   },
 };
 </script>
 
 <style scoped>
-
 .card-header {
   display: flex;
   padding-top: 12px;
@@ -205,5 +203,4 @@ i {
   font-size: 1.25rem;
   height: 45px;
 }
-
 </style>

@@ -4,10 +4,10 @@
     @click="changeLinkColors"
     class="navbar navbar-expand-lg navbar-light sticky-top"
   >
-    <router-link to="/" class="brand navbar-brand">
+    <a href="/" class="brand navbar-brand">
       <img class="logo" src="@/assets/logo_transparent.png" />
       Schillerando
-    </router-link>
+    </a>
     <button
       class="navbar-toggler"
       type="button"
@@ -23,7 +23,7 @@
           <router-link class="nav-link" to="/start">Startseite</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/produkte">Produkte</router-link>
+          <router-link class="nav-link" to="/angebote">Angebote</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/unternehmen"
@@ -58,10 +58,10 @@ export default {
       }
 
       switch (path) {
-        case '':
+        case 'start':
           links[0].style.color = '#00a100';
           break;
-        case 'produkte':
+        case 'angebote':
           links[1].style.color = '#00a100';
           break;
         case 'unternehmen':

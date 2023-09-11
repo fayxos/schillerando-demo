@@ -69,7 +69,7 @@
       </div>
 
       <div class="col-lg-7 col-xl-8">
-        <h4 class="review">Dieses Produkt hat noch keine Bewertungen</h4>
+        <h4 class="review">Noch keine Bewertungen vorhanden</h4>
       </div>
     </div>
   </div>

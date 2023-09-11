@@ -3,14 +3,15 @@
     <AlertPopup :title="this.alertTitle" :info="this.alertInfo" />
 
     <div class="container">
-      <div class="row mb-0">
+      <div v-if="userData != null" class="row mb-0">
         <div class="col-12">
           <div
             v-if="userData.email_confirmed_at == null"
             class="alert alert-warning"
             role="alert"
           >
-          Bestätige deine Email, um Bestellungen zu tätigen oder dein Unternehmen zu registrieren!
+            Bestätige deine Email, um Bestellungen zu tätigen oder dein
+            Unternehmen zu registrieren!
           </div>
         </div>
 
@@ -151,7 +152,7 @@
               class="btn bg-sec register"
               :disabled="userData.email_confirmed_at == null"
             >
-            Unternehmen registrieren
+              Unternehmen registrieren
             </button>
           </div>
 
@@ -302,6 +303,14 @@ export default {
         this.alertTitle = this.successAlertTitle;
         this.alertInfo = this.successAlertInfo;
 
+        if (this.store.state.registered) {
+          this.alertTitle = 'Registrierung erfolgreich';
+          this.alertInfo =
+            'Es wurde eine Email zur Bestätigung deiner Email-Addresse verschickt.';
+
+          this.store.commit('setRegistered', false);
+        }
+
         if (this.alertTitle == '') return;
         alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
@@ -431,6 +440,15 @@ export default {
 
           if (error) throw error;
 
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('name', capitalizedName)
+              .eq('id', data.user.id);
+
+            if (error) throw error;
+          }
+
           console.log(data.user);
           this.store.commit('setUser', data.user);
         }
@@ -442,6 +460,15 @@ export default {
           });
 
           if (error) throw error;
+
+          {
+            const { error } = await supabase
+              .from('users')
+              .update('email', mailInput.value)
+              .eq('id', this.store.state.user.id);
+
+            if (error) throw error;
+          }
 
           this.successAlertTitle = 'Email Änderung bestätigen';
           this.successAlertInfo =

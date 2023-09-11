@@ -340,6 +340,13 @@ export default {
         this.alertTitle = this.successAlertTitle;
         this.alertInfo = this.successAlertInfo;
 
+        if(this.store.state.registered) {
+          this.alertTitle = "Registrierung erfolgreich"
+          this.alertInfo = "Es wurde eine Email zur Bestätigung deiner Email-Addresse verschickt."
+
+          this.store.commit('setRegistered', false)
+        }
+
         if (this.alertTitle == '') return;
         alertModal = new Modal(document.getElementById('alertModal'), {});
         alertModal.show();
@@ -360,7 +367,7 @@ export default {
             this.failureAlertInfo =
               'Wir erfahren im Moment eine erhöhte Anzahl an Anmeldungen, weshalb unser Server keine Kapazität übrig hat. Versuche es später erneut.';
             this.successAlertTitle = '';
-          } else {
+          } /* else if (false) {
             var mailInput = document.getElementById('signup-mail');
             mailInput.classList.remove('is-valid');
             mailInput.classList.add('is-invalid');
@@ -368,6 +375,11 @@ export default {
             this.failureAlertTitle = 'Registrierung fehlgeschlagen';
             this.failureAlertInfo =
               'Es existiert bereits ein Account mit dieser Email!';
+            this.successAlertTitle = '';
+          } */ else {
+            this.failureAlertTitle = 'Registrierung fehlgeschlagen';
+            this.failureAlertInfo =
+              'Es gab einen Fehler bei der Registrierung. Versuche es später erneut!';
             this.successAlertTitle = '';
           }
         }

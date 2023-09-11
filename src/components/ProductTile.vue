@@ -68,7 +68,7 @@ export default {
       event.stopPropagation()
 
       if (this.store.getters.getUser == null)
-        router.push({ path: 'auth', query: { redirect: 'produkte' } });
+        router.push({ path: 'auth', query: { redirect: 'angebote' } });
       this.store.commit('addProductToCart', this.data);
     },
   },
