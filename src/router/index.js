@@ -9,6 +9,7 @@ import AuthView from '../views/AuthView';
 import UpdatePasswordView from '../views/UpdatePasswordView';
 import AGBView from '../views/AGBView';
 import OrderView from '../views/OrderView';
+import OrderedView from '../views/OrderedView';
 import OrderDetailView from '../views/OrderDetailView';
 import OrderQRView from '../views/OrderQRView';
 import store from '../store/index';
@@ -49,6 +50,16 @@ const routes = [
     path: '/order',
     name: 'OrderView',
     component: OrderView,
+    meta: {
+      requiresAuth: true,
+      footer: false,
+      shoppingCart: false,
+    },
+  },
+  {
+    path: '/ordered',
+    name: 'OrderedView',
+    component: OrderedView,
     meta: {
       requiresAuth: true,
       footer: false,

@@ -346,10 +346,10 @@ const store = createStore({
 
         if (error) throw error;
 
-        // Send confirmation Email
-
         store.state.shoppingCart = [];
         commit('setState', 'success');
+
+        router.replace('ordered');
       } catch (error) {
         commit('setState', 'failure');
         console.log(error.error_description || error.message);

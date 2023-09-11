@@ -121,9 +121,8 @@ export default {
       action: '',
       alertTitle: '',
       alertInfo: '',
-      successAlertTitle: 'Bestellung Erfolgreich',
-      successAlertInfo:
-        'Eine Bestellbestätigung wurde an deine Email geschickt.',
+      successAlertTitle: '',
+      successAlertInfo: '',
       failureAlertTitle: 'Bestellung fehlgeschlagen',
       failureAlertInfo:
         'Bei der Bestellung ist ein Fehler aufgetreten. Versuche es später erneut!',
