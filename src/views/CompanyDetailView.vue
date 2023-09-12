@@ -64,30 +64,24 @@
               <div class="col-9 location">
                 <i class="fa-solid fa-location-dot"></i>
                 <div class="location-text">
-                  {{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;<a
-                    v-if="company.socials.instagram !== undefined"
-                    :href="company.socials.instagram"
-                    ><img
-                      src="@/assets/instagram.svg"
-                      style="
-                        opacity: 0.7;
-                        height: 1em;
-                        width: 1em;
-                        position: relative;
-                      "
-                      alt="Instagram"
-                  /></a>
+                  {{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
+                <a
+                  v-if="company.socials.instagram !== undefined"
+                  :href="company.socials.instagram"
+                  class="insta"
+                  ><i class="fa-brands fa-instagram fa-lg"></i
+                ></a>
               </div>
             </div>
           </div>
         </div>
 
-        <hr />
-        <MapProvider
-          :positions="company.coordinates"
-          style="height: 50vh; width: 50vw"
-        />
+        <div class="mapWrapper">
+          <MapProvider :positions="company.coordinates" class="map" />
+        </div>
+
+        <hr class="mapDivider" />
       </div>
 
       <div class="products col-lg-7 col-xl-8">
@@ -289,6 +283,33 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.mapWrapper {
+  position: relative;
+  width: calc(100% - 30px);
+  padding-bottom: 100%;
+  margin: 0 15px 0 15px;
+}
+
+.mapDivider {
+  margin-top: 15px;
+}
+
+.map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  left: 0;
+  border-style: groove;
+  border-color: #ebebeb;
+  border-width: 1px;
+}
+
+.insta {
+  position: relative;
+  bottom: 3px;
 }
 
 @media (min-width: 992px) {
