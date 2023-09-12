@@ -77,8 +77,8 @@
           </div>
         </div>
 
-        <div class="mapWrapper">
-          <MapProvider :positions="company.coordinates" class="map" />
+        <div v-if="company.pinData != undefined && !loading" class="mapWrapper">
+          <MapProvider :data="[company.pinData]" class="map" />
         </div>
 
         <hr class="mapDivider" />
@@ -118,6 +118,7 @@ export default {
       company: undefined,
       image: null,
       products: [],
+      loading: true,
     };
   },
   async mounted() {
@@ -132,12 +133,24 @@ export default {
         return;
       }
       this.company = data[0];
+      if (
+        this.company.coordinates != undefined &&
+        this.company.coordinates != null
+      )
+        this.company.pinData = { position: data[0].coordinates, image: null };
 
       if (this.company.header_picture != null) {
         const response = await supabase.storage
           .from('public/sellers-headings')
           .download(this.company.header_picture);
-        if (response.data != null) this.image = await response.data.text();
+        if (response.data != null) {
+          this.image = await response.data.text();
+          if (
+            this.company.coordinates != undefined &&
+            this.company.coordinates != null
+          )
+            this.company.pinData.image = this.image;
+        }
         if (response.error) console.warn(response.error);
       }
 
@@ -162,6 +175,8 @@ export default {
     if (this.company.socials.instagram !== undefined)
       this.company.socials.instagram =
         'https://instagram.com/' + this.company.socials.instagram;
+
+    this.loading = false;
   },
 };
 </script>
