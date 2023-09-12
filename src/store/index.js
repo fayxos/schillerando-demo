@@ -148,28 +148,28 @@ const store = createStore({
       }
     },
     // eslint-disable-next-line no-empty-pattern
-    async externLoginCallback({}, path) {
+    async externLoginCallback({ }, path) {
       window.location.replace(
         process.env.VUE_APP_BUSINESS_URL +
-          path +
-          '?ext=true&access_token=' +
-          store.state.access_token +
-          '&refresh_token=' +
-          store.state.refresh_token
+        path +
+        '?ext=true&access_token=' +
+        store.state.access_token +
+        '&refresh_token=' +
+        store.state.refresh_token
       );
     },
     // eslint-disable-next-line no-empty-pattern
-    async internLoginCallback({}, path) {
+    async internLoginCallback({ }, path) {
       var p = '';
       if (path != undefined && path != null && path != '/') p = path;
 
       window.location.replace(
         process.env.VUE_APP_INTERN_URL +
-          p +
-          '?int=true&access_token=' +
-          store.state.access_token +
-          '&refresh_token=' +
-          store.state.refresh_token
+        p +
+        '?int=true&access_token=' +
+        store.state.access_token +
+        '&refresh_token=' +
+        store.state.refresh_token
       );
     },
     async signInAction({ commit }, { form, path }) {
@@ -206,15 +206,20 @@ const store = createStore({
       try {
         commit('setState', 'loading');
 
-        const splitName = form.name.split(' ');
-        const name1 =
-          splitName[0].charAt(0).toUpperCase() +
-          splitName[0].slice(1).toLowerCase();
-        const name2 =
-          splitName[1].charAt(0).toUpperCase() +
-          splitName[1].slice(1).toLowerCase();
-
-        const capitalizedName = name1 + ' ' + name2;
+        const splitBySpace = form.name.split(" ")
+        let formattedName = ""
+        for (let i = 0; i < splitBySpace.length; i++) {
+          let splitByHyphen = splitBySpace[i].split("-")
+          let subName = ""
+          for (let j = 0; j < splitByHyphen.length; j++) {
+            if (splitByHyphen[j].toLowerCase() === "von") subName += "von-"
+            else if (splitByHyphen[j].toLowerCase() === "zu") subName += "zu-"
+            else subName += splitByHyphen[j].charAt(0).toUpperCase() + splitByHyphen[j].slice(1).toLowerCase() + "-";
+          }
+          subName = subName.slice(0, subName.length - 1);
+          formattedName += subName + " "
+        }
+        formattedName.slice(0, -1);
 
         const { data, error } = await supabase.auth.signUp({
           email: form.email,
@@ -222,7 +227,7 @@ const store = createStore({
           options: {
             emailRedirectTo: 'https://schillerando.de/account',
             data: {
-              name: capitalizedName,
+              name: formattedName,
               isInDatabase: true,
               isCompanyLeader: false,
             },
@@ -235,7 +240,7 @@ const store = createStore({
           const { error } = await supabase.from('users').insert({
             id: data.user.id,
             email: data.user.email,
-            name: capitalizedName,
+            name: formattedName,
           });
 
           if (error) throw error;
@@ -326,11 +331,11 @@ const store = createStore({
           .select()
           .or(
             'user_uid.eq.' +
-              this.getters.getUser.id +
-              ',employees.cs.' +
-              '{"' +
-              this.getters.getUser.email +
-              '"}'
+            this.getters.getUser.id +
+            ',employees.cs.' +
+            '{"' +
+            this.getters.getUser.email +
+            '"}'
           );
 
         if (error) throw error;
@@ -348,7 +353,7 @@ const store = createStore({
     },
 
     // eslint-disable-next-line no-empty-pattern
-    async addQRCodeCount({}, id) {
+    async addQRCodeCount({ }, id) {
       try {
         const { data, error } = await supabase
           .from('stats')
