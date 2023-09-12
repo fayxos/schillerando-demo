@@ -70,7 +70,6 @@
         </div>
 
         <hr />
-        <MapProvider :positions="company.coordinates" style="height: 50vh; width: 50vw"/>
       </div>
 
       <div class="products col-lg-7 col-xl-8">
@@ -83,7 +82,8 @@
           element="ProductTile"
         />
         <h4 v-else class="margin">
-          Dieses Unternehmen bietet keine Produkte, Aktivitäten oder Dienstleistungen auf Schillerando an.
+          Dieses Unternehmen bietet keine Produkte, Aktivitäten oder
+          Dienstleistungen auf Schillerando an.
         </h4>
       </div>
     </div>
@@ -94,12 +94,11 @@
 import { supabase } from '../supabase';
 import CompanyBadge from '../components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
-import MapProvider from '@/components/MapProvider.vue';
 
 export default {
   name: 'CompanyDetailView',
   props: ['companyuuid'],
-  components: { CompanyBadge, SortableList, MapProvider },
+  components: { CompanyBadge, SortableList },
   data() {
     return {
       company: undefined,
@@ -141,7 +140,7 @@ export default {
           });
         }
 
-        console.log("Products array of /" + this.company.alias, this.products);
+        console.log('Products array of /' + this.company.alias, this.products);
 
         if (response.error) console.warn(response.error);
       }
