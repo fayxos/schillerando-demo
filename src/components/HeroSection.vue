@@ -27,6 +27,7 @@
 
 <script>
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   name: 'HeroSection',
@@ -38,13 +39,24 @@ export default {
   setup() {
     const store = useStore();
 
+    var userData = computed(() => store.state.user);
+
     return {
       store,
+      userData,
     };
   },
   methods: {
     link() {
-      window.location.href = '/auth?action=register';
+      if (this.userData == null) {
+        window.location.href = '/auth?action=register';
+      }
+
+      if (this.userData.email_confirmed_at == null) {
+        window.location.href = '/account';
+      }
+
+      this.store.dispatch('externLoginCallback', '/companyRegistration');
     },
   },
 };

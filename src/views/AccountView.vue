@@ -360,8 +360,7 @@ export default {
     },
     companyRegistration() {
       if (this.userData.email.split('@')[1] == 'fsgmarbach.info') {
-        window.location.href =
-          this.businessUrl + '/companyRegistration?ext=true';
+        this.store.dispatch('externLoginCallback', '/companyRegistration');
       } else {
         this.alertTitle = 'Ungültige Email';
         this.alertInfo =
@@ -372,7 +371,7 @@ export default {
       }
     },
     businessLink() {
-      window.location.href = this.businessUrl + '/einstellungen?ext=true';
+      this.store.dispatch('externLoginCallback', '/einstellungen');
     },
     validateAccountChange(pressed) {
       if (!pressed && !this.saveAccountPressed) return;

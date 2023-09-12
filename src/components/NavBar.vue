@@ -1,10 +1,7 @@
 <template>
   <hr />
-  <header
-    @click="changeLinkColors"
-    class="navbar navbar-expand-lg navbar-light sticky-top"
-  >
-    <a href="/" class="brand navbar-brand">
+  <header class="navbar navbar-expand-lg navbar-light sticky-top">
+    <a @click="changeLinkColors" href="/" class="brand navbar-brand">
       <img class="logo" src="@/assets/logo_transparent.png" />
       Schillerando
     </a>
@@ -14,10 +11,15 @@
       data-bs-toggle="collapse"
       data-bs-target="#navbarToggler"
       aria-controls="navbarToggler"
+      id="nav-button"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarToggler">
+    <div
+      @click="changeLinkColors"
+      class="collapse navbar-collapse"
+      id="navbarToggler"
+    >
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <router-link class="nav-link" to="/start">Startseite</router-link>
@@ -46,8 +48,31 @@ export default {
   },
   mounted() {
     this.changeLinkColors();
+
+    this.$nextTick(function () {
+      window.addEventListener('scroll', function () {
+        const navBar = document.getElementById('navbarToggler');
+
+        if (navBar.classList.contains('show')) {
+          const navButton = document.getElementById('nav-button');
+
+          navBar.classList.remove('show');
+          navButton['aria-expanded'] = false;
+        }
+      });
+    });
   },
   methods: {
+    collapse() {
+      const navBar = document.getElementById('navbarToggler');
+
+      if (navBar.classList.contains('show')) {
+        const navButton = document.getElementById('nav-button');
+
+        navBar.classList.remove('show');
+        navButton['aria-expanded'] = false;
+      }
+    },
     changeLinkColors() {
       const url = window.location.href.split('/');
       const path = url[url.length - 1];
