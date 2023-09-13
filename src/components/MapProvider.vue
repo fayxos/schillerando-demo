@@ -8,16 +8,13 @@
 
 <script>
 import 'leaflet/dist/leaflet.css';
+import { supabase } from '@/supabase';
 import L from 'leaflet';
 
 export default {
   name: 'MapProvider',
-  props: ['data'],
-  data() {
-    return {
-      pinData: [],
-    };
-  },
+  props: ['data', 'companies'],
+  emits: ['pickCompany'],
   setup() {
     var pin = new Image();
     pin.src = require('@/assets/pin.png');
@@ -40,20 +37,16 @@ export default {
       else return { position: [48.935283, 9.2627305] };
     },
   },
-  mounted() {
-    if (this.data != null) this.pinData = this.data;
-
-    console.log(this.pinData);
-
-    if (this.pinData.length > 0) {
-      var startZoom = 16.5;
+  async mounted() {
+    if (this.data != null || this.companies != null) {
+      var startZoom = 16;
       var startPos = [48.93452321902908, 9.263819092113069];
 
       var map = L.map('mapContainer').setView(startPos, startZoom);
-      map.setZoom(16.5);
+      map.setZoom(16);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 22,
-        minZoom: 16.5,
+        minZoom: 16,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
@@ -69,14 +62,6 @@ export default {
         console.log(false);
       }
 
-      this.buildIcons();
-
-      for (let i = 0; i < this.pinData.length; i++) {
-        L.marker(this.pinData[i].position, {
-          icon: this.pinData[i].icon,
-        }).addTo(map);
-      }
-
       map.on('click', (e) => {
         console.log(e.latlng);
       });
@@ -86,69 +71,108 @@ export default {
       console.log('Illegal positions-data');
     }
 
-    this.buildIcons();
+    if (this.data != null) {
+      this.data.forEach((pinData) => {
+        var icon = this.buildIcon(pinData.image);
+
+        L.marker(pinData.position, {
+          icon: icon,
+        }).addTo(map);
+      });
+    }
+
+    if (this.companies != null) {
+      this.companies.forEach(async (company) => {
+        if (company.coordinates != undefined && company.coordinates != null) {
+          var image = null;
+
+          if (
+            company.header_picture != undefined &&
+            company.header_picture != null
+          ) {
+            const response = await supabase.storage
+              .from('public/sellers-headings')
+              .download(company.header_picture);
+
+            if (response.data != null) {
+              image = await response.data.text();
+            }
+            if (response.error) console.warn(response.error);
+          }
+
+          var icon = this.buildIcon(image);
+
+          L.marker([company.coordinates[0], company.coordinates[1]], {
+            icon: icon,
+          })
+            .addTo(map)
+            .on('click', () => {
+              var newCompany = company;
+              newCompany.image = image;
+              this.$emit('pickCompany', newCompany);
+            });
+        }
+      });
+    }
   },
   methods: {
     onMapClick(e) {
       console.log(e);
     },
-    buildIcons() {
+    buildIcon(image) {
       var canvas = document.getElementById('test');
       var ctx = canvas.getContext('2d');
 
-      for (var i = 0; i < this.pinData.length; i++) {
-        if (this.pinData[i].image == null) {
-          let icon = L.icon({
-            iconUrl: this.pin.src,
-            iconSize: [29, 45],
-            iconAnchor: [14.5, 45],
-          });
-          this.pinData[i].icon = icon;
-          continue;
-        }
-
-        ctx.drawImage(this.pin, 0, 0, 145, 225);
-
-        var width = 135;
-        var height = 135;
-        var x = (145 - width) / 2;
-        var y = (145 - width) / 2;
-
-        ctx.beginPath();
-        ctx.arc(x + width / 2, y + height / 2, width / 2, 0, 10);
-
-        ctx.clip();
-
-        var logo = new Image();
-        logo.src = this.pinData[0].image;
-
-        if (logo.width > logo.height) {
-          var scale = logo.height / width;
-          var w = logo.width / scale;
-          var h = height;
-          var posX = (width - w) / 2;
-          var posY = y;
-        } else {
-          scale = logo.width / width;
-          h = logo.height / scale;
-          w = width;
-          posX = x;
-          posY = (height - h) / 2;
-        }
-
-        ctx.drawImage(logo, posX, posY, w, h);
-
-        var mergedImage = canvas.toDataURL('image/png');
-
+      if (image == null) {
         let icon = L.icon({
-          iconUrl: mergedImage,
+          iconUrl: this.pin.src,
           iconSize: [29, 45],
           iconAnchor: [14.5, 45],
         });
-        this.pinData[i].icon = icon;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return icon;
       }
+
+      ctx.drawImage(this.pin, 0, 0, 145, 225);
+
+      var width = 135;
+      var height = 135;
+      var x = (145 - width) / 2;
+      var y = (145 - width) / 2;
+
+      ctx.beginPath();
+      ctx.arc(x + width / 2, y + height / 2, width / 2, 0, 10);
+
+      ctx.clip();
+
+      var logo = new Image();
+      logo.src = image;
+
+      if (logo.width > logo.height) {
+        var scale = logo.height / width;
+        var w = logo.width / scale;
+        var h = height;
+        var posX = (width - w) / 2;
+        var posY = y;
+      } else {
+        scale = logo.width / width;
+        h = logo.height / scale;
+        w = width;
+        posX = x;
+        posY = (height - h) / 2;
+      }
+
+      ctx.drawImage(logo, posX, posY, w, h);
+
+      var mergedImage = canvas.toDataURL('image/png');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let icon = L.icon({
+        iconUrl: mergedImage,
+        iconSize: [29, 45],
+        iconAnchor: [14.5, 45],
+      });
+      return icon;
     },
   },
 };

@@ -1,11 +1,15 @@
 <template>
   <router-link :to="link" class="hover">
-    <div class="sizing">
+    <div class="sizing" :class="{ 'no-margin': noMargin }">
       <div class="card">
         <div class="image">
-          <div v-if="this.picture == null" class="no-image">
+          <div
+            v-if="this.picture == null && data.image == undefined"
+            class="no-image"
+          >
             <i class="fa-solid fa-image fa-2xl"></i>
           </div>
+          <img v-else-if="data.image != undefined" :src="data.image" alt="" />
           <img v-else :src="picture" alt="" />
         </div>
         <div class="row">
@@ -41,7 +45,7 @@ import { supabase } from '../supabase';
 
 export default {
   name: 'CompanyTile',
-  props: ['data'],
+  props: ['data', 'noMargin'],
   data() {
     return {
       picture: null,
@@ -49,6 +53,10 @@ export default {
   },
   components: { CompanyBadge },
   async mounted() {
+    if (this.data.image != undefined) {
+      return;
+    }
+
     if (this.data.header_picture != null) {
       const response = await supabase.storage
         .from('public/sellers-headings')
@@ -105,6 +113,10 @@ img {
   position: relative;
   padding-bottom: calc(56.25% + 10rem);
   margin: 2.5%;
+}
+
+.no-margin {
+  margin: 0;
 }
 
 .card {

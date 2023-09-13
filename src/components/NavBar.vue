@@ -102,7 +102,7 @@ export default {
   text-align: left;
   background-color: white;
 
-  z-index: 999;
+  z-index: 10000;
 }
 
 .navbar-brand {

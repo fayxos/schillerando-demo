@@ -77,8 +77,13 @@
           </div>
         </div>
 
-        <div v-if="company.pinData != undefined && !loading" class="mapWrapper">
-          <MapProvider :data="[company.pinData]" class="map" />
+        <div>
+          <div
+            v-if="company.pinData != undefined && !loading"
+            class="mapWrapper"
+          >
+            <MapProvider :data="company.pinData" class="map" />
+          </div>
         </div>
 
         <hr class="mapDivider" />
@@ -133,11 +138,6 @@ export default {
         return;
       }
       this.company = data[0];
-      if (
-        this.company.coordinates != undefined &&
-        this.company.coordinates != null
-      )
-        this.company.pinData = { position: data[0].coordinates, image: null };
 
       if (this.company.header_picture != null) {
         const response = await supabase.storage
@@ -149,10 +149,23 @@ export default {
             this.company.coordinates != undefined &&
             this.company.coordinates != null
           )
-            this.company.pinData.image = this.image;
+            this.company.pinData = [
+              { position: this.company.coordinates, image: this.image },
+            ];
         }
         if (response.error) console.warn(response.error);
+      } else {
+        if (
+          this.company.coordinates != undefined &&
+          this.company.coordinates != null
+        )
+          this.company.pinData = [
+            { position: data[0].coordinates, image: null },
+          ];
+        else this.company.pinData = null;
       }
+
+      console.log(this.company.pinData);
 
       {
         const response = await supabase
@@ -303,7 +316,7 @@ img {
 .mapWrapper {
   position: relative;
   width: calc(100% - 30px);
-  padding-bottom: 100%;
+  padding-bottom: calc(100% - 50px);
   margin: 0 15px 0 15px;
 }
 
