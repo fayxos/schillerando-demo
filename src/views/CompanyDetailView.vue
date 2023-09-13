@@ -316,7 +316,7 @@ img {
 .mapWrapper {
   position: relative;
   width: calc(100% - 30px);
-  padding-bottom: calc(100% - 50px);
+  padding-bottom: calc(100% - 30px);
   margin: 0 15px 0 15px;
 }
 
