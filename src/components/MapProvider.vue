@@ -39,11 +39,12 @@ export default {
   },
   async mounted() {
     if (this.data != null || this.companies != null) {
-      var startZoom = 16;
-      var startPos = [48.93452321902908, 9.263819092113069];
+      var startZoom = 17;
+      //var startPos = [48.93452321902908, 9.263819092113069];
+      var startPos = [48.93522091222182, 9.262719154357912];
 
       var map = L.map('mapContainer').setView(startPos, startZoom);
-      map.setZoom(16);
+      map.setZoom(startZoom);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 22,
         minZoom: 16,
