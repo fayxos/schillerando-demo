@@ -73,10 +73,11 @@ export default {
     }
 
     if (this.data != null) {
-      this.data.forEach((pinData) => {
-        var icon = this.buildIcon(pinData.image);
+      this.data.forEach(async (pinData) => {
+        console.log(pinData);
+        var icon = await this.buildIcon(pinData.image);
 
-        L.marker(pinData.position, {
+        L.marker([pinData.position[0], pinData.position[1]], {
           icon: icon,
         }).addTo(map);
       });
@@ -101,7 +102,7 @@ export default {
             if (response.error) console.warn(response.error);
           }
 
-          var icon = this.buildIcon(image);
+          var icon = await this.buildIcon(image);
 
           L.marker([company.coordinates[0], company.coordinates[1]], {
             icon: icon,
@@ -120,7 +121,7 @@ export default {
     onMapClick(e) {
       console.log(e);
     },
-    buildIcon(image) {
+    async buildIcon(image) {
       var canvas = document.getElementById('test');
       var ctx = canvas.getContext('2d');
 
@@ -133,6 +134,11 @@ export default {
         return icon;
       }
 
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      var logo = new Image();
+      logo.src = image;
+
       ctx.drawImage(this.pin, 0, 0, 145, 225);
 
       var width = 135;
@@ -144,9 +150,6 @@ export default {
       ctx.arc(x + width / 2, y + height / 2, width / 2, 0, 10);
 
       ctx.clip();
-
-      var logo = new Image();
-      logo.src = image;
 
       if (logo.width > logo.height) {
         var scale = logo.height / width;
