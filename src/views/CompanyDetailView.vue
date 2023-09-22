@@ -63,13 +63,30 @@
             <div class="row spacing location-pos">
               <div class="col-9 location">
                 <i class="fa-solid fa-location-dot"></i>
-                <div class="location-text">{{ company.location }}</div>
+                <div class="location-text">
+                  {{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <a
+                  v-if="company.socials.instagram !== undefined"
+                  :href="company.socials.instagram"
+                  class="insta"
+                  ><i class="fa-brands fa-instagram fa-lg"></i
+                ></a>
               </div>
             </div>
           </div>
         </div>
 
-        <hr />
+        <div>
+          <div
+            v-if="company.pinData != undefined && !loading"
+            class="mapWrapper"
+          >
+            <MapProvider :data="company.pinData" class="map" />
+          </div>
+        </div>
+
+        <hr class="mapDivider" />
       </div>
 
       <div class="products col-lg-7 col-xl-8">
@@ -81,8 +98,10 @@
           show-category="true"
           element="ProductTile"
         />
+
         <h4 v-else class="margin">
-          Dieses Unternehmen bietet keine Produkte, Aktivitäten oder Dienstleistungen auf Schillerando an.
+          Dieses Unternehmen bietet keine Produkte, Aktivitäten oder
+          Dienstleistungen auf Schillerando an.
         </h4>
       </div>
     </div>
@@ -93,16 +112,18 @@
 import { supabase } from '../supabase';
 import CompanyBadge from '../components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
+import MapProvider from '@/components/MapProvider.vue';
 
 export default {
   name: 'CompanyDetailView',
   props: ['companyuuid'],
-  components: { CompanyBadge, SortableList },
+  components: { CompanyBadge, SortableList, MapProvider },
   data() {
     return {
       company: undefined,
       image: null,
       products: [],
+      loading: true,
     };
   },
   async mounted() {
@@ -122,9 +143,29 @@ export default {
         const response = await supabase.storage
           .from('public/sellers-headings')
           .download(this.company.header_picture);
-        if (response.data != null) this.image = await response.data.text();
+        if (response.data != null) {
+          this.image = await response.data.text();
+          if (
+            this.company.coordinates != undefined &&
+            this.company.coordinates != null
+          )
+            this.company.pinData = [
+              { position: this.company.coordinates, image: this.image },
+            ];
+        }
         if (response.error) console.warn(response.error);
+      } else {
+        if (
+          this.company.coordinates != undefined &&
+          this.company.coordinates != null
+        )
+          this.company.pinData = [
+            { position: data[0].coordinates, image: null },
+          ];
+        else this.company.pinData = null;
       }
+
+      console.log(this.company.pinData);
 
       {
         const response = await supabase
@@ -139,11 +180,16 @@ export default {
           });
         }
 
-        console.log(this.products);
+        console.log('Products array of /' + this.company.alias, this.products);
 
         if (response.error) console.warn(response.error);
       }
     }
+    if (this.company.socials.instagram !== undefined)
+      this.company.socials.instagram =
+        'https://instagram.com/' + this.company.socials.instagram;
+
+    this.loading = false;
   },
 };
 </script>
@@ -265,6 +311,33 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.mapWrapper {
+  position: relative;
+  width: calc(100% - 30px);
+  padding-bottom: calc(100% - 30px);
+  margin: 0 15px 0 15px;
+}
+
+.mapDivider {
+  margin-top: 15px;
+}
+
+.map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  left: 0;
+  border-style: groove;
+  border-color: #ebebeb;
+  border-width: 1px;
+}
+
+.insta {
+  position: relative;
+  bottom: 3px;
 }
 
 @media (min-width: 992px) {

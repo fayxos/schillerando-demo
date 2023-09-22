@@ -172,7 +172,6 @@ export default {
         ];
 
         for (var i = 0; i < this.sortedShownItems.length; i++) {
-          console.log(this.sortedShownItems[i].categories[0]);
           this.sortedShownItems[i].category = categoryOrder.indexOf(
             this.sortedShownItems[i].categories[0]
           );
