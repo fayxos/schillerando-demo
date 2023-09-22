@@ -157,8 +157,8 @@ export default {
   methods: {
     sort: function () {
       this.sortedShownItems = this.shownItems;
+      this.shuffleArray(this.sortedShownItems);
       if (this.sortBy == '') {
-        this.shuffleArray(this.sortedShownItems);
         return;
       } else if (this.sortBy == 'category') {
         const categoryOrder = [
