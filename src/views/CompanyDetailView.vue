@@ -67,7 +67,10 @@
                   {{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
                 <a
-                  v-if="company.socials.instagram !== undefined"
+                  v-if="
+                    company.socials.instagram !== undefined &&
+                    this.company.socials.instagram != ''
+                  "
                   :href="company.socials.instagram"
                   class="insta"
                   ><i class="fa-brands fa-instagram fa-lg"></i
@@ -185,7 +188,11 @@ export default {
         if (response.error) console.warn(response.error);
       }
     }
-    if (this.company.socials.instagram !== undefined)
+
+    if (
+      this.company.socials.instagram !== undefined &&
+      this.company.socials.instagram != ''
+    )
       this.company.socials.instagram =
         'https://instagram.com/' + this.company.socials.instagram;
 
