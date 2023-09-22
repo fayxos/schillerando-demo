@@ -243,6 +243,13 @@ export default {
   },
   methods: {
     startReview(star) {
+      if (this.stars == 0) {
+        this.stars = star + 1;
+        return;
+      }
+
+      var reviewInput = document.getElementById('review-info');
+      this.review_text = reviewInput.value;
       this.stars = star + 1;
     },
     cancelReview() {
