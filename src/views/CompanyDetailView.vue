@@ -81,11 +81,17 @@
         </div>
 
         <div>
-          <div
-            v-if="company.pinData != undefined && !loading"
-            class="mapWrapper"
-          >
-            <MapProvider :data="company.pinData" class="map" />
+          <div>
+            <div
+              v-if="
+                company.pinData != undefined &&
+                company.coordinates.length == 2 &&
+                !loading
+              "
+              class="mapWrapper"
+            >
+              <MapProvider :data="company.pinData" class="map" />
+            </div>
           </div>
         </div>
 

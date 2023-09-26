@@ -85,7 +85,11 @@ export default {
 
     if (this.companies != null) {
       this.companies.forEach(async (company) => {
-        if (company.coordinates != undefined && company.coordinates != null) {
+        if (
+          company.coordinates != undefined &&
+          company.coordinates != null &&
+          company.coordinates.length == 2
+        ) {
           var image = null;
 
           if (
