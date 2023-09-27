@@ -39,9 +39,17 @@ export default {
   },
   async mounted() {
     if (this.data != null || this.companies != null) {
-      var startZoom = 17;
+      var mapWidth = document.getElementById('mapContainer');
+      console.log(mapWidth.clientWidth);
+
+      if (mapWidth.clientWidth < 450) {
+        var startZoom = 17;
+      } else {
+        startZoom = 18;
+      }
+
       //var startPos = [48.93452321902908, 9.263819092113069];
-      var startPos = [48.93522091222182, 9.262719154357912];
+      var startPos = [48.93510181358248, 9.262896180152895];
 
       var map = L.map('mapContainer').setView(startPos, startZoom);
       map.setZoom(startZoom);
@@ -51,6 +59,15 @@ export default {
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
+
+      window.addEventListener('resize', function () {
+        var width = document.getElementById('mapContainer').clientWidth;
+        if (width < 450) {
+          map.setZoom(17);
+        } else {
+          map.setZoom(18);
+        }
+      });
 
       if ('geolocation' in navigator) {
         navigator.geolocation.watchPosition((position) => {
