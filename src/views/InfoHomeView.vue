@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import AlertBanner from '../components/AlertBanner';
+import AlertBanner from '@/shared/components/AlertBanner';
 import TitleDiv from '../components/TitleDiv';
 import InfoCards from '../components/InfoCards';
 import QuestionsCarousel from '../components/QuestionsCarousel';
