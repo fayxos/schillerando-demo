@@ -7,7 +7,7 @@
 
 <script>
 import AlertBanner from '@/shared/components/AlertBanner';
-import TitleDiv from '../components/TitleDiv';
+import TitleDiv from '@/shared/components/TitleDiv';
 import InfoCards from '../components/InfoCards';
 import QuestionsCarousel from '../components/QuestionsCarousel';
 

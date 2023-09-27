@@ -8,7 +8,7 @@
 
 <script>
 import AlertBanner from '@/shared/components/AlertBanner';
-import TitleDiv from '../components/TitleDiv';
+import TitleDiv from '@/shared/components/TitleDiv';
 import InfoDiv from '../components/InfoDiv';
 
 export default {

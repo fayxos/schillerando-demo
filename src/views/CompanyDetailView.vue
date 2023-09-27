@@ -119,7 +119,7 @@
 
 <script>
 import { supabase } from '../supabase';
-import CompanyBadge from '../components/CompanyBadge.vue';
+import CompanyBadge from '@/shared/components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
 import MapProvider from '@/components/MapProvider.vue';
 
