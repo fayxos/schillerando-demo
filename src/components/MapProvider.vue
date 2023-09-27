@@ -70,11 +70,13 @@ export default {
       });
 
       if ('geolocation' in navigator) {
+        var marker = L.circleMarker([0, 0]).addTo(map);
+
         navigator.geolocation.watchPosition((position) => {
-          L.circleMarker([
+          marker.setLatLng([
             position.coords.latitude,
             position.coords.longitude,
-          ]).addTo(map);
+          ]);
         });
       } else {
         console.log(false);
