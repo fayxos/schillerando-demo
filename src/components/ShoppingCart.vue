@@ -40,6 +40,21 @@
             </div>
           </div>
           <div class="card-body scroll">
+            <div v-if="hasActiveOrder" class="alert alert-warning">
+              Du kannst nicht mehrere Bestellungen gleichzeitig aufgeben. Warte
+              bis deine vorherige Bestellung eingetroffen ist!
+            </div>
+            <div v-else-if="companyCount > 3" class="alert alert-warning">
+              Du kannst nur Produkte von maximal von 3 verschiedenen Unternehmen
+              bestellen!
+            </div>
+            <div v-else-if="productCount > 10" class="alert alert-warning">
+              Du kannst nur maximal 10 Produkte auf einmal bestellen!
+            </div>
+            <div v-else-if="companyCount > 1" class="alert alert-primary">
+              Bei Bestellung von Produkten von mehr als einem Unternehmen fällt
+              eine Liefergebühr von 5 $ an.
+            </div>
             <div class="list">
               <div v-for="product in products" v-bind:key="product.id">
                 <ShoppingCartTile :data="product" :editable="true" />
@@ -47,10 +62,18 @@
             </div>
           </div>
           <div class="card-footer">
-            <p class="total-price">{{ totalPrice }} $</p>
+            <div class="total-price">
+              {{ totalPrice }} $
+              <div class="delivery-costs" v-if="companyCount > 1">+ 5 $</div>
+            </div>
 
             <button
-              :disabled="productCount == 0"
+              :disabled="
+                productCount == 0 ||
+                companyCount > 3 ||
+                productCount > 10 ||
+                hasActiveOrder
+              "
               @click="$router.push('order')"
               class="btn btn-primary order-button"
             >
@@ -109,12 +132,46 @@ export default {
       return price;
     });
 
+    const companyCount = computed(() => {
+      var companies = [];
+
+      store.state.shoppingCart.forEach((product) => {
+        if (!companies.includes(product.company_id))
+          companies.push(product.company_id);
+      });
+
+      return companies.length;
+    });
+
+    var hasActiveOrder = computed(() => {
+      var hasOrder = false;
+
+      store.state.orders.forEach((order) => {
+        if (order.delivery_time == null) hasOrder = true;
+      });
+
+      return hasOrder;
+    });
+
     return {
       userData,
       products,
       productCount,
       totalPrice,
+      companyCount,
+      hasActiveOrder,
     };
+  },
+  mounted() {
+    window.jQuery = window.$ = require('jquery');
+
+    window.Popper = require('@popperjs/core');
+
+    require('bootstrap');
+
+    window.$('body').tooltip({
+      selector: '[data-bs-toggle="tooltip"]',
+    });
   },
 };
 </script>
@@ -235,5 +292,15 @@ i {
 .btn:disabled {
   background-color: grey;
   border-color: grey;
+}
+
+.alert {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.delivery-costs {
+  display: inline;
+  color: #3284ff;
 }
 </style>

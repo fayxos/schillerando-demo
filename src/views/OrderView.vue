@@ -10,6 +10,9 @@
       </div>
     </div>
 
+    <p class="delivery-costs" v-if="companyCount > 1">
+      Liefergebühr: <span class="price">5 $</span>
+    </p>
     <p class="total">
       Gesamtbetrag: <span class="price">{{ totalPrice }} $</span>
     </p>
@@ -209,7 +212,18 @@ export default {
       price += product.price;
     });
 
-    const totalPrice = price;
+    var companies = [];
+
+    store.state.shoppingCart.forEach((product) => {
+      if (!companies.includes(product.company_id))
+        companies.push(product.company_id);
+    });
+
+    const companyCount = companies.length;
+
+    var totalPrice = price;
+
+    if (companyCount > 1) totalPrice += 5;
 
     const order = reactive({
       deliver_to: '',
@@ -220,15 +234,31 @@ export default {
       note: '',
     });
 
+    var hasActiveOrder = false;
+
+    store.state.orders.forEach((order) => {
+      if (order.delivery_time == null) hasActiveOrder = true;
+    });
+
     return {
       store,
       stackedProducts,
       productCount,
       totalPrice,
       order,
+      companyCount,
+      hasActiveOrder,
     };
   },
   mounted() {
+    if (
+      this.companyCount > 3 ||
+      this.productCount > 10 ||
+      this.hasActiveOrder
+    ) {
+      this.$router.back();
+    }
+
     this.order.products = this.store.state.shoppingCart;
     this.order.totalPrice = this.totalPrice;
 
@@ -306,7 +336,13 @@ h1 {
 .total {
   font-weight: 700;
   font-size: 1.4rem;
-  margin: 10px 0 40px 20px;
+  margin: 5px 0 40px 20px;
+}
+
+.delivery-costs {
+  font-weight: 400;
+  font-size: 1.3rem;
+  margin: 10px 0 0 20px;
 }
 
 .price {

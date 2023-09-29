@@ -366,6 +366,17 @@ const store = createStore({
       }
     },
     async order({ commit }, order) {
+      var hasActiveOrder = false;
+
+      this.state.orders.forEach((order) => {
+        if (order.delivery_time == null) hasActiveOrder = true;
+      });
+
+      if (hasActiveOrder) {
+        commit('setState', 'failure');
+        return;
+      }
+
       try {
         commit('setState', 'loading');
 
