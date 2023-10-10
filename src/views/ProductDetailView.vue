@@ -63,7 +63,7 @@
               <i class="fa-solid fa-cart-plus fa-lg"></i>
             </button>
 
-            <div class="product-stars">
+            <div class="product-stars" v-if="false">
               <div>
                 <span class="average" v-if="this.reviews.length == 0">-</span>
                 <span class="average" v-else>{{ product_stars }}</span>
@@ -77,7 +77,7 @@
       </div>
 
       <div class="col-lg-7 col-xl-8">
-        <div class="make-review">
+        <div class="make-review" v-if="false">
           <h5 class="review-heading">Bewerten & Rezension schreiben</h5>
 
           <div class="stars">
@@ -177,11 +177,11 @@ export default {
   name: 'ProductDetailView',
   props: ['companyuuid'],
   setup() {
-    const store = useStore()
+    const store = useStore();
 
     return {
-      store
-    }
+      store,
+    };
   },
   data() {
     return {
@@ -192,13 +192,6 @@ export default {
       anonym: false,
       reviews: [],
       product_stars: 0,
-    };
-  },
-  setup() {
-    const store = useStore();
-
-    return {
-      store,
     };
   },
   async mounted() {
@@ -292,16 +285,17 @@ export default {
         console.log(e);
       }
     },
-  },
-  methods: {
     addProductToCart() {
-      console.log(this.$route.path)
+      console.log(this.$route.path);
 
       if (this.store.getters.getUser == null)
-        this.$router.push({ path: 'auth', query: { redirect: this.$route.path } });
-      this.store.commit('addProductToCart', this.product)
-    }
-  }
+        this.$router.push({
+          path: 'auth',
+          query: { redirect: this.$route.path },
+        });
+      this.store.commit('addProductToCart', this.product);
+    },
+  },
   components: { ReviewTile },
 };
 </script>
