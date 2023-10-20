@@ -1,58 +1,96 @@
 <template>
   <div v-if="this.data != null && this.data != undefined" class="card">
-    <div class="image">
-      <div v-if="this.image == null" class="no-image">
-        <i class="fa-solid fa-image fa-2xl"></i>
+    <div class="main">
+      <div class="image">
+        <div v-if="this.image == null" class="no-image">
+          <i class="fa-solid fa-image fa-2xl"></i>
+        </div>
+        <img v-else :src="this.image" alt="Produkt Bild" />
       </div>
-      <img v-else :src="this.image" alt="Produkt Bild" />
+      <div class="info">
+        <div>
+          <p class="name">{{ data.name }}</p>
+        </div>
+        <div>
+          <p v-if="data.company != undefined" class="company_name">
+            {{ data.company.name }}
+          </p>
+        </div>
+
+        <p class="price">{{ data.price }} $</p>
+
+        <div v-if="editable == true" class="input-group input-group-sm count">
+          <button
+            v-if="count == 1"
+            @click="countDown(true)"
+            class="input-group-text"
+          >
+            <i color="red" class="fa-solid fa-trash-can"></i>
+          </button>
+          <button v-else @click="countDown" class="input-group-text">-</button>
+          <input
+            disabled
+            id="countInput"
+            style="background-color: white"
+            :value="count"
+            type="number"
+            class="form-control"
+            aria-label="Anzahl an Produkten"
+            min="1"
+            max="9"
+          />
+          <button v-if="count == 9" class="input-group-text">
+            &nbsp;&nbsp;&nbsp;
+          </button>
+          <button
+            v-else
+            :disabled="count >= 9"
+            @click="countUp"
+            class="input-group-text"
+          >
+            +
+          </button>
+        </div>
+
+        <div v-else>
+          <p class="checkout-count">{{ count }}x</p>
+        </div>
+      </div>
     </div>
-    <div class="info">
-      <div>
-        <p class="name">{{ data.name }}</p>
+
+    <div class="main" v-if="data.has_variations">
+      <div class="left">
+        <p class="title">Variation</p>
       </div>
-      <div>
-        <p v-if="data.company != undefined" class="company_name">
-          {{ data.company.name }}
+
+      <div class="right">
+        <p class="variation">
+          {{
+            this.data.variations.find(
+              (variation) => variation.id == data.variation
+            ).name
+          }}
         </p>
       </div>
+    </div>
 
-      <p class="price">{{ data.price }} $</p>
-
-      <div v-if="editable == true" class="input-group input-group-sm count">
-        <button
-          v-if="count == 1"
-          @click="countDown(true)"
-          class="input-group-text"
-        >
-          <i color="red" class="fa-solid fa-trash-can"></i>
-        </button>
-        <button v-else @click="countDown" class="input-group-text">-</button>
-        <input
-          disabled
-          id="countInput"
-          style="background-color: white"
-          :value="count"
-          type="number"
-          class="form-control"
-          aria-label="Anzahl an Produkten"
-          min="1"
-          max="9"
-        />
-        <button v-if="count == 9" class="input-group-text">
-          &nbsp;&nbsp;&nbsp;
-        </button>
-        <button
-          v-else
-          :disabled="count >= 9"
-          @click="countUp"
-          class="input-group-text"
-        >
-          +
-        </button>
+    <div
+      class="main"
+      v-if="data.picked_extras != undefined && data.picked_extras.length > 0"
+    >
+      <div class="left">
+        <p class="title">Extras</p>
       </div>
 
-      <div v-else>
-        <p class="checkout-count">{{ count }}x</p>
+      <div class="right">
+        <p class="variation">
+          <span v-for="extra in extras" :key="extra.id"
+            >{{ extra.name
+            }}<span v-if="extras.indexOf(extra) != extras.length - 1"
+              >,
+            </span></span
+          >
+        </p>
       </div>
     </div>
   </div>
@@ -76,10 +114,24 @@ export default {
     return {
       image: null,
       count: null,
+      extras: [],
     };
   },
   async mounted() {
     this.count = this.data.count;
+
+    console.log(this.data);
+
+    if (
+      this.data.picked_extras != undefined &&
+      this.data.picked_extras != null
+    ) {
+      this.data.picked_extras.forEach((extra) => {
+        this.extras.push(this.data.extras.find((e) => e.id == extra));
+      });
+
+      this.extras.sort((a, b) => a.name.localeCompare(b.name));
+    }
 
     if (this.data.product_picture != null) {
       const response = await supabase.storage
@@ -175,9 +227,32 @@ export default {
 }
 
 .card {
-  flex-direction: row;
   overflow: hidden;
   margin: 2.5%;
+}
+
+.main {
+  position: relative;
+  text-align: left;
+  height: fit-content;
+}
+
+.left {
+  width: 40%;
+  height: 100%;
+  position: relative;
+  padding: 5px 15px;
+  border-right: 1px solid;
+  border-top: 1px solid;
+  border-color: #cfd4da;
+  float: left;
+}
+
+.right {
+  width: 100%;
+  height: 100%;
+  border-top: 1px solid;
+  border-color: #cfd4da;
 }
 
 .image {
@@ -245,4 +320,19 @@ input[type='number'] {
 }
 
 /*   border-radius: 0.375rem 0 0 0.375rem; */
+
+.title {
+  padding: 0;
+  margin: 0;
+}
+
+.variation {
+  position: relative;
+  left: 15px;
+  margin: 5px 15px;
+  padding: 0;
+  text-align: left;
+  word-wrap: break-word;
+  height: fit-content;
+}
 </style>

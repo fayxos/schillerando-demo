@@ -19,24 +19,14 @@
         </div>
 
         <p class="price">
-          <span v-if="data.has_variations"></span>ab {{ data.price }} $
+          <span v-if="data.has_variations">ab</span> {{ data.price }} $
         </p>
-
-        <button
-          v-if="data.delivery"
-          class="btn btn-primary"
-          @click.prevent="addProductToCart"
-          type="button"
-        >
-          <i class="fa-solid fa-cart-plus fa-lg"></i>
-        </button>
       </div>
     </div>
   </router-link>
 </template>
 
 <script>
-import router from '@/router';
 import { useStore } from 'vuex';
 import { supabase } from '../supabase';
 
@@ -63,15 +53,6 @@ export default {
       if (response.data != null) this.image = await response.data.text();
       if (response.error) console.warn(response.error);
     }
-  },
-  methods: {
-    addProductToCart(event) {
-      event.stopPropagation();
-
-      if (this.store.getters.getUser == null)
-        router.push({ path: 'auth', query: { redirect: 'angebote' } });
-      this.store.commit('addProductToCart', this.data);
-    },
   },
   computed: {
     link() {

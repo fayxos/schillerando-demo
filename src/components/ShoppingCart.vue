@@ -56,7 +56,10 @@
               eine Liefergebühr von 5 $ an.
             </div>
             <div class="list">
-              <div v-for="product in products" v-bind:key="product.id">
+              <div
+                v-for="product in products"
+                v-bind:key="product.id + product.variation"
+              >
                 <ShoppingCartTile :data="product" :editable="true" />
               </div>
             </div>
@@ -74,7 +77,7 @@
                 productCount > 10 ||
                 hasActiveOrder
               "
-              @click="$router.push('order')"
+              @click="$router.push({ name: 'OrderView' })"
               class="btn btn-primary order-button"
             >
               Bestellen
@@ -104,29 +107,24 @@ export default {
   setup() {
     const store = useStore();
     const userData = computed(() => store.state.user);
-    const products = computed(() => {
-      const stackedProducts = [];
-      const cartProducts = store.state.shoppingCart;
 
-      cartProducts.forEach((product) => {
-        const index = stackedProducts.findIndex((p) => p.id == product.id);
-        if (index == -1) {
-          product.count = 1;
-          stackedProducts.push(product);
-        } else {
-          stackedProducts[index].count += 1;
-        }
-      });
+    console.log(store.state.shoppingCart);
 
-      return stackedProducts;
+    const products = computed(() => store.state.shoppingCart);
+
+    const productCount = computed(() => {
+      const products = store.state.shoppingCart;
+      var count = 0;
+
+      products.forEach((product) => (count += product.count));
+
+      return count;
     });
-
-    const productCount = computed(() => store.state.shoppingCart.length);
     const totalPrice = computed(() => {
       var price = 0;
 
       store.state.shoppingCart.forEach((product) => {
-        price += product.price;
+        price += product.price * product.count;
       });
 
       return price;

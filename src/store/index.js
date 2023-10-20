@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import router from '../router';
 import { supabase } from '../supabase';
+import { v4 as uuidv4 } from 'uuid';
 
 const store = createStore({
   state: {
@@ -23,21 +24,76 @@ const store = createStore({
       state.state = payload;
     },
     addProductToCart(state, payload) {
-      state.shoppingCart.push(payload);
-
-      state.shoppingCart.sort((a, b) => a.name.localeCompare(b.name));
-    },
-    removeProductFromCart(state, payload) {
-      state.shoppingCart = state.shoppingCart.filter(
-        (product) => product.id != payload.id
-      );
-    },
-    removeOneProductFromCart(state, payload) {
-      const index = state.shoppingCart.findIndex((product) => {
-        return product.id == payload.id;
+      const index = state.shoppingCart.findIndex((p) => {
+        return (
+          p.id == payload.id &&
+          p.variation == payload.variation &&
+          JSON.stringify(
+            p.picked_extras == undefined ? [] : p.picked_extras.sort()
+          ) ===
+            JSON.stringify(
+              payload.picked_extras == undefined
+                ? []
+                : payload.picked_extras.sort()
+            )
+        );
       });
 
-      state.shoppingCart.splice(index, 1);
+      if (index != -1) {
+        if (state.shoppingCart[index].count < 9)
+          state.shoppingCart[index].count++;
+      } else {
+        state.shoppingCart.push(payload);
+      }
+    },
+    removeProductFromCart(state, payload) {
+      state.shoppingCart = state.shoppingCart.filter((product) => {
+        return !(
+          product.id == payload.id &&
+          product.variation == payload.variation &&
+          JSON.stringify(
+            product.picked_extras == undefined
+              ? []
+              : product.picked_extras.sort()
+          ) ===
+            JSON.stringify(
+              payload.picked_extras == undefined
+                ? []
+                : payload.picked_extras.sort()
+            )
+        );
+      });
+    },
+    removeOneProductFromCart(state, payload) {
+      const index = state.shoppingCart.findIndex((p) => {
+        return (
+          p.id == payload.id &&
+          p.variation == payload.variation &&
+          JSON.stringify(
+            p.picked_extras == undefined ? [] : p.picked_extras.sort()
+          ) ===
+            JSON.stringify(
+              payload.picked_extras == undefined
+                ? []
+                : payload.picked_extras.sort()
+            )
+        );
+      });
+
+      if (index != -1) {
+        state.shoppingCart[index].count--;
+
+        if (state.shoppingCart[index].count == 0) {
+          state.shoppingCart = state.shoppingCart.filter((product) => {
+            return !(
+              product.id == payload.id &&
+              product.variation == payload.variation &&
+              JSON.stringify(product.picked_extras.sort()) ===
+                JSON.stringify(payload.picked_extras.sort())
+            );
+          });
+        }
+      }
     },
     setOrders(state, payload) {
       state.orders = payload;
@@ -62,6 +118,8 @@ const store = createStore({
   },
   actions: {
     async reload({ commit }) {
+      //this.state.shoppingCart = [];
+
       var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       isSafari = true;
 
@@ -380,12 +438,31 @@ const store = createStore({
       try {
         commit('setState', 'loading');
 
+        var orderId = uuidv4();
+
         const productIds = [];
-        order.products.forEach((product) => {
-          productIds.push(product.id);
+        order.products.forEach(async (product) => {
+          var productId = uuidv4();
+
+          const { error } = await supabase.from('order_products').insert({
+            id: productId,
+            order: orderId,
+            product: product.id,
+            variation: product.variation,
+            extras:
+              product.picked_extras != undefined ? product.picked_extras : null,
+            count: product.count,
+            price: product.price,
+            buyer: this.state.user.id,
+          });
+
+          if (error) throw error;
+
+          productIds.push(productId);
         });
 
         const { error } = await supabase.from('orders').insert({
+          id: orderId,
           buyer: this.state.user.id,
           deliver_to: order.deliver_to,
           products: productIds,
@@ -416,7 +493,7 @@ const store = createStore({
 
         if (error != null) throw error;
 
-        commit('setOrders', data);
+        var orders = data;
 
         this.state.orders.sort((a, b) => {
           var longA = a.day + a.order_time;
@@ -424,6 +501,25 @@ const store = createStore({
 
           return longA.localeCompare(longB);
         });
+
+        {
+          const { data, error } = await supabase
+            .from('order_products')
+            .select()
+            .eq('buyer', this.state.user.id);
+
+          if (error) throw error;
+
+          data.forEach((product) => {
+            var index = orders.findIndex((o) => o.id == product.order);
+
+            if (orders[index].order_products == undefined)
+              orders[index].order_products = [];
+            orders[index].order_products.push(product);
+          });
+        }
+
+        commit('setOrders', orders);
 
         const orderSubscription = supabase.channel('any').on(
           'postgres_changes',
@@ -438,8 +534,13 @@ const store = createStore({
 
             var index = orders.findIndex((order) => order.id == payload.new.id);
 
-            if (index != -1) orders[index] = payload.new;
-            else orders.push(payload.new);
+            if (index != -1) {
+              var newOrder = payload.new;
+
+              newOrder.order_products = orders[index].order_products;
+
+              orders[index] = newOrder;
+            } else orders.push(payload.new);
 
             if (error != null) throw error;
 

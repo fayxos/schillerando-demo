@@ -30,7 +30,11 @@
                 {{ this.product.name }}
               </h1>
               <div class="col-4">
-                <p class="price">{{ product.price }} $</p>
+                <p v-if="this.price == null" class="price">
+                  <span v-if="this.product.has_variations">ab</span>
+                  {{ product.price + extra_price }} $
+                </p>
+                <p class="price" v-else>{{ price + extra_price }} $</p>
               </div>
             </div>
 
@@ -51,12 +55,61 @@
             </div>
           </div>
 
+          <div class="select">
+            <div v-if="this.product.has_variations" class="input-group mb-3">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-bars"></i
+              ></span>
+              <select
+                class="form-select"
+                id="product-variation"
+                aria-label="Default select example"
+                :value="variation"
+                @change="changeVariation()"
+              >
+                <option value="" selected>Variation</option>
+                <option
+                  v-for="variation in this.product.variations"
+                  :key="variation.id"
+                  :value="variation.id"
+                >
+                  {{ variation.name }} | {{ variation.price }} $
+                </option>
+              </select>
+            </div>
+
+            <div v-if="product.has_extras" class="extras">
+              <p class="extras-header">Extras</p>
+              <div
+                class="check"
+                v-for="extra in product.extras"
+                :key="extra.id"
+              >
+                <div class="form-check">
+                  <input
+                    @change="switchExtra(extra)"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="flexCheckDefault"
+                  />
+                  <label class="form-check-label" for="flexCheckDefault">
+                    {{ extra.name }} | +{{ extra.extra_price }} $
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="spacing">
             <button
               v-if="product.delivery"
               class="btn btn-primary"
               @click="addProductToCart"
               type="button"
+              :disabled="
+                this.product.has_variations &&
+                (variation == null || variation == '')
+              "
             >
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
@@ -82,49 +135,129 @@ export default {
   name: 'ProductDetailView',
   props: ['companyuuid'],
   setup() {
-    const store = useStore()
+    const store = useStore();
 
     return {
-      store
-    }
+      store,
+    };
   },
   data() {
     return {
       product: undefined,
       image: null,
+      price: null,
+      extra_price: 0,
+      variation: null,
+      extras: [],
     };
   },
   async mounted() {
     if (this.$route.params.productid) {
-      const { data, error } = await supabase
-        .from('products')
-        .select(`*, company:companies(name, alias)`)
-        .eq('id', this.$route.params.productid);
-      if (error != null) console.log(error);
-      if (data === null || data.length === 0) {
-        this.product = null;
-        return;
-      }
-      this.product = data[0];
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select(`*, company:companies(name, alias)`)
+          .eq('id', this.$route.params.productid);
+        if (error) throw error;
 
-      if (this.product.product_picture != null) {
-        const response = await supabase.storage
-          .from('public/products-pictures')
-          .download(this.product.product_picture);
-        if (response.data != null) this.image = await response.data.text();
-        if (response.error) console.warn(response.error);
+        if (data === null || data.length === 0) {
+          this.product = null;
+          return;
+        }
+
+        this.product = data[0];
+
+        if (this.product.has_variations) {
+          const { data, error } = await supabase
+            .from('product_variations')
+            .select()
+            .eq('product', this.product.id)
+            .order('price');
+
+          if (error) throw error;
+
+          if (data.length > 0) this.product.variations = data;
+        }
+
+        if (this.product.has_extras) {
+          const { data, error } = await supabase
+            .from('product_extras')
+            .select()
+            .eq('product', this.product.id)
+            .order('extra_price');
+
+          if (error) throw error;
+
+          if (data.length > 0) this.product.extras = data;
+
+          console.log(data);
+        }
+
+        if (this.product.product_picture != null) {
+          const response = await supabase.storage
+            .from('public/products-pictures')
+            .download(this.product.product_picture);
+          if (response.data != null) this.image = await response.data.text();
+          if (response.error) console.warn(response.error);
+        }
+      } catch (e) {
+        console.log(e);
       }
     }
   },
   methods: {
     addProductToCart() {
-      console.log(this.$route.path)
-
       if (this.store.getters.getUser == null)
-        this.$router.push({ path: 'auth', query: { redirect: this.$route.path } });
-      this.store.commit('addProductToCart', this.product)
-    }
-  }
+        this.$router.push({
+          path: 'auth',
+          query: { redirect: this.$route.path },
+        });
+
+      this.product.count = 1;
+      var product = JSON.parse(JSON.stringify(this.product));
+
+      if (product.has_variations) {
+        product.price = this.price + this.extra_price;
+      } else {
+        product.price += this.extra_price;
+      }
+      product.variation = this.variation;
+
+      if (product.has_extras) {
+        product.picked_extras = JSON.parse(
+          JSON.stringify(this.extras.sort((a, b) => a.localeCompare(b)))
+        );
+      }
+
+      console.log(product);
+
+      this.store.commit('addProductToCart', product);
+    },
+    changeVariation() {
+      var variationInput = document.getElementById('product-variation');
+
+      this.variation = variationInput.value;
+
+      if (variationInput.value == '') {
+        this.price = null;
+      } else {
+        this.price = this.product.variations.find(
+          (variation) => variation.id == this.variation
+        ).price;
+      }
+    },
+    switchExtra(extra) {
+      if (this.extras.includes(extra.id)) {
+        this.extras = this.extras.filter((e) => e != extra.id);
+
+        this.extra_price -= extra.extra_price;
+      } else {
+        this.extras.push(extra.id);
+
+        this.extra_price += extra.extra_price;
+      }
+    },
+  },
 };
 </script>
 
@@ -302,5 +435,27 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.select {
+  margin: 20px 15px;
+}
+
+.extras {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.check {
+  margin-bottom: 5px;
+}
+
+.extras-header {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.form-check {
+  margin-bottom: 2px;
 }
 </style>

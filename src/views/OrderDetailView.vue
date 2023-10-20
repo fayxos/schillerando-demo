@@ -44,8 +44,11 @@
       <span class="qr">QR Code</span>
     </button>
 
-    <div v-if="products.length > 0" class="list">
-      <div v-for="product in products" v-bind:key="product.id">
+    <div v-if="order.order_products.length > 0" class="list">
+      <div
+        v-for="product in order.final_products"
+        v-bind:key="product.id + product.variation + product.picked_extras"
+      >
         <ShoppingCartTile :data="product" :editable="false" />
       </div>
     </div>
@@ -100,8 +103,8 @@
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import ShoppingCartTile from '../components/ShoppingCartTile.vue';
-import { supabase } from '@/supabase';
 import { cutSecondsFromTime, reformatDate } from '@/helpers';
+import { supabase } from '@/supabase';
 
 export default {
   name: 'OrderDetailView',
@@ -113,7 +116,6 @@ export default {
       day: '',
       order_time: '',
       delivery_time: '',
-      products: [],
       order: null,
       loading: true,
     };
@@ -135,50 +137,97 @@ export default {
     },
   },
   async mounted() {
+    this.order = this.store.state.orders.find(
+      (order) => order.id == this.$route.params.orderid
+    );
+
     try {
-      {
+      var productIds = [];
+      var variationIds = [];
+      var extraIds = [];
+      this.order.order_products.forEach((product) => {
+        productIds.push(`${product.product}`);
+
+        if (product.variation != null)
+          variationIds.push(`${product.variation}`);
+
+        if (product.extras != null)
+          product.extras.forEach((extra) => {
+            extraIds.push(`${extra}`);
+          });
+      });
+
+      const { data, error } = await supabase
+        .from('products')
+        .select()
+        .filter('id', 'in', '(' + productIds + ')');
+
+      if (error) throw error;
+
+      data.forEach((product) => {
+        var p = this.order.order_products.find(
+          (pr) => pr.product == product.id
+        );
+
+        product.variation = p.variation;
+        if (p.extras != null) product.picked_extras = p.extras;
+        product.price = p.price;
+        product.count = p.count;
+
+        if (this.order.final_products == undefined)
+          this.order.final_products = [];
+        this.order.final_products.push(product);
+      });
+
+      if (variationIds.length > 0) {
         const { data, error } = await supabase
-          .from('orders')
+          .from('product_variations')
           .select()
-          .eq('id', this.$route.params.orderid);
+          .filter('id', 'in', '(' + variationIds + ')');
 
         if (error) throw error;
 
-        this.order = data[0];
+        data.forEach((variation) => {
+          for (var i = 0; i < this.order.final_products.length; i++) {
+            if (this.order.final_products[i].variation == variation.id)
+              this.order.final_products[i].variations = [variation];
+          }
+        });
       }
 
-      this.day = reformatDate(this.order.day);
-      this.order_time = cutSecondsFromTime(this.order.order_time);
-      this.delivery_time = cutSecondsFromTime(this.order.delivery_time);
-
-      const stackedProductIds = [];
-      this.order.products.forEach((productId) => {
-        var index = stackedProductIds.findIndex(
-          (product) => product.id == productId
-        );
-
-        if (index == -1) stackedProductIds.push({ id: productId, count: 1 });
-        else stackedProductIds[index].count++;
-      });
-
-      stackedProductIds.forEach(async (p) => {
+      if (extraIds.length > 0) {
         const { data, error } = await supabase
-          .from('products')
+          .from('product_extras')
           .select()
-          .eq('id', p.id);
+          .filter('id', 'in', '(' + extraIds + ')');
 
-        if (error != null) throw error;
+        if (error) throw error;
 
-        var product = data[0];
-        product.count = p.count;
-
-        this.products.push(product);
-      });
+        data.forEach((extra) => {
+          for (var i = 0; i < this.order.final_products.length; i++) {
+            if (
+              this.order.final_products[i].picked_extras != undefined &&
+              this.order.final_products[i].picked_extras.includes(extra.id)
+            ) {
+              if (this.order.final_products[i].extras == undefined)
+                this.order.final_products[i].extras = [];
+              this.order.final_products[i].extras.push(extra);
+            }
+          }
+        });
+      }
     } catch (e) {
       console.log(e);
     }
+    //this.order.order_products.forEach((product) => {});
+
+    this.day = reformatDate(this.order.day);
+    this.order_time = cutSecondsFromTime(this.order.order_time);
+    this.delivery_time = cutSecondsFromTime(this.order.delivery_time);
 
     this.loading = false;
+
+    console.log(this.order);
   },
 };
 </script>

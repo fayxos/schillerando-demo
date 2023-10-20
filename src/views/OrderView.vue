@@ -191,25 +191,16 @@ export default {
   setup() {
     const store = useStore();
 
-    const stackedProducts = [];
-    const cartProducts = store.state.shoppingCart;
+    const stackedProducts = store.state.shoppingCart;
 
-    cartProducts.forEach((product) => {
-      const index = stackedProducts.findIndex((p) => p.id == product.id);
-      if (index == -1) {
-        product.count = 1;
-        stackedProducts.push(product);
-      } else {
-        stackedProducts[index].count += 1;
-      }
-    });
+    var productCount = 0;
 
-    const productCount = store.state.shoppingCart.length;
+    stackedProducts.forEach((product) => (productCount += product.count));
 
     var price = 0;
 
-    store.state.shoppingCart.forEach((product) => {
-      price += product.price;
+    stackedProducts.forEach((product) => {
+      price += product.price * product.count;
     });
 
     var companies = [];

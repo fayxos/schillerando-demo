@@ -42,7 +42,7 @@
       <div class="order_details">
         <div class="product_count">
           <i class="fa-solid fa-box-open"></i>
-          <span>{{ this.data.products.length }}</span>
+          <span>{{ productCount }}</span>
         </div>
 
         <span class="order_price">{{ this.data.order_price }} $</span>
@@ -71,12 +71,17 @@ export default {
       order_time: '',
       delivery_time: '',
       loading: true,
+      productCount: 0,
     };
   },
   mounted() {
     this.day = reformatDate(this.data.day);
     this.order_time = cutSecondsFromTime(this.data.order_time);
     this.delivery_time = cutSecondsFromTime(this.data.delivery_time);
+
+    this.data.order_products.forEach((p) => {
+      this.productCount += p.count;
+    });
 
     this.loading = false;
   },

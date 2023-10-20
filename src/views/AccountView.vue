@@ -254,6 +254,8 @@ export default {
 
     const orders = computed(() => store.state.orders);
 
+    console.log(orders.value);
+
     return {
       store,
       userData,
