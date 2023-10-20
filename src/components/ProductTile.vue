@@ -18,7 +18,9 @@
           <p v-else class="company_name">{{ data.company.name }}</p>
         </div>
 
-        <p class="price">{{ data.price }} $</p>
+        <p class="price">
+          <span v-if="data.has_variations"></span>ab {{ data.price }} $
+        </p>
 
         <button
           v-if="data.delivery"
@@ -64,7 +66,7 @@ export default {
   },
   methods: {
     addProductToCart(event) {
-      event.stopPropagation()
+      event.stopPropagation();
 
       if (this.store.getters.getUser == null)
         router.push({ path: 'auth', query: { redirect: 'angebote' } });
