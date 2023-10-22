@@ -14,7 +14,7 @@ export function cutSecondsFromTime(time) {
 
   const parts = time.split(':');
 
-  if (parts.length != 3) return '';
+  if (parts.length < 3) return '';
 
   return `${parts[0]}:${parts[1]}`;
 }
