@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import CompanyTile from '@/shared/components/CompanyTile.vue';
+import CompanyTile from '../components/CompanyTile.vue';
 import MapProvider from '@/components/MapProvider.vue';
 import SortableList from '@/components/SortableList.vue';
 import { supabase } from '@/supabase';

@@ -127,7 +127,7 @@
 <script>
 /* eslint-disable no-unused-vars */
 import ProductTile from './ProductTile.vue';
-import CompanyTile from '@/shared/components/CompanyTile.vue';
+import CompanyTile from '../components/CompanyTile.vue';
 import router from '@/router';
 /* eslint-enable no-unused-vars */
 
