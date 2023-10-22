@@ -58,12 +58,12 @@
       </div>
     </div>
 
-    <div class="main" v-if="data.has_variations">
-      <div class="left">
+    <div class="main row" v-if="data.has_variations">
+      <div class="left col col-4">
         <p class="title">Variation</p>
       </div>
 
-      <div class="right">
+      <div class="right col">
         <p class="variation">
           {{
             this.data.variations.find(
@@ -75,14 +75,14 @@
     </div>
 
     <div
-      class="main"
+      class="main row"
       v-if="data.picked_extras != undefined && data.picked_extras.length > 0"
     >
-      <div class="left">
+      <div class="left col col-4">
         <p class="title">Extras</p>
       </div>
 
-      <div class="right">
+      <div class="right col col-8">
         <p class="variation">
           <span v-for="extra in extras" :key="extra.id"
             >{{ extra.name
@@ -239,20 +239,18 @@ export default {
 
 .left {
   width: 40%;
-  height: 100%;
-  position: relative;
   padding: 5px 15px;
   border-right: 1px solid;
   border-top: 1px solid;
   border-color: #cfd4da;
-  float: left;
 }
 
 .right {
-  width: 100%;
-  height: 100%;
+  width: 60%;
   border-top: 1px solid;
   border-color: #cfd4da;
+  margin: 0;
+  padding: 0;
 }
 
 .image {
@@ -327,8 +325,6 @@ input[type='number'] {
 }
 
 .variation {
-  position: relative;
-  left: 15px;
   margin: 5px 15px;
   padding: 0;
   text-align: left;

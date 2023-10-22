@@ -351,7 +351,7 @@ export default {
     addProductToCart() {
       if (this.store.getters.getUser == null)
         this.$router.push({
-          path: 'auth',
+          name: 'AuthView',
           query: { redirect: this.$route.path },
         });
 
