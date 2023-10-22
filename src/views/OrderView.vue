@@ -108,7 +108,7 @@
 import { useStore, mapGetters } from 'vuex';
 import { reactive } from 'vue';
 import ShoppingCartTile from '../components/ShoppingCartTile.vue';
-import AlertPopup from '../components/AlertPopup.vue';
+import AlertPopup from '@/shared/components/AlertPopup.vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 
 export default {

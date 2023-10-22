@@ -21,6 +21,22 @@
         <p class="price">
           <span v-if="data.has_variations">ab</span> {{ data.price }} $
         </p>
+
+        <div v-if="data.stars > 0" class="product-stars">
+          <div>
+            <span class="average">{{ data.stars }}</span>
+            <i class="fa-solid fa-star fa-xl solid-star"></i>
+          </div>
+        </div>
+
+        <button
+          v-if="data.delivery && false"
+          class="btn btn-primary"
+          @click.prevent="addProductToCart"
+          type="button"
+        >
+          <i class="fa-solid fa-cart-plus fa-lg"></i>
+        </button>
       </div>
     </div>
   </router-link>
@@ -104,6 +120,8 @@ export default {
   bottom: 8px;
   left: 15px;
   color: black;
+  background-color: white;
+  width: 100%;
 }
 
 .row {
@@ -175,6 +193,28 @@ img {
   top: 50%;
   left: calc(50% - 2rem);
   color: black;
+}
+
+.product-stars {
+  position: absolute;
+  right: 0;
+  bottom: 9px;
+}
+.average {
+  color: black;
+  font-size: 1.3rem;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}
+.fa-star {
+  margin-right: 5px;
+}
+.solid-star {
+  color: #e3c100;
+}
+.stars {
+  display: flex;
 }
 
 /*   border-radius: 0.375rem 0 0 0.375rem; */

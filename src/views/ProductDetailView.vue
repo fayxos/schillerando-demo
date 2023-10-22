@@ -103,7 +103,7 @@
           <div class="spacing">
             <button
               v-if="product.delivery"
-              class="btn btn-primary"
+              class="btn btn-primary deliver-btn"
               @click="addProductToCart"
               type="button"
               :disabled="
@@ -114,6 +114,16 @@
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
             </button>
+
+            <div v-else class="spacer"></div>
+
+            <div class="product-stars">
+              <div>
+                <span class="average" v-if="this.reviews.length == 0">-</span>
+                <span class="average" v-else>{{ product_stars }}</span>
+                <i class="fa-solid fa-star fa-xl solid-star"></i>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -121,26 +131,123 @@
       </div>
 
       <div class="col-lg-7 col-xl-8">
-        <h4 class="review">Noch keine Bewertungen vorhanden</h4>
+        <div class="make-review">
+          <div v-if="store.getters.getUser == null">
+            <p class="alert">
+              Du musst mit deinem Account angemeldet sein um eine Bewertung zu
+              schreiben.
+            </p>
+          </div>
+          <div
+            v-else-if="
+              store.getters.getUser.company_id != null &&
+              this.product.company_id == store.getters.getUser.company_id
+            "
+          >
+            <p class="alert">
+              Du kannst Angebote deines eigenen Unternehmens nicht bewerten.
+            </p>
+          </div>
+          <div v-else>
+            <h5 class="review-heading">Bewerten & Rezension schreiben</h5>
+
+            <div class="stars">
+              <div v-for="star in [0, 1, 2, 3, 4]" :key="star">
+                <i
+                  v-if="star < this.stars"
+                  @click="startReview(star)"
+                  class="fa-solid fa-star fa-xl solid-star"
+                ></i>
+                <i
+                  v-else
+                  @click="startReview(star)"
+                  class="fa-regular fa-star fa-xl"
+                ></i>
+              </div>
+            </div>
+
+            <div v-if="stars != 0">
+              <textarea
+                type="text"
+                id="review-info"
+                class="form-control"
+                placeholder="Rezension schreiben"
+                required
+                maxlength="500"
+                style="resize: none"
+                rows="5"
+                cols="50"
+                :value="review_text"
+              ></textarea>
+
+              <div class="form-check form-switch mt-2">
+                <input
+                  :checked="anonym"
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="review-anonym"
+                />
+                <label class="form-check-label" for="flexSwitchCheckChecked"
+                  >Anonym</label
+                >
+              </div>
+
+              <div style="display: flex">
+                <div class="edit-buttons">
+                  <button
+                    type="button"
+                    class="btn btn-warning px-2 mx-2"
+                    @click="cancelReview()"
+                  >
+                    Abbrechen
+                  </button>
+                </div>
+                <div class="edit-buttons">
+                  <button
+                    type="button"
+                    class="btn btn-primary px-2 mx-2"
+                    @click="postReview()"
+                  >
+                    <div>Posten</div>
+                    <div class="spinner">
+                      <span
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 v-if="this.reviews.length == 0" class="no-reviews">
+            Noch keine Bewertungen vorhanden
+          </h4>
+          <div class="reviews" v-else>
+            <div v-for="review in reviews" :key="review.id" class="review">
+              <ReviewTile :data="review" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import ReviewTile from '@/components/ReviewTile.vue';
 import { supabase } from '../supabase';
 import { useStore } from 'vuex';
 
 export default {
   name: 'ProductDetailView',
   props: ['companyuuid'],
-  setup() {
-    const store = useStore();
-
-    return {
-      store,
-    };
-  },
   data() {
     return {
       product: undefined,
@@ -149,6 +256,18 @@ export default {
       extra_price: 0,
       variation: null,
       extras: [],
+      stars: [],
+      review_text: '',
+      anonym: false,
+      reviews: [],
+      product_stars: 0,
+    };
+  },
+  setup() {
+    const store = useStore();
+
+    return {
+      store,
     };
   },
   async mounted() {
@@ -198,7 +317,30 @@ export default {
             .from('public/products-pictures')
             .download(this.product.product_picture);
           if (response.data != null) this.image = await response.data.text();
-          if (response.error) console.warn(response.error);
+          if (response.error) throw response.error;
+        }
+
+        {
+          const { data, error } = await supabase
+            .from('product_reviews')
+            .select('*, users(*)')
+            .eq('product', this.product.id);
+
+          if (error) throw error;
+
+          this.reviews = data;
+
+          this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
+
+          if (this.reviews.length > 0) {
+            var totalStars = 0;
+            this.reviews.forEach((review) => {
+              totalStars += review.stars;
+            });
+
+            this.product_stars =
+              Math.round((totalStars / this.reviews.length) * 10) / 10;
+          }
         }
       } catch (e) {
         console.log(e);
@@ -257,7 +399,58 @@ export default {
         this.extra_price += extra.extra_price;
       }
     },
+    startReview(star) {
+      if (this.stars == 0) {
+        this.stars = star + 1;
+        return;
+      }
+
+      var reviewInput = document.getElementById('review-info');
+      this.review_text = reviewInput.value;
+      this.stars = star + 1;
+    },
+    cancelReview() {
+      this.stars = 0;
+      this.review_text = '';
+      this.anonym = false;
+    },
+    async postReview() {
+      const textInput = document.getElementById('review-info');
+      const anonymInput = document.getElementById('review-anonym');
+      this.review_text = textInput.value;
+      this.anonym = anonymInput.checked;
+      try {
+        const { data, error } = await supabase
+          .from('product_reviews')
+          .insert({
+            product: this.product.id,
+            company: this.product.company_id,
+            reviewee: this.store.getters.getUser.id,
+            text: this.review_text,
+            stars: this.stars,
+            verified: null,
+            anonym: this.anonym,
+          })
+          .select('*, users(*)');
+        if (error) throw error;
+        this.reviews.push(data[0]);
+        var totalStars = 0;
+        this.reviews.forEach((review) => {
+          totalStars += review.stars;
+        });
+
+        this.product_stars =
+          Math.round((totalStars / this.reviews.length) * 10) / 10;
+        this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
+        this.stars = 0;
+        this.review_text = '';
+        this.anonym = false;
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
+  components: { ReviewTile },
 };
 </script>
 
@@ -378,9 +571,9 @@ img {
   margin-bottom: 100px;
 }
 
-.review {
+.no-reviews {
   text-align: center;
-  margin: 20px 10px;
+  margin: 30px 10px;
 }
 
 .cart {
@@ -395,7 +588,7 @@ img {
   font-size: 1.25rem;
 }
 
-.btn-primary {
+.deliver-btn {
   background-color: #00a100;
   border-color: #00a100;
   margin-bottom: 20px;
@@ -457,5 +650,67 @@ img {
 
 .form-check {
   margin-bottom: 2px;
+}
+
+.fa-star {
+  margin-right: 5px;
+}
+
+.solid-star {
+  color: #e3c100;
+}
+
+.stars {
+  display: flex;
+}
+
+.make-review {
+  padding: 15px;
+  margin: 10px 15px 10px 15px;
+  border-radius: 10px;
+  background-color: #e8ebe8;
+}
+
+#review-info {
+  margin-top: 20px;
+  color: black;
+  background-color: white;
+}
+
+.spinner {
+  display: none;
+}
+
+.edit-buttons {
+  margin-top: 15px;
+  margin-left: -7px;
+}
+
+.reviews {
+  margin: 10px 15px 10px 15px;
+}
+.review {
+  margin-bottom: 10px;
+}
+
+.product-stars {
+  position: absolute;
+  right: 5px;
+  bottom: 25px;
+}
+
+.average {
+  font-size: 1.3rem;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}
+
+.alert {
+  font-size: 1.1rem;
+}
+
+.spacer {
+  margin-bottom: 70px;
 }
 </style>

@@ -1,24 +1,29 @@
 <template>
   <section id="title">
     <div class="row">
-      <div class="col-md-6 col-12 order-first order-md-last">
-        <img class="hero-image" src="@/assets/hero_image.png" alt="" />
+      <div class="col-md-6 col-12 image order-md-last">
+        <div class="hero-image">
+          <button @click="mapLink()" class="btn btn-primary map-link">
+            <i class="fa-solid fa-map fa-xs"></i>
+          </button>
+          <img src="@/assets/map.png" alt="" />
+        </div>
       </div>
       <div class="col-md-6 col-12">
         <div class="hero-info">
           <div class="title">
-            <span>Mehr </span>
-            <span style="color: black">als ein</span>
-            <br />
+            <span style="color: black">Der </span>
             <span>Lieferservice</span>
+            <br />
+            <span style="color: black">im Schillerreich</span>
           </div>
           <p class="text">
-            Erstelle einen Account <br />
-            um dein Unternehmen zu registrieren <br />
-            und von zahlreichen Services <br />
-            zu profitieren
+            Verschaffe dir einen Überblick <br />
+            über zahlreiche Angebote im Staat. <br />
+            Vergleiche Preise, lass dir Produkte <br />
+            zu dir liefern oder berwerte sie.
           </p>
-          <button @click="link()" class="btn btn-primary">Registrieren</button>
+          <button @click="link()" class="btn btn-primary">Angebote</button>
         </div>
       </div>
     </div>
@@ -27,6 +32,7 @@
 
 <script>
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   name: 'HeroSection',
@@ -38,13 +44,19 @@ export default {
   setup() {
     const store = useStore();
 
+    var userData = computed(() => store.state.user);
+
     return {
       store,
+      userData,
     };
   },
   methods: {
     link() {
-      window.location.href = '/auth?action=register';
+      this.$router.push({ path: 'angebote' });
+    },
+    mapLink() {
+      this.$router.push({ path: 'unternehmen' });
     },
   },
 };
@@ -112,16 +124,30 @@ p {
   width: max-content;
 }
 
-img {
-  display: block;
+.hero-image {
+  width: 90%;
   margin-left: auto;
   margin-right: auto;
-  height: 80%;
+  position: relative;
+}
+
+img {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.map-link {
+  padding: 2px 10px 0 10px;
+  position: absolute;
+  top: 5px;
+  right: calc(5% + 5px);
+  margin: 0;
 }
 
 @media (max-width: 767px) {
   img {
-    width: 80%;
+    width: 90%;
     height: auto;
   }
 
@@ -146,6 +172,14 @@ img {
     padding: 3px 20px;
     position: relative;
     margin: 30px auto;
+  }
+
+  .map-link {
+    padding: 2px 10px 0 10px;
+    position: absolute;
+    top: 5px;
+    right: calc(5% + 5px);
+    margin: 0;
   }
 }
 
@@ -182,6 +216,14 @@ img {
   img {
     height: 50%;
   }
+
+  .map-link {
+    padding: 2px 10px 0 10px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    margin: 0;
+  }
 }
 
 /* Tablet */
@@ -215,6 +257,14 @@ img {
   img {
     height: 70%;
   }
+
+  .map-link {
+    padding: 2px 10px 0 10px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    margin: 0;
+  }
 }
 
 /* Pc */
@@ -247,6 +297,14 @@ img {
 
   img {
     height: 80%;
+  }
+
+  .map-link {
+    padding: 2px 10px 0 10px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    margin: 0;
   }
 }
 </style>

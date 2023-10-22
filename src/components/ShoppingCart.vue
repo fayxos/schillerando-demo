@@ -75,7 +75,8 @@
                 productCount == 0 ||
                 companyCount > 3 ||
                 productCount > 10 ||
-                hasActiveOrder
+                hasActiveOrder ||
+                true
               "
               @click="$router.push({ name: 'OrderView' })"
               class="btn btn-primary order-button"
@@ -160,17 +161,6 @@ export default {
       hasActiveOrder,
     };
   },
-  mounted() {
-    window.jQuery = window.$ = require('jquery');
-
-    window.Popper = require('@popperjs/core');
-
-    require('bootstrap');
-
-    window.$('body').tooltip({
-      selector: '[data-bs-toggle="tooltip"]',
-    });
-  },
 };
 </script>
 
@@ -199,7 +189,7 @@ export default {
 }
 
 .overlay {
-  z-index: 9999;
+  z-index: 499;
 }
 
 .icon {
@@ -211,7 +201,7 @@ export default {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  z-index: 9999;
+  z-index: 499;
   -webkit-transform: translate3d(0, 0, 0);
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);

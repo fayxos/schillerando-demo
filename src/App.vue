@@ -1,6 +1,6 @@
 <template>
   <div translate="no">
-    <NavBar />
+    <NavBar :key="key" />
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null" />
     <ShoppingCart v-if="$route.meta.shoppingCart == null" />
@@ -9,12 +9,17 @@
 
 <script>
 import NavBar from './components/NavBar';
-import SocialsFooter from './components/SocialsFooter';
+import SocialsFooter from '@/shared/components/SocialsFooter';
 import ShoppingCart from './components/ShoppingCart';
 import { useStore } from 'vuex';
 
 export default {
   name: 'App',
+  data() {
+    return {
+      key: 0,
+    };
+  },
   components: {
     NavBar,
     SocialsFooter,

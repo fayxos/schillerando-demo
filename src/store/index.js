@@ -283,15 +283,24 @@ const store = createStore({
       try {
         commit('setState', 'loading');
 
-        const splitName = form.name.split(' ');
-        const name1 =
-          splitName[0].charAt(0).toUpperCase() +
-          splitName[0].slice(1).toLowerCase();
-        const name2 =
-          splitName[1].charAt(0).toUpperCase() +
-          splitName[1].slice(1).toLowerCase();
-
-        const capitalizedName = name1 + ' ' + name2;
+        const splitBySpace = form.name.split(' ');
+        let formattedName = '';
+        for (let i = 0; i < splitBySpace.length; i++) {
+          let splitByHyphen = splitBySpace[i].split('-');
+          let subName = '';
+          for (let j = 0; j < splitByHyphen.length; j++) {
+            if (splitByHyphen[j].toLowerCase() === 'von') subName += 'von-';
+            else if (splitByHyphen[j].toLowerCase() === 'zu') subName += 'zu-';
+            else
+              subName +=
+                splitByHyphen[j].charAt(0).toUpperCase() +
+                splitByHyphen[j].slice(1).toLowerCase() +
+                '-';
+          }
+          subName = subName.slice(0, subName.length - 1);
+          formattedName += subName + ' ';
+        }
+        formattedName.slice(0, -1);
 
         const { data, error } = await supabase.auth.signUp({
           email: form.email,
@@ -299,7 +308,7 @@ const store = createStore({
           options: {
             emailRedirectTo: 'https://schillerando.de/account',
             data: {
-              name: capitalizedName,
+              name: formattedName,
               isInDatabase: true,
               isCompanyLeader: false,
             },
@@ -312,7 +321,7 @@ const store = createStore({
           const { error } = await supabase.from('users').insert({
             id: data.user.id,
             email: data.user.email,
-            name: capitalizedName,
+            name: formattedName,
           });
 
           if (error) throw error;

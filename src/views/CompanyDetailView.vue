@@ -60,19 +60,52 @@
               </p>
             </div>
 
-            <div class="row spacing location-pos">
+            <div class="spacing location-pos">
               <div class="col-9 location">
                 <i class="fa-solid fa-location-dot"></i>
-                <div class="location-text">{{ company.location }}</div>
+                <div class="location-text">
+                  {{ company.location }}&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <a
+                  v-if="
+                    company.socials.instagram !== undefined &&
+                    this.company.socials.instagram != ''
+                  "
+                  :href="company.socials.instagram"
+                  class="insta"
+                  ><i class="fa-brands fa-instagram fa-lg"></i
+                ></a>
+              </div>
+              <div class="product-stars">
+                <div>
+                  <span class="average" v-if="total_stars == 0">-</span>
+                  <span class="average" v-else>{{ total_stars }}</span>
+                  <i class="fa-solid fa-star fa-xl solid-star"></i>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <hr />
+        <div>
+          <div>
+            <div
+              v-if="
+                company.pinData != undefined &&
+                company.coordinates.length == 2 &&
+                !loading
+              "
+              class="mapWrapper"
+            >
+              <MapProvider :data="company.pinData" class="map" />
+            </div>
+          </div>
+        </div>
+
+        <hr class="mapDivider" />
       </div>
 
-      <div class="products col-lg-7 col-xl-8">
+      <div v-if="!loading" class="products col-lg-7 col-xl-8">
         <SortableList
           v-if="products.length > 0"
           :items="products"
@@ -81,6 +114,7 @@
           show-category="true"
           element="ProductTile"
         />
+
         <h4 v-else class="margin">
           Dieses Unternehmen bietet keine Produkte, Aktivitäten oder
           Dienstleistungen auf Schillerando an.
@@ -91,41 +125,86 @@
 </template>
 
 <script>
-import { supabase } from '../supabase';
-import CompanyBadge from '../components/CompanyBadge.vue';
+import router from '@/router';
+import { supabase } from '@/supabase';
+import CompanyBadge from '@/shared/components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
+import MapProvider from '@/components/MapProvider.vue';
 
 export default {
   name: 'CompanyDetailView',
   props: ['companyuuid'],
-  components: { CompanyBadge, SortableList },
+  components: { CompanyBadge, SortableList, MapProvider },
   data() {
     return {
       company: undefined,
       image: null,
       products: [],
+      loading: true,
+      total_stars: 0,
     };
   },
   async mounted() {
     if (this.$route.params.companyalias) {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('companies')
         .select()
         .eq('alias', this.$route.params.companyalias);
-      if (error != null) console.log(error);
-      if (data === null || data.length === 0) {
-        this.company = null;
-        return;
+      if (error !== null) console.log(error);
+      if (data !== null && data.length !== 0) {
+        this.company = data[0];
+        console.log('Opening company by alias', this.company.alias);
+      } else {
+        let { data, error } = await supabase
+          .from('companies')
+          .select()
+          .contains('redirect_aliases', [this.$route.params.companyalias]);
+        if (error !== null) console.log(error);
+        if (data !== null && data.length !== 0) {
+          this.company = data[0];
+          console.log(
+            'Opening company by redirect alias ' +
+              this.$route.params.companyalias +
+              ' redirecting to ' +
+              this.company.alias
+          );
+          router.replace('/' + this.company.alias);
+        } else {
+          console.log(
+            'Company ' + this.$route.params.companyalias + ' not found'
+          );
+          this.company = null;
+          return;
+        }
       }
-      this.company = data[0];
 
       if (this.company.header_picture != null) {
         const response = await supabase.storage
           .from('public/sellers-headings')
           .download(this.company.header_picture);
-        if (response.data != null) this.image = await response.data.text();
+        if (response.data != null) {
+          this.image = await response.data.text();
+          if (
+            this.company.coordinates != undefined &&
+            this.company.coordinates != null
+          )
+            this.company.pinData = [
+              { position: this.company.coordinates, image: this.image },
+            ];
+        }
         if (response.error) console.warn(response.error);
+      } else {
+        if (
+          this.company.coordinates != undefined &&
+          this.company.coordinates != null
+        )
+          this.company.pinData = [
+            { position: data[0].coordinates, image: null },
+          ];
+        else this.company.pinData = null;
       }
+
+      console.log(this.company.pinData);
 
       {
         const response = await supabase
@@ -144,7 +223,54 @@ export default {
 
         if (response.error) console.warn(response.error);
       }
+
+      {
+        const { data, error } = await supabase
+          .from('product_reviews')
+          .select()
+          .eq('company', this.company.id);
+        if (error) console.warn(error);
+        data.forEach((review) => {
+          var index = this.products.findIndex(
+            (product) => product.id == review.product
+          );
+          if (index != -1) {
+            if (this.products[index].reviews == undefined) {
+              this.products[index].reviews = [];
+            }
+            this.products[index].reviews.push(review);
+          }
+        });
+        var i = 0;
+        var count = 0;
+        this.products.forEach((product) => {
+          if (product.reviews != undefined && product.reviews.length > 0) {
+            var stars = 0;
+            product.reviews.forEach((review) => {
+              stars += review.stars;
+            });
+            this.products[i].stars =
+              Math.round((stars / product.reviews.length) * 10) / 10;
+            this.total_stars += this.products[i].stars;
+            count++;
+          } else {
+            this.products[i].stars = 0;
+          }
+          i++;
+        });
+        if (count > 0)
+          this.total_stars = Math.round((this.total_stars / count) * 10) / 10;
+      }
     }
+
+    if (
+      this.company.socials.instagram !== undefined &&
+      this.company.socials.instagram != ''
+    )
+      this.company.socials.instagram =
+        'https://instagram.com/' + this.company.socials.instagram;
+
+    this.loading = false;
   },
 };
 </script>
@@ -268,6 +394,33 @@ img {
   margin-right: auto;
 }
 
+.mapWrapper {
+  position: relative;
+  width: calc(100% - 30px);
+  padding-bottom: calc(100% - 30px);
+  margin: 0 15px 0 15px;
+}
+
+.mapDivider {
+  margin-top: 15px;
+}
+
+.map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  left: 0;
+  border-style: groove;
+  border-color: #ebebeb;
+  border-width: 1px;
+}
+
+.insta {
+  position: relative;
+  bottom: 3px;
+}
+
 @media (min-width: 992px) {
   .col-lg-5 {
     border-right: 1px solid;
@@ -289,5 +442,30 @@ img {
   .spacer {
     position: relative;
   }
+}
+
+.product-stars {
+  position: absolute;
+  right: 25px;
+  bottom: -3px;
+}
+.average {
+  font-size: 1.3rem;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}
+.fa-star {
+  margin-right: 5px;
+}
+.solid-star {
+  color: #e3c100;
+}
+.stars {
+  display: flex;
+}
+.location-pos {
+  position: relative;
+  width: 100%;
 }
 </style>

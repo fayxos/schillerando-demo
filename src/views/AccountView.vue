@@ -222,7 +222,7 @@ import { supabase } from '../supabase';
 import { useStore, mapGetters } from 'vuex';
 import { computed } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-import AlertPopup from '../components/AlertPopup.vue';
+import AlertPopup from '@/shared/components/AlertPopup.vue';
 import OrderTile from '@/components/OrderTile.vue';
 
 export default {
@@ -338,8 +338,7 @@ export default {
     },
     companyRegistration() {
       if (this.userData.email.split('@')[1] == 'fsgmarbach.info') {
-        window.location.href =
-          this.businessUrl + '/companyRegistration?ext=true';
+        this.store.dispatch('externLoginCallback', '/companyRegistration');
       } else {
         this.alertTitle = 'Ungültige Email';
         this.alertInfo =
@@ -350,7 +349,7 @@ export default {
       }
     },
     businessLink() {
-      window.location.href = this.businessUrl + '/einstellungen?ext=true';
+      this.store.dispatch('externLoginCallback', '/einstellungen');
     },
     validateAccountChange(pressed) {
       if (!pressed && !this.saveAccountPressed) return;
@@ -401,19 +400,28 @@ export default {
         var nameInput = document.getElementById('account-name');
         var mailInput = document.getElementById('account-mail');
 
-        const splitName = nameInput.value.split(' ');
-        const name1 =
-          splitName[0].charAt(0).toUpperCase() +
-          splitName[0].slice(1).toLowerCase();
-        const name2 =
-          splitName[1].charAt(0).toUpperCase() +
-          splitName[1].slice(1).toLowerCase();
+        const splitBySpace = nameInput.value.split(' ');
+        let formattedName = '';
+        for (let i = 0; i < splitBySpace.length; i++) {
+          let splitByHyphen = splitBySpace[i].split('-');
+          let subName = '';
+          for (let j = 0; j < splitByHyphen.length; j++) {
+            if (splitByHyphen[j].toLowerCase() === 'von') subName += 'von-';
+            else if (splitByHyphen[j].toLowerCase() === 'zu') subName += 'zu-';
+            else
+              subName +=
+                splitByHyphen[j].charAt(0).toUpperCase() +
+                splitByHyphen[j].slice(1).toLowerCase() +
+                '-';
+          }
+          subName = subName.slice(0, subName.length - 1);
+          formattedName += subName + ' ';
+        }
+        formattedName.slice(0, -1);
 
-        const capitalizedName = name1 + ' ' + name2;
-
-        if (capitalizedName != this.userData.user_metadata.name) {
+        if (formattedName != this.userData.user_metadata.name) {
           const { data, error } = await supabase.auth.updateUser({
-            data: { name: capitalizedName },
+            data: { name: formattedName },
           });
 
           if (error) throw error;
@@ -421,7 +429,7 @@ export default {
           {
             const { error } = await supabase
               .from('users')
-              .update('name', capitalizedName)
+              .update('name', formattedName)
               .eq('id', data.user.id);
 
             if (error) throw error;
