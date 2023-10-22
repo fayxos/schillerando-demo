@@ -74,7 +74,7 @@ section {
 
 @media (min-width: 1400px) {
   .col-md-6 {
-    zoom: 120%;
+    zoom: 110%;
   }
 }
 
@@ -82,6 +82,11 @@ section {
   .col-md-6 {
     margin-top: 3%;
     zoom: 150%;
+  }
+
+  .hero-image {
+    position: relative;
+    bottom: 50px;
   }
 }
 

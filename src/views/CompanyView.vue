@@ -157,15 +157,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .spinner-border {
   color: #00a100;
 }
 
 .row {
   margin: 0;
-  margin-top: -35px;
   padding: 0;
+  margin-bottom: 50px;
 }
 
 .col {
