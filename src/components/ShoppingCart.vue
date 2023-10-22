@@ -164,17 +164,6 @@ export default {
       hasActiveOrder,
     };
   },
-  mounted() {
-    window.jQuery = window.$ = require('jquery');
-
-    window.Popper = require('@popperjs/core');
-
-    require('bootstrap');
-
-    window.$('body').tooltip({
-      selector: '[data-bs-toggle="tooltip"]',
-    });
-  },
 };
 </script>
 
