@@ -121,6 +121,8 @@ export default {
   bottom: 8px;
   left: 15px;
   color: black;
+  background-color: white;
+  width: 100%;
 }
 
 .row {

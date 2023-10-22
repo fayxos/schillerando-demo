@@ -122,6 +122,7 @@ export default {
     });
 
     const productCount = computed(() => store.state.shoppingCart.length);
+
     const totalPrice = computed(() => {
       var price = 0;
 
@@ -201,7 +202,7 @@ export default {
 }
 
 .overlay {
-  z-index: 9999;
+  z-index: 499;
 }
 
 .icon {
@@ -213,7 +214,7 @@ export default {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  z-index: 9999;
+  z-index: 499;
   -webkit-transform: translate3d(0, 0, 0);
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
@@ -302,5 +303,6 @@ i {
 .delivery-costs {
   display: inline;
   color: #3284ff;
+
 }
 </style>

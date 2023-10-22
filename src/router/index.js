@@ -145,7 +145,7 @@ router.beforeEach((to, from, next) => {
     let query = to.query;
     store.dispatch('addQRCodeCount', to.query.source);
     delete query.source;
-    next({ query: query });
+    next({ query: query, path: to.path });
   } else if (to.path === '/' && user !== null) {
     //Logged in users get 'products' page as start-page
     next({ path: 'angebote' });
