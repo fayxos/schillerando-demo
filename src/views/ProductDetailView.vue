@@ -115,7 +115,7 @@
               <i class="fa-solid fa-cart-plus fa-lg"></i>
             </button>
 
-            <div v-else class="spacer"></div>
+            <div v-else class="space"></div>
 
             <div class="product-stars">
               <div>
@@ -708,5 +708,9 @@ img {
 
 .alert {
   font-size: 1.1rem;
+}
+
+.space {
+  height: 50px;
 }
 </style>
