@@ -57,7 +57,6 @@
               class="btn btn-primary deliver-btn"
               @click="addProductToCart"
               type="button"
-              disabled
             >
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
@@ -177,11 +176,11 @@ export default {
   name: 'ProductDetailView',
   props: ['companyuuid'],
   setup() {
-    const store = useStore();
+    const store = useStore()
 
     return {
-      store,
-    };
+      store
+    }
   },
   data() {
     return {
@@ -296,6 +295,15 @@ export default {
       this.store.commit('addProductToCart', this.product);
     },
   },
+  methods: {
+    addProductToCart() {
+      console.log(this.$route.path)
+
+      if (this.store.getters.getUser == null)
+        this.$router.push({ path: 'auth', query: { redirect: this.$route.path } });
+      this.store.commit('addProductToCart', this.product)
+    }
+  }
   components: { ReviewTile },
 };
 </script>
