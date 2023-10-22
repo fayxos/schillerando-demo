@@ -72,8 +72,7 @@
                 productCount == 0 ||
                 companyCount > 3 ||
                 productCount > 10 ||
-                hasActiveOrder ||
-                true
+                hasActiveOrder
               "
               @click="$router.push('order')"
               class="btn btn-primary order-button"
@@ -304,5 +303,6 @@ i {
 .delivery-costs {
   display: inline;
   color: #3284ff;
+
 }
 </style>

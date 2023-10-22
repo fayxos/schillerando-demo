@@ -222,7 +222,7 @@ import { supabase } from '../supabase';
 import { useStore, mapGetters } from 'vuex';
 import { computed } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-import AlertPopup from '@/shared/components/AlertPopup.vue';
+import AlertPopup from '../components/AlertPopup.vue';
 import OrderTile from '@/components/OrderTile.vue';
 
 export default {
