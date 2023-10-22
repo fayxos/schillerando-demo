@@ -25,7 +25,6 @@
           class="btn btn-primary"
           @click.prevent="addProductToCart"
           type="button"
-          disabled
         >
           <i class="fa-solid fa-cart-plus fa-lg"></i>
         </button>
