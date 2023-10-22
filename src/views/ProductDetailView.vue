@@ -57,7 +57,6 @@
               class="btn btn-primary deliver-btn"
               @click="addProductToCart"
               type="button"
-              disabled
             >
               <div class="cart">Warenkorb</div>
               <i class="fa-solid fa-cart-plus fa-lg"></i>
