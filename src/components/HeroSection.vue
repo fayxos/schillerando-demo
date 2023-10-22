@@ -1,29 +1,24 @@
 <template>
   <section id="title">
     <div class="row">
-      <div class="col-md-6 col-12 image order-md-last">
-        <div class="hero-image">
-          <button @click="mapLink()" class="btn btn-primary map-link">
-            <i class="fa-solid fa-map fa-xs"></i>
-          </button>
-          <img src="@/assets/map.png" alt="" />
-        </div>
+      <div class="col-md-6 col-12 order-first order-md-last">
+        <img class="hero-image" src="@/assets/hero_image.png" alt="" />
       </div>
       <div class="col-md-6 col-12">
         <div class="hero-info">
           <div class="title">
-            <span style="color: black">Der </span>
-            <span>Lieferservice</span>
+            <span>Mehr </span>
+            <span style="color: black">als ein</span>
             <br />
-            <span style="color: black">im Schillerreich</span>
+            <span>Lieferservice</span>
           </div>
           <p class="text">
-            Verschaffe dir einen Überblick <br />
-            über zahlreiche Angebote im Staat. <br />
-            Vergleiche Preise, lass dir Produkte <br />
-            zu dir liefern oder berwerte sie.
+            Erstelle einen Account <br />
+            um dein Unternehmen zu registrieren <br />
+            und von zahlreichen Services <br />
+            zu profitieren
           </p>
-          <button @click="link()" class="btn btn-primary">Angebote</button>
+          <button @click="link()" class="btn btn-primary">Registrieren</button>
         </div>
       </div>
     </div>
@@ -53,10 +48,15 @@ export default {
   },
   methods: {
     link() {
-      this.$router.push({ path: 'angebote' });
-    },
-    mapLink() {
-      this.$router.push({ path: 'unternehmen' });
+      if (this.userData == null) {
+        window.location.href = '/auth?action=register';
+      }
+
+      if (this.userData.email_confirmed_at == null) {
+        window.location.href = '/account';
+      }
+
+      this.store.dispatch('externLoginCallback', '/companyRegistration');
     },
   },
 };
@@ -124,30 +124,16 @@ p {
   width: max-content;
 }
 
-.hero-image {
-  width: 90%;
+img {
+  display: block;
   margin-left: auto;
   margin-right: auto;
-  position: relative;
-}
-
-img {
-  width: 100%;
-  display: block;
-  margin: 0 auto;
-}
-
-.map-link {
-  padding: 2px 10px 0 10px;
-  position: absolute;
-  top: 5px;
-  right: calc(5% + 5px);
-  margin: 0;
+  height: 80%;
 }
 
 @media (max-width: 767px) {
   img {
-    width: 90%;
+    width: 80%;
     height: auto;
   }
 
@@ -172,14 +158,6 @@ img {
     padding: 3px 20px;
     position: relative;
     margin: 30px auto;
-  }
-
-  .map-link {
-    padding: 2px 10px 0 10px;
-    position: absolute;
-    top: 5px;
-    right: calc(5% + 5px);
-    margin: 0;
   }
 }
 
@@ -216,14 +194,6 @@ img {
   img {
     height: 50%;
   }
-
-  .map-link {
-    padding: 2px 10px 0 10px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    margin: 0;
-  }
 }
 
 /* Tablet */
@@ -257,14 +227,6 @@ img {
   img {
     height: 70%;
   }
-
-  .map-link {
-    padding: 2px 10px 0 10px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    margin: 0;
-  }
 }
 
 /* Pc */
@@ -297,14 +259,6 @@ img {
 
   img {
     height: 80%;
-  }
-
-  .map-link {
-    padding: 2px 10px 0 10px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    margin: 0;
   }
 }
 </style>
