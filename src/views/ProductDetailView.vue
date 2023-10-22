@@ -709,8 +709,4 @@ img {
 .alert {
   font-size: 1.1rem;
 }
-
-.spacer {
-  margin-bottom: 70px;
-}
 </style>
