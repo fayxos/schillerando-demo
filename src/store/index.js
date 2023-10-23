@@ -450,8 +450,24 @@ const store = createStore({
         var orderId = uuidv4();
 
         const productIds = [];
+
+        console.log(order.products)
+
+        const { error } = await supabase.from('orders').insert({
+          id: orderId,
+          buyer: this.state.user.id,
+          deliver_to: order.deliver_to,
+          products: productIds,
+          order_price: order.totalPrice,
+          note: order.note,
+          payed: false,
+          delivered: false,
+          buyer_name: this.state.user.user_metadata.name,
+        });
+
         order.products.forEach(async (product) => {
           var productId = uuidv4();
+
 
           const { error } = await supabase.from('order_products').insert({
             id: productId,
@@ -468,18 +484,6 @@ const store = createStore({
           if (error) throw error;
 
           productIds.push(productId);
-        });
-
-        const { error } = await supabase.from('orders').insert({
-          id: orderId,
-          buyer: this.state.user.id,
-          deliver_to: order.deliver_to,
-          products: productIds,
-          order_price: order.totalPrice,
-          note: order.note,
-          payed: false,
-          delivered: false,
-          buyer_name: this.state.user.user_metadata.name,
         });
 
         if (error) throw error;
