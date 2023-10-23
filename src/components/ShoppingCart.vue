@@ -75,8 +75,7 @@
                 productCount == 0 ||
                 companyCount > 3 ||
                 productCount > 10 ||
-                hasActiveOrder ||
-                true
+                hasActiveOrder
               "
               @click="$router.push({ name: 'OrderView' })"
               class="btn btn-primary order-button"
