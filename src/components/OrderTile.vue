@@ -18,7 +18,7 @@
               >In Bearbeitung</span
             >
             <span
-              v-else-if="this.delivery_time == null"
+              v-else-if="this.delivered == false"
               class="badge text-bg-success"
               >In Zulieferung</span
             >
@@ -78,6 +78,8 @@ export default {
     this.day = reformatDate(this.data.day);
     this.order_time = cutSecondsFromTime(this.data.order_time);
     this.delivery_time = cutSecondsFromTime(this.data.delivery_time);
+
+    console.log(this.data);
 
     this.data.order_products.forEach((p) => {
       this.productCount += p.count;

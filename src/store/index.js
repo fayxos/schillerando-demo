@@ -88,8 +88,16 @@ const store = createStore({
             return !(
               product.id == payload.id &&
               product.variation == payload.variation &&
-              JSON.stringify(product.picked_extras != null ? product.picked_extras.sort() : null) ===
-                JSON.stringify(payload.picked_extras != null ? payload.picked_extras.sort() : null)
+              JSON.stringify(
+                product.picked_extras != null
+                  ? product.picked_extras.sort()
+                  : null
+              ) ===
+                JSON.stringify(
+                  payload.picked_extras != null
+                    ? payload.picked_extras.sort()
+                    : null
+                )
             );
           });
         }
@@ -451,7 +459,7 @@ const store = createStore({
 
         const productIds = [];
 
-        console.log(order.products)
+        console.log(order.products);
 
         const { error } = await supabase.from('orders').insert({
           id: orderId,
@@ -467,7 +475,6 @@ const store = createStore({
 
         order.products.forEach(async (product) => {
           var productId = uuidv4();
-
 
           const { error } = await supabase.from('order_products').insert({
             id: productId,
@@ -522,6 +529,8 @@ const store = createStore({
             .eq('buyer', this.state.user.id);
 
           if (error) throw error;
+
+          console.log(data);
 
           data.forEach((product) => {
             var index = orders.findIndex((o) => o.id == product.order);

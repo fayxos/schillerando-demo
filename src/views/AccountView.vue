@@ -174,11 +174,11 @@
               </p>
               <div v-else>
                 <div class="order" v-for="order in this.orders" :key="order.id">
-                  <OrderTile :data="order" v-if="order.delivery_time == null" />
+                  <OrderTile :data="order" v-if="order.delivered == false" />
                 </div>
                 <h4 style="text-align: left; margin: 0 0 10px 10px">Letzte</h4>
                 <div class="order" v-for="order in this.orders" :key="order.id">
-                  <OrderTile :data="order" v-if="order.delivery_time != null" />
+                  <OrderTile :data="order" v-if="order.delivered == true" />
                 </div>
               </div>
             </div>
