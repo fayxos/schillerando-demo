@@ -88,8 +88,8 @@ const store = createStore({
             return !(
               product.id == payload.id &&
               product.variation == payload.variation &&
-              JSON.stringify(product.picked_extras.sort()) ===
-                JSON.stringify(payload.picked_extras.sort())
+              JSON.stringify(product.picked_extras != null ? product.picked_extras.sort() : null) ===
+                JSON.stringify(payload.picked_extras != null ? payload.picked_extras.sort() : null)
             );
           });
         }
