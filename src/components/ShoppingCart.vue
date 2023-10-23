@@ -145,7 +145,7 @@ export default {
       var hasOrder = false;
 
       store.state.orders.forEach((order) => {
-        if (order.delivery_time == null) hasOrder = true;
+        if (order.delivered == false) hasOrder = true;
       });
 
       return hasOrder;
