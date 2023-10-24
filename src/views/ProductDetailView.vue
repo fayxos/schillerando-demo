@@ -125,6 +125,14 @@
               </div>
             </div>
           </div>
+
+          <div v-if="this.product.delivery == false" class="no-delivery">
+            <i class="fa-solid fa-circle-info"></i>
+            <p class="no-delivery-info">
+              Dieses Angebot ist nur direkt beim Unternehmen erhältlich und wird
+              nicht zum Liefern angeboten.
+            </p>
+          </div>
         </div>
 
         <hr />
@@ -712,5 +720,17 @@ img {
 
 .space {
   height: 50px;
+}
+
+.no-delivery {
+  padding: 15px;
+}
+
+.fa-circle-info {
+  margin-right: 5px;
+}
+
+.no-delivery-info {
+  display: inline;
 }
 </style>

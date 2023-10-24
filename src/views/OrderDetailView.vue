@@ -157,6 +157,8 @@ export default {
           });
       });
 
+      console.log(productIds);
+
       const { data, error } = await supabase
         .from('products')
         .select()
@@ -176,7 +178,13 @@ export default {
 
         if (this.order.final_products == undefined)
           this.order.final_products = [];
-        this.order.final_products.push(product);
+
+        if (
+          this.order.final_products.findIndex((pro) => pro.id == product.id) ==
+          -1
+        ) {
+          this.order.final_products.push(product);
+        }
       });
 
       if (variationIds.length > 0) {

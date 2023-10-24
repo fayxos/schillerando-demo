@@ -18,7 +18,7 @@
               >In Bearbeitung</span
             >
             <span
-              v-else-if="this.delivered == false"
+              v-else-if="this.data.delivered == false"
               class="badge text-bg-success"
               >In Zulieferung</span
             >

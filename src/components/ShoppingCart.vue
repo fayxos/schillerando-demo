@@ -40,7 +40,10 @@
             </div>
           </div>
           <div class="card-body scroll">
-            <div v-if="hasActiveOrder" class="alert alert-warning">
+            <div v-if="!deliveryEnabled" class="alert alert-warning">
+              Derzeit können keine neuen Bestellungen entgegen genommen werden.
+            </div>
+            <div v-else-if="hasActiveOrder" class="alert alert-warning">
               Du kannst nicht mehrere Bestellungen gleichzeitig aufgeben. Warte
               bis deine vorherige Bestellung eingetroffen ist!
             </div>
@@ -75,7 +78,9 @@
                 productCount == 0 ||
                 companyCount > 3 ||
                 productCount > 10 ||
-                hasActiveOrder
+                hasActiveOrder ||
+                loading ||
+                !deliveryEnabled
               "
               @click="$router.push({ name: 'OrderView' })"
               class="btn btn-primary order-button"
@@ -93,6 +98,7 @@
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import ShoppingCartTile from './ShoppingCartTile.vue';
+import { supabase } from '@/supabase';
 
 export default {
   name: 'ShoppingCart',
@@ -102,7 +108,25 @@ export default {
   data() {
     return {
       showCard: false,
+      deliveryEnabled: true,
+      loading: true,
     };
+  },
+  async mounted() {
+    try {
+      const { data, error } = await supabase
+        .from('settings')
+        .select()
+        .eq('name', 'delivery');
+
+      if (error) throw error;
+
+      this.deliveryEnabled = data[0].enabled;
+    } catch (e) {
+      console.log(e);
+    }
+
+    this.loading = false;
   },
   setup() {
     const store = useStore();

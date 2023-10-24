@@ -169,8 +169,9 @@
             <div class="card-header">Bestellungen</div>
             <div class="card-body">
               <p v-if="orders.length == 0">
-                Hier siehst du später alle deine getätigten Bestellungen.
-                Bestellungen sind erst ab dem 23.10.2023 möglich.
+                Hier siehst du alle deine getätigten Bestellungen. Du kannst
+                ihren Status verfolgen und den QR-Code zur Bestellbestätigung
+                aufrufen.
               </p>
               <div v-else>
                 <div class="order" v-for="order in this.orders" :key="order.id">

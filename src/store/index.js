@@ -455,14 +455,11 @@ const store = createStore({
       try {
         commit('setState', 'loading');
 
-        var orderId = uuidv4();
-
         const productIds = [];
 
         console.log(order.products);
 
-        const { error } = await supabase.from('orders').insert({
-          id: orderId,
+        const { data, error } = await supabase.from('orders').insert({
           buyer: this.state.user.id,
           deliver_to: order.deliver_to,
           products: productIds,
@@ -473,12 +470,14 @@ const store = createStore({
           buyer_name: this.state.user.user_metadata.name,
         });
 
+        if (error) throw error;
+
         order.products.forEach(async (product) => {
           var productId = uuidv4();
 
           const { error } = await supabase.from('order_products').insert({
             id: productId,
-            order: orderId,
+            order: data.id,
             product: product.id,
             variation: product.variation,
             extras:
@@ -511,6 +510,8 @@ const store = createStore({
           .select()
           .eq('buyer', this.state.user.id);
 
+        console.log(data);
+
         if (error != null) throw error;
 
         var orders = data;
@@ -535,9 +536,11 @@ const store = createStore({
           data.forEach((product) => {
             var index = orders.findIndex((o) => o.id == product.order);
 
-            if (orders[index].order_products == undefined)
-              orders[index].order_products = [];
-            orders[index].order_products.push(product);
+            if (index != -1) {
+              if (orders[index].order_products == undefined)
+                orders[index].order_products = [];
+              orders[index].order_products.push(product);
+            }
           });
         }
 
