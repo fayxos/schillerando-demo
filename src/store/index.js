@@ -459,7 +459,10 @@ const store = createStore({
 
         console.log(order.products);
 
-        const { data, error } = await supabase.from('orders').insert({
+        var id = uuidv4()
+
+        const { error } = await supabase.from('orders').insert({
+          id: id,
           buyer: this.state.user.id,
           deliver_to: order.deliver_to,
           products: productIds,
@@ -473,11 +476,11 @@ const store = createStore({
         if (error) throw error;
 
         order.products.forEach(async (product) => {
-          var productId = uuidv4();
+          var productId = uuidv4()
 
           const { error } = await supabase.from('order_products').insert({
             id: productId,
-            order: data.id,
+            order: id,
             product: product.id,
             variation: product.variation,
             extras:
