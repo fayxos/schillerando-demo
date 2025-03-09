@@ -421,6 +421,7 @@ export default {
   methods: {
     flipCard() {
       this.registerSite = !this.registerSite;
+
       var element = document.getElementById('flipper');
       element.classList.toggle('flip');
       if (window.innerWidth < 576) {
@@ -429,6 +430,19 @@ export default {
       }
       this.logInPressed = false;
       this.signUpPressed = false;
+
+
+      if(navigator.userAgent.includes("Firefox")) {
+        if(this.registerSite) {
+          let front = document.getElementById('front');
+          front.style.visibility = "hidden";
+        } else {
+          let front = document.getElementById('front');
+          front.style.visibility = "visible";
+        }
+      }
+      
+      
 
       var mailInput = document.getElementById('login-mail');
       mailInput.value = '';

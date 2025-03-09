@@ -98,7 +98,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { supabase } from '../supabase';
+
 
 export default {
   name: 'ShoppingCartTile',
@@ -134,11 +134,12 @@ export default {
     }
 
     if (this.data.product_picture != null) {
-      const response = await supabase.storage
-        .from('public/products-pictures')
-        .download(this.data.product_picture);
-      if (response.data != null) this.image = await response.data.text();
-      if (response.error) console.warn(response.error);
+      //TODO
+      // const response = await supabase.storage
+      //   .from('public/products-pictures')
+      //   .download(this.data.product_picture);
+      // if (response.data != null) this.image = await response.data.text();
+      // if (response.error) console.warn(response.error);
     }
   },
   methods: {

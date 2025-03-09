@@ -51,7 +51,7 @@
             </div>
 
             <div class="category spacing">
-              {{ company.categories[0] }}
+              {{ company.categories.replace("{", "").replace("}", "").replace('"', "").replace('"', "").trim() }}
             </div>
 
             <div class="row spacing">
@@ -69,9 +69,9 @@
                 <a
                   v-if="
                     company.socials.instagram !== undefined &&
-                    this.company.socials.instagram != ''
+                    company.socials.instagram != null
                   "
-                  :href="company.socials.instagram"
+                  :href="this.company.socials.instagram"
                   class="insta"
                   ><i class="fa-brands fa-instagram fa-lg"></i
                 ></a>
@@ -92,7 +92,7 @@
             <div
               v-if="
                 company.pinData != undefined &&
-                company.coordinates.length == 2 &&
+                company.coordinates.length > 10 &&
                 !loading
               "
               class="mapWrapper"
@@ -125,11 +125,12 @@
 </template>
 
 <script>
-import router from '@/router';
-import { supabase } from '@/supabase';
+// import router from '@/router';
+
 import CompanyBadge from '@/shared/components/CompanyBadge.vue';
 import SortableList from '@/components/SortableList.vue';
 import MapProvider from '@/components/MapProvider.vue';
+import { executeQuery } from '@/database';
 
 export default {
   name: 'CompanyDetailView',
@@ -146,129 +147,198 @@ export default {
   },
   async mounted() {
     if (this.$route.params.companyalias) {
-      let { data, error } = await supabase
-        .from('companies')
-        .select()
-        .eq('alias', this.$route.params.companyalias);
-      if (error !== null) console.log(error);
-      if (data !== null && data.length !== 0) {
-        this.company = data[0];
-        console.log('Opening company by alias', this.company.alias);
+
+      const companies = await executeQuery("SELECT * FROM companies WHERE alias='" + this.$route.params.companyalias + "'");
+
+      if(companies.length > 0) {
+        this.company = companies[0];
       } else {
-        let { data, error } = await supabase
-          .from('companies')
-          .select()
-          .contains('redirect_aliases', [this.$route.params.companyalias]);
-        if (error !== null) console.log(error);
-        if (data !== null && data.length !== 0) {
-          this.company = data[0];
-          console.log(
-            'Opening company by redirect alias ' +
-              this.$route.params.companyalias +
-              ' redirecting to ' +
-              this.company.alias
-          );
-          router.replace('/' + this.company.alias);
-        } else {
-          console.log(
-            'Company ' + this.$route.params.companyalias + ' not found'
-          );
-          this.company = null;
-          return;
-        }
+        const companies = await executeQuery("SELECT * FROM companies WHERE redirect_aliases LIKE '%" + this.$route.params.companyalias + "%'");
+     
+        if(companies.length > 0) {
+          this.company = companies[0];
+        }   
       }
 
-      if (this.company.header_picture != null) {
-        const response = await supabase.storage
-          .from('public/sellers-headings')
-          .download(this.company.header_picture);
-        if (response.data != null) {
-          this.image = await response.data.text();
-          if (
-            this.company.coordinates != undefined &&
-            this.company.coordinates != null
-          )
-            this.company.pinData = [
-              { position: this.company.coordinates, image: this.image },
-            ];
-        }
-        if (response.error) console.warn(response.error);
-      } else {
-        if (
-          this.company.coordinates != undefined &&
-          this.company.coordinates != null
-        )
+      // let { data, error } = await supabase
+      //   .from('companies')
+      //   .select()
+      //   .eq('alias', this.$route.params.companyalias);
+      // if (error !== null) console.log(error);
+      // if (data !== null && data.length !== 0) {
+      //   this.company = data[0];
+      //   console.log('Opening company by alias', this.company.alias);
+      // } else {
+      //   let { data, error } = await supabase
+      //     .from('companies')
+      //     .select()
+      //     .contains('redirect_aliases', [this.$route.params.companyalias]);
+      //   if (error !== null) console.log(error);
+      //   if (data !== null && data.length !== 0) {
+      //     this.company = data[0];
+      //     console.log(
+      //       'Opening company by redirect alias ' +
+      //         this.$route.params.companyalias +
+      //         ' redirecting to ' +
+      //         this.company.alias
+      //     );
+      //     router.replace('/' + this.company.alias);
+      //   } else {
+      //     console.log(
+      //       'Company ' + this.$route.params.companyalias + ' not found'
+      //     );
+      //     this.company = null;
+      //     return;
+      //   }
+      // }
+
+      if(this.company.coordinates != undefined &&
+        this.company.coordinates != null) {
           this.company.pinData = [
-            { position: data[0].coordinates, image: null },
+            { position: companies[0].coordinates, image: null }
           ];
-        else this.company.pinData = null;
       }
+      
 
-      console.log(this.company.pinData);
+      //TODO
+      // if (this.company.header_picture != null) {
+        // const response = await supabase.storage
+        //   .from('public/sellers-headings')
+        //   .download(this.company.header_picture);
+        // if (response.data != null) {
+        //   this.image = await response.data.text();
+        //   if (
+        //     this.company.coordinates != undefined &&
+        //     this.company.coordinates != null
+        //   )
+        //     this.company.pinData = [
+        //       { position: this.company.coordinates, image: this.image },
+        //     ];
+        // }
+        // if (response.error) console.warn(response.error);
+      // } else {
+      //   if (
+      //     this.company.coordinates != undefined &&
+      //     this.company.coordinates != null
+      //   )
+      //     this.company.pinData = [
+      //       { position: data[0].coordinates, image: null },
+      //     ];
+      //   else this.company.pinData = null;
+      // }
 
-      {
-        const response = await supabase
-          .from('products')
-          .select(`*, company:companies(name, abo, alias)`)
-          .eq('company_id', this.company.id)
-          .eq('public', true);
+      // console.log(this.company.pinData);
 
-        if (response.data != null) {
-          response.data.forEach((product) => {
+      const products = await executeQuery("SELECT * FROM products WHERE company_id='" + this.company.id + "' and public=true");
+
+      if (products.length > 0) {
+          products.forEach((product) => {
+            product.company = {
+              "name": this.company.name,
+              "abo": this.company.abo,
+              "alias": this.company.alias
+            }
             this.products.push(product);
           });
         }
 
-        console.log('Products array of /' + this.company.alias, this.products);
+      // {
+      //   const response = await supabase
+      //     .from('products')
+      //     .select(`*, company:companies(name, abo, alias)`)
+      //     .eq('company_id', this.company.id)
+      //     .eq('public', true);
 
-        if (response.error) console.warn(response.error);
+      //   if (response.data != null) {
+      //     response.data.forEach((product) => {
+      //       this.products.push(product);
+      //     });
+      //   }
+
+      //   console.log('Products array of /' + this.company.alias, this.products);
+
+      //   if (response.error) console.warn(response.error);
+      // }
+
+      const product_reviews = await executeQuery("SELECT * FROM product_reviews WHERE company='" + this.company.id + "'");
+
+      product_reviews.forEach((review) => {
+        var index = this.products.findIndex(
+          (product) => product.id == review.product
+        );
+        if (index != -1) {
+          if (this.products[index].reviews == undefined) {
+            this.products[index].reviews = [];
+          }
+          this.products[index].reviews.push(review);
+        }
+      });
+      var i = 0;
+      var count = 0;
+      this.products.forEach((product) => {
+        if (product.reviews != undefined && product.reviews.length > 0) {
+          var stars = 0;
+          product.reviews.forEach((review) => {
+            stars += review.stars;
+          });
+          this.products[i].stars =
+            Math.round((stars / product.reviews.length) * 10) / 10;
+          this.total_stars += this.products[i].stars;
+          count++;
+        } else {
+          this.products[i].stars = 0;
+        }
+        i++;
+      });
+      if (count > 0)
+        this.total_stars = Math.round((this.total_stars / count) * 10) / 10;
       }
 
-      {
-        const { data, error } = await supabase
-          .from('product_reviews')
-          .select()
-          .eq('company', this.company.id);
-        if (error) console.warn(error);
-        data.forEach((review) => {
-          var index = this.products.findIndex(
-            (product) => product.id == review.product
-          );
-          if (index != -1) {
-            if (this.products[index].reviews == undefined) {
-              this.products[index].reviews = [];
-            }
-            this.products[index].reviews.push(review);
-          }
-        });
-        var i = 0;
-        var count = 0;
-        this.products.forEach((product) => {
-          if (product.reviews != undefined && product.reviews.length > 0) {
-            var stars = 0;
-            product.reviews.forEach((review) => {
-              stars += review.stars;
-            });
-            this.products[i].stars =
-              Math.round((stars / product.reviews.length) * 10) / 10;
-            this.total_stars += this.products[i].stars;
-            count++;
-          } else {
-            this.products[i].stars = 0;
-          }
-          i++;
-        });
-        if (count > 0)
-          this.total_stars = Math.round((this.total_stars / count) * 10) / 10;
-      }
-    }
+      // {
+      //   const { data, error } = await supabase
+      //     .from('product_reviews')
+      //     .select()
+      //     .eq('company', this.company.id);
+      //   if (error) console.warn(error);
+      //   data.forEach((review) => {
+      //     var index = this.products.findIndex(
+      //       (product) => product.id == review.product
+      //     );
+      //     if (index != -1) {
+      //       if (this.products[index].reviews == undefined) {
+      //         this.products[index].reviews = [];
+      //       }
+      //       this.products[index].reviews.push(review);
+      //     }
+      //   });
+      //   var i = 0;
+      //   var count = 0;
+      //   this.products.forEach((product) => {
+      //     if (product.reviews != undefined && product.reviews.length > 0) {
+      //       var stars = 0;
+      //       product.reviews.forEach((review) => {
+      //         stars += review.stars;
+      //       });
+      //       this.products[i].stars =
+      //         Math.round((stars / product.reviews.length) * 10) / 10;
+      //       this.total_stars += this.products[i].stars;
+      //       count++;
+      //     } else {
+      //       this.products[i].stars = 0;
+      //     }
+      //     i++;
+      //   });
+      //   if (count > 0)
+      //     this.total_stars = Math.round((this.total_stars / count) * 10) / 10;
+      // }
+    // }
 
     if (
-      this.company.socials.instagram !== undefined &&
-      this.company.socials.instagram != ''
+      this.company.socials.includes("instagram") && this.company.socials.split('"instagram":')[1].replace('"', "").replace("}", "").replace('"', "").trim() != ""
     )
-      this.company.socials.instagram =
-        'https://instagram.com/' + this.company.socials.instagram;
+      this.company.socials = {
+        "instagram": 'https://instagram.com/' + this.company.socials.split('"instagram":')[1].replace('"', "").replace("}", "").replace('"', "").trim()
+      }
 
     this.loading = false;
   },

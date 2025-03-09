@@ -8,7 +8,7 @@
 
 <script>
 import 'leaflet/dist/leaflet.css';
-import { supabase } from '@/supabase';
+
 import L from 'leaflet';
 
 export default {
@@ -96,7 +96,7 @@ export default {
         console.log(pinData);
         var icon = await this.buildIcon(pinData.image);
 
-        L.marker([pinData.position[0], pinData.position[1]], {
+        L.marker([pinData.position.split(",")[0].replace("{", ""), pinData.position.split(",")[1].replace("}", "")], {
           icon: icon,
         }).addTo(map);
       });
@@ -107,7 +107,7 @@ export default {
         if (
           company.coordinates != undefined &&
           company.coordinates != null &&
-          company.coordinates.length == 2
+          company.coordinates.length > 10
         ) {
           var image = null;
 
@@ -115,19 +115,20 @@ export default {
             company.header_picture != undefined &&
             company.header_picture != null
           ) {
-            const response = await supabase.storage
-              .from('public/sellers-headings')
-              .download(company.header_picture);
+            //TODO
+            // const response = await supabase.storage
+            //   .from('public/sellers-headings')
+            //   .download(company.header_picture);
 
-            if (response.data != null) {
-              image = await response.data.text();
-            }
-            if (response.error) console.warn(response.error);
+            // if (response.data != null) {
+            //   image = await response.data.text();
+            // }
+            // if (response.error) console.warn(response.error);
           }
 
           var icon = await this.buildIcon(image);
 
-          L.marker([company.coordinates[0], company.coordinates[1]], {
+          L.marker([company.coordinates.split(",")[0].replace("{", ""), company.coordinates.split(",")[1].replace("}", "")], {
             icon: icon,
           })
             .addTo(map)

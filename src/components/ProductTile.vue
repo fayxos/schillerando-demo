@@ -13,7 +13,7 @@
         </div>
         <div>
           <p v-if="showCategory" class="company_name">
-            {{ data.categories[0] }}
+            {{ data.categories.replace("{", "").replace("}", "").replace('"', "").replace('"', "").trim() }}
           </p>
           <p v-else class="company_name">{{ data.company.name }}</p>
         </div>
@@ -44,7 +44,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { supabase } from '../supabase';
+
 
 export default {
   name: 'ProductTile',
@@ -63,11 +63,12 @@ export default {
   },
   async mounted() {
     if (this.data.product_picture != null) {
-      const response = await supabase.storage
-        .from('public/products-pictures')
-        .download(this.data.product_picture);
-      if (response.data != null) this.image = await response.data.text();
-      if (response.error) console.warn(response.error);
+      //TODO
+      // const response = await supabase.storage
+      //   .from('public/products-pictures')
+      //   .download(this.data.product_picture);
+      // if (response.data != null) this.image = await response.data.text();
+      // if (response.error) console.warn(response.error);
     }
   },
   computed: {

@@ -20,7 +20,8 @@
 
 <script>
 import SortableList from '@/components/SortableList.vue';
-import { supabase } from '@/supabase';
+import { executeQuery, getAll } from '@/database';
+
 import TitleDiv from '@/shared/components/TitleDiv';
 
 export default {
@@ -38,29 +39,34 @@ export default {
   },
   async created() {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select(`*, company:companies(name, abo, alias, verified)`)
-        .eq('public', true);
+      // const { data, error } = await supabase
+      //   .from('products')
+      //   .select(`*, company:companies(name, abo, alias, verified)`)
+      //   .eq('public', true);
 
-      if (error) throw error;
+      const companies = await executeQuery("SELECT * FROM companies")
+
+      const products = await executeQuery("SELECT * FROM products WHERE public=true")
+
+      // if (error) throw error;
 
       var filtered = [];
-      data.forEach((product) => {
-        if (product.company.abo != null && product.company.verified) {
-          product.reviews = [];
-          filtered.push(product);
-        }
+      products.forEach((product) => {
+        product.company = companies.filter(c => c.id == product.company_id)[0]
+        product.reviews = [];
+        filtered.push(product);
       });
 
       this.products = filtered;
 
       {
-        const { data, error } = await supabase
-          .from('product_reviews')
-          .select(`*`);
-        if (error) throw error;
-        data.forEach((review) => {
+      //   const { data, error } = await supabase
+      //     .from('product_reviews')
+      //     .select(`*`);
+      //   if (error) throw error;
+
+      const reviews = await getAll("product_reviews");
+      reviews.forEach((review) => {
           var index = this.products.findIndex(
             (product) => product.id == review.product
           );
@@ -68,6 +74,7 @@ export default {
             this.products[index].reviews.push(review);
           }
         });
+
         var i = 0;
         this.products.forEach((product) => {
           if (product.reviews.length > 0) {

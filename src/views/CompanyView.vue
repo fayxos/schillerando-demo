@@ -51,7 +51,8 @@
 import CompanyTile from '../components/CompanyTile.vue';
 import MapProvider from '@/components/MapProvider.vue';
 import SortableList from '@/components/SortableList.vue';
-import { supabase } from '@/supabase';
+import { getAll } from '@/database';
+
 import TitleDiv from '@/shared/components/TitleDiv';
 
 export default {
@@ -71,25 +72,32 @@ export default {
   },
   async created() {
     try {
-      const { data, error } = await supabase
-        .from('companies')
-        .select()
-        .eq('verified', true)
-        .neq('abo', null);
-      if (error) throw error;
-      this.companies = data;
+      // TODO
+      const companies = await getAll("companies")
+
+      // const { data, error } = await supabase
+      //   .from('companies')
+      //   .select()
+      //   .eq('verified', true)
+      //   .neq('abo', null);
+      // if (error) throw error;
+      this.companies = companies;
 
       for (var i = 0; i < this.companies.length; i++) {
         this.companies[i].stars = 0;
       }
 
-      {
-        const { data, error } = await supabase.from('product_reviews').select();
+      console.log(this.companies)
 
-        if (error) throw error;
+      {
+      //   const { data, error } = await supabase.from('product_reviews').select();
+
+      const product_reviews = await getAll("product_reviews")
+
+      //   if (error) throw error;
 
         var company_reviews = [];
-        data.forEach((review) => {
+        product_reviews.forEach((review) => {
           var index = company_reviews.findIndex(
             (company) => company.id == review.company
           );

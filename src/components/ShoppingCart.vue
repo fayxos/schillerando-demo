@@ -98,7 +98,8 @@
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import ShoppingCartTile from './ShoppingCartTile.vue';
-import { supabase } from '@/supabase';
+
+import { executeQuery } from '@/database';
 
 export default {
   name: 'ShoppingCart',
@@ -114,12 +115,20 @@ export default {
   },
   async mounted() {
     try {
-      const { data, error } = await supabase
-        .from('settings')
-        .select()
-        .eq('name', 'delivery');
+      const data = await executeQuery(`
+        SELECT *
+        FROM settings
+        WHERE name = 'delivery'
+      `)
 
-      if (error) throw error;
+      // const { data, error } = await supabase
+      //   .from('settings')
+      //   .select()
+      //   .eq('name', 'delivery');
+
+      // if (error) throw error;
+
+      console.log(data)
 
       this.deliveryEnabled = data[0].enabled;
     } catch (e) {

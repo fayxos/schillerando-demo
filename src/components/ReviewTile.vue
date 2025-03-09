@@ -29,7 +29,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { reformatDate, cutSecondsFromTime } from '../helpers.js';
+import { reformatDate } from "../helpers.js";
 
 export default {
   name: 'ReviewTile',
@@ -48,8 +48,8 @@ export default {
     };
   },
   mounted() {
-    this.date = reformatDate(this.data.created_at.split('T')[0]);
-    this.time = cutSecondsFromTime(this.data.created_at.split('T')[1]);
+    this.date = reformatDate(this.data.created_at.split(' ')[0]) //+ this.data.created_at.split('+00')[1];
+    this.time = this.data.created_at.split(' ')[1].split(":")[0] + ":" + this.data.created_at.split(' ')[1].split(":")[1];
   },
 };
 </script>

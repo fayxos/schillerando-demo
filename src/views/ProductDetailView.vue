@@ -39,7 +39,7 @@
             </div>
 
             <div v-if="product.categories != null" class="category spacing">
-              {{ product.categories[0] }}
+              {{ product.categories.replace("{", "").replace("}", "").replace('"', "").replace('"', "").trim() }}
             </div>
 
             <div class="spacing link">
@@ -250,8 +250,10 @@
 
 <script>
 import ReviewTile from '@/components/ReviewTile.vue';
-import { supabase } from '../supabase';
+import { executeQuery, getAll } from '@/database';
+
 import { useStore } from 'vuex';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: 'ProductDetailView',
@@ -281,62 +283,86 @@ export default {
   async mounted() {
     if (this.$route.params.productid) {
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select(`*, company:companies(name, alias)`)
-          .eq('id', this.$route.params.productid);
-        if (error) throw error;
+        //TODO
+        // const { data, error } = await supabase
+        //   .from('products')
+        //   .select(`*, company:companies(name, alias)`)
+        //   .eq('id', this.$route.params.productid);
+        // if (error) throw error;
 
-        if (data === null || data.length === 0) {
-          this.product = null;
-          return;
-        }
+        // if (data === null || data.length === 0) {
+        //   this.product = null;
+        //   return;
+        // }
 
-        this.product = data[0];
+        const companies = await executeQuery("SELECT * FROM companies")
+
+        const products = await executeQuery("SELECT * FROM products WHERE id='" + this.$route.params.productid + "'")
+
+        // if (error) throw error;
+
+        products[0].company = companies.filter(c => c.id == products[0].company_id)[0]
+
+        this.product = products[0];
+
+        // this.product = data[0];
 
         if (this.product.has_variations) {
-          const { data, error } = await supabase
-            .from('product_variations')
-            .select()
-            .eq('product', this.product.id)
-            .order('price');
 
-          if (error) throw error;
+          const variations = await executeQuery("SELECT * FROM product_variations WHERE product='" + this.product.id + "' ORDER BY price");
+        //   const { data, error } = await supabase
+        //     .from('product_variations')
+        //     .select()
+        //     .eq('product', this.product.id)
+        //     .order('price');
 
-          if (data.length > 0) this.product.variations = data;
+        //   if (error) throw error;
+
+          if (variations.length > 0) this.product.variations = variations;
         }
 
         if (this.product.has_extras) {
-          const { data, error } = await supabase
-            .from('product_extras')
-            .select()
-            .eq('product', this.product.id)
-            .order('extra_price');
+          const extras = await executeQuery("SELECT * FROM product_extras WHERE product='" + this.product.id + "' ORDER BY extra_price");
 
-          if (error) throw error;
+        //   const { data, error } = await supabase
+        //     .from('product_extras')
+        //     .select()
+        //     .eq('product', this.product.id)
+        //     .order('extra_price');
 
-          if (data.length > 0) this.product.extras = data;
+        //   if (error) throw error;
 
-          console.log(data);
+          if (extras.length > 0) this.product.extras = extras;
+
+        //   console.log(data);
         }
 
-        if (this.product.product_picture != null) {
-          const response = await supabase.storage
-            .from('public/products-pictures')
-            .download(this.product.product_picture);
-          if (response.data != null) this.image = await response.data.text();
-          if (response.error) throw response.error;
-        }
+        // if (this.product.product_picture != null) {
+        //   const response = await supabase.storage
+        //     .from('public/products-pictures')
+        //     .download(this.product.product_picture);
+        //   if (response.data != null) this.image = await response.data.text();
+        //   if (response.error) throw response.error;
+        // }
 
         {
-          const { data, error } = await supabase
-            .from('product_reviews')
-            .select('*, users(*)')
-            .eq('product', this.product.id);
+          const reviews = await executeQuery("SELECT * FROM product_reviews WHERE product='" + this.product.id + "'")
 
-          if (error) throw error;
+        //   const { data, error } = await supabase
+        //     .from('product_reviews')
+        //     .select('*, users(*)')
+        //     .eq('product', this.product.id);
 
-          this.reviews = data;
+        //   if (error) throw error;
+
+          const users = await getAll("users");
+          
+          this.reviews = []
+          reviews.forEach((review) => {
+            const filteredUsers = users.filter(u => u.id == review.reviewee);
+            if(filteredUsers.length > 0) review.users = filteredUsers[0];
+            this.reviews.push(review);
+          });
 
           this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
 
@@ -428,31 +454,78 @@ export default {
       this.review_text = textInput.value;
       this.anonym = anonymInput.checked;
       try {
-        const { data, error } = await supabase
-          .from('product_reviews')
-          .insert({
-            product: this.product.id,
-            company: this.product.company_id,
-            reviewee: this.store.getters.getUser.id,
-            text: this.review_text,
-            stars: this.stars,
-            verified: null,
-            anonym: this.anonym,
-          })
-          .select('*, users(*)');
-        if (error) throw error;
-        this.reviews.push(data[0]);
-        var totalStars = 0;
-        this.reviews.forEach((review) => {
-          totalStars += review.stars;
-        });
+        await executeQuery(`INSERT INTO product_reviews (id, product, reviewee, text, stars, verified, anonym, company) VALUES (
+          "`+ uuidv4() +`",  
+          "`+ this.product.id +`",
+          "`+ this.store.getters.getUser.id +`",
+          "`+ this.review_text +`",
+          "`+ this.stars +`",
+          `+ true +`,
+          "`+ this.anonym +`",
+          "`+ this.product.id +`"
+        )`)
 
-        this.product_stars =
-          Math.round((totalStars / this.reviews.length) * 10) / 10;
-        this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
+        {
+          const reviews = await executeQuery("SELECT * FROM product_reviews WHERE product='" + this.product.id + "'")
+
+        //   const { data, error } = await supabase
+        //     .from('product_reviews')
+        //     .select('*, users(*)')
+        //     .eq('product', this.product.id);
+
+        //   if (error) throw error;
+
+          const users = await getAll("users");
+          
+          this.reviews = []
+          reviews.forEach((review) => {
+            const filteredUsers = users.filter(u => u.id == review.reviewee);
+            if(filteredUsers.length > 0) review.users = filteredUsers[0];
+            this.reviews.push(review);
+          });
+
+          this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
+
+          if (this.reviews.length > 0) {
+            var totalStars = 0;
+            this.reviews.forEach((review) => {
+              totalStars += review.stars;
+            });
+
+            this.product_stars =
+              Math.round((totalStars / this.reviews.length) * 10) / 10;
+          }
+        }
+
         this.stars = 0;
         this.review_text = '';
         this.anonym = false;
+
+        // const { data, error } = await supabase
+        //   .from('product_reviews')
+        //   .insert({
+        //     product: this.product.id,
+        //     company: this.product.company_id,
+        //     reviewee: this.store.getters.getUser.id,
+        //     text: this.review_text,
+        //     stars: this.stars,
+        //     verified: null,
+        //     anonym: this.anonym,
+        //   })
+        //   .select('*, users(*)');
+        // if (error) throw error;
+        // this.reviews.push(data[0]);
+        // var totalStars = 0;
+        // this.reviews.forEach((review) => {
+        //   totalStars += review.stars;
+        // });
+
+        // this.product_stars =
+        //   Math.round((totalStars / this.reviews.length) * 10) / 10;
+        // this.reviews.sort((a, b) => b.created_at.localeCompare(a.created_at));
+        // this.stars = 0;
+        // this.review_text = '';
+        // this.anonym = false;
       } catch (e) {
         console.log(e);
       }

@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="category highlight">
-          {{ data.categories[0] }}
+          {{ data.categories.replace("{", "").replace("}", "").replace('"', "").replace('"', "").trim() }}
         </div>
         <div class="row">
           <div class="col-9 location">
@@ -44,7 +44,7 @@
 
 <script>
 import CompanyBadge from '@/shared/components/CompanyBadge.vue';
-import { supabase } from '../supabase';
+
 
 export default {
   name: 'CompanyTile',
@@ -57,11 +57,12 @@ export default {
   components: { CompanyBadge },
   async mounted() {
     if (this.data.header_picture != null) {
-      const response = await supabase.storage
-        .from('public/sellers-headings')
-        .download(this.data.header_picture);
-      if (response.data != null) this.picture = await response.data.text();
-      if (response.error) console.warn(response.error);
+      //TODO
+      // const response = await supabase.storage
+      //   .from('public/sellers-headings')
+      //   .download(this.data.header_picture);
+      // if (response.data != null) this.picture = await response.data.text();
+      // if (response.error) console.warn(response.error);
     }
   },
   computed: {

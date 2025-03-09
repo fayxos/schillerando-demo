@@ -54,7 +54,7 @@
                     class="form-control"
                     @input="validateAccountChange(false)"
                     placeholder="Name"
-                    :value="this.userData.user_metadata.name"
+                    :value="this.userData.name"
                     :disabled="!isAccountEditing"
                     required
                   />
@@ -95,6 +95,7 @@
                     margin-bottom: 10px;
                   "
                   @click="editAccount"
+                  disabled='true'
                 >
                   Bearbeiten
                 </button>
@@ -219,12 +220,13 @@
 </template>
 
 <script>
-import { supabase } from '../supabase';
+
 import { useStore, mapGetters } from 'vuex';
 import { computed } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 import AlertPopup from '@/shared/components/AlertPopup.vue';
 import OrderTile from '@/components/OrderTile.vue';
+import { executeQuery } from '@/database';
 
 export default {
   name: 'AccountView',
@@ -420,42 +422,52 @@ export default {
         }
         formattedName.slice(0, -1);
 
-        if (formattedName != this.userData.user_metadata.name) {
-          const { data, error } = await supabase.auth.updateUser({
-            data: { name: formattedName },
-          });
+        if (formattedName != this.userData.name) {
+          // const { data, error } = await supabase.auth.updateUser({
+          //   data: { name: formattedName },
+          // });
 
-          if (error) throw error;
+          // if (error) throw error;
 
-          {
-            const { error } = await supabase
-              .from('users')
-              .update('name', formattedName)
-              .eq('id', data.user.id);
+          // {
+          //   const { error } = await supabase
+          //     .from('users')
+          //     .update('name', formattedName)
+          //     .eq('id', data.user.id);
 
-            if (error) throw error;
-          }
+          //   if (error) throw error;
+          // }
 
-          console.log(data.user);
-          this.store.commit('setUser', data.user);
+          await executeQuery("UPDATE users SET name='" + formattedName + "'");
+
+          const user = this.store.getters.getUser;
+          user.name = formattedName;
+          console.log(user);
+          this.store.commit('setUser', user);
         }
 
         if (mailInput.value != this.userData.email) {
-          const { error } = await supabase.auth.updateUser({
-            email: mailInput.value,
-            emailRedirectTo: process.env.VUE_APP_MAIN_URL + '/account',
-          });
+          // const { error } = await supabase.auth.updateUser({
+          //   email: mailInput.value,
+          //   emailRedirectTo: process.env.VUE_APP_MAIN_URL + '/account',
+          // });
 
-          if (error) throw error;
+          // if (error) throw error;
 
-          {
-            const { error } = await supabase
-              .from('users')
-              .update('email', mailInput.value)
-              .eq('id', this.store.state.user.id);
+          // {
+          //   const { error } = await supabase
+          //     .from('users')
+          //     .update('email', mailInput.value)
+          //     .eq('id', this.store.state.user.id);
 
-            if (error) throw error;
-          }
+          //   if (error) throw error;
+          // }
+
+          await executeQuery("UPDATE users SET email='" + mailInput.value + "'");
+
+          const user = this.store.getters.getUser;
+          user.email = mailInput.value;
+          this.store.commit('setUser', user);
 
           this.successAlertTitle = 'Email Änderung bestätigen';
           this.successAlertInfo =
@@ -486,7 +498,7 @@ export default {
       var nameInput = document.getElementById('account-name');
       var mailInput = document.getElementById('account-mail');
 
-      nameInput.value = this.userData.user_metadata.name;
+      nameInput.value = this.userData.name;
       mailInput.value = this.userData.mail;
 
       nameInput.classList.remove('is-valid');

@@ -104,7 +104,7 @@ import { useStore } from 'vuex';
 import { computed } from 'vue';
 import ShoppingCartTile from '../components/ShoppingCartTile.vue';
 import { cutSecondsFromTime, reformatDate } from '@/helpers';
-import { supabase } from '@/supabase';
+
 
 export default {
   name: 'OrderDetailView',
@@ -159,71 +159,72 @@ export default {
 
       console.log(productIds);
 
-      const { data, error } = await supabase
-        .from('products')
-        .select()
-        .filter('id', 'in', '(' + productIds + ')');
+      //TODO
+      // const { data, error } = await supabase
+      //   .from('products')
+      //   .select()
+      //   .filter('id', 'in', '(' + productIds + ')');
 
-      if (error) throw error;
+      // if (error) throw error;
 
-      data.forEach((product) => {
-        var p = this.order.order_products.find(
-          (pr) => pr.product == product.id
-        );
+      // data.forEach((product) => {
+      //   var p = this.order.order_products.find(
+      //     (pr) => pr.product == product.id
+      //   );
 
-        product.variation = p.variation;
-        if (p.extras != null) product.picked_extras = p.extras;
-        product.price = p.price;
-        product.count = p.count;
+      //   product.variation = p.variation;
+      //   if (p.extras != null) product.picked_extras = p.extras;
+      //   product.price = p.price;
+      //   product.count = p.count;
 
-        if (this.order.final_products == undefined)
-          this.order.final_products = [];
+      //   if (this.order.final_products == undefined)
+      //     this.order.final_products = [];
 
-        if (
-          this.order.final_products.findIndex((pro) => pro.id == product.id) ==
-          -1
-        ) {
-          this.order.final_products.push(product);
-        }
-      });
+      //   if (
+      //     this.order.final_products.findIndex((pro) => pro.id == product.id) ==
+      //     -1
+      //   ) {
+      //     this.order.final_products.push(product);
+      //   }
+      // });
 
-      if (variationIds.length > 0) {
-        const { data, error } = await supabase
-          .from('product_variations')
-          .select()
-          .filter('id', 'in', '(' + variationIds + ')');
+      // if (variationIds.length > 0) {
+      //   const { data, error } = await supabase
+      //     .from('product_variations')
+      //     .select()
+      //     .filter('id', 'in', '(' + variationIds + ')');
 
-        if (error) throw error;
+      //   if (error) throw error;
 
-        data.forEach((variation) => {
-          for (var i = 0; i < this.order.final_products.length; i++) {
-            if (this.order.final_products[i].variation == variation.id)
-              this.order.final_products[i].variations = [variation];
-          }
-        });
-      }
+      //   data.forEach((variation) => {
+      //     for (var i = 0; i < this.order.final_products.length; i++) {
+      //       if (this.order.final_products[i].variation == variation.id)
+      //         this.order.final_products[i].variations = [variation];
+      //     }
+      //   });
+      // }
 
-      if (extraIds.length > 0) {
-        const { data, error } = await supabase
-          .from('product_extras')
-          .select()
-          .filter('id', 'in', '(' + extraIds + ')');
+      // if (extraIds.length > 0) {
+      //   const { data, error } = await supabase
+      //     .from('product_extras')
+      //     .select()
+      //     .filter('id', 'in', '(' + extraIds + ')');
 
-        if (error) throw error;
+      //   if (error) throw error;
 
-        data.forEach((extra) => {
-          for (var i = 0; i < this.order.final_products.length; i++) {
-            if (
-              this.order.final_products[i].picked_extras != undefined &&
-              this.order.final_products[i].picked_extras.includes(extra.id)
-            ) {
-              if (this.order.final_products[i].extras == undefined)
-                this.order.final_products[i].extras = [];
-              this.order.final_products[i].extras.push(extra);
-            }
-          }
-        });
-      }
+      //   data.forEach((extra) => {
+      //     for (var i = 0; i < this.order.final_products.length; i++) {
+      //       if (
+      //         this.order.final_products[i].picked_extras != undefined &&
+      //         this.order.final_products[i].picked_extras.includes(extra.id)
+      //       ) {
+      //         if (this.order.final_products[i].extras == undefined)
+      //           this.order.final_products[i].extras = [];
+      //         this.order.final_products[i].extras.push(extra);
+      //       }
+      //     }
+      //   });
+      // }
     } catch (e) {
       console.log(e);
     }
