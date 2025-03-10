@@ -1,5 +1,6 @@
 <template>
   <div translate="no">
+    <AlertBanner :title="'Demo-Version'" />
     <NavBar :key="key" />
     <router-view></router-view>
     <SocialsFooter v-if="$route.meta.footer == null" />
@@ -11,6 +12,7 @@
 import NavBar from './components/NavBar';
 import SocialsFooter from '@/shared/components/SocialsFooter';
 import ShoppingCart from './components/ShoppingCart';
+import AlertBanner from './shared/components/AlertBanner.vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -24,6 +26,7 @@ export default {
     NavBar,
     SocialsFooter,
     ShoppingCart,
+    AlertBanner
   },
   mounted() {
     console.log('reload');
